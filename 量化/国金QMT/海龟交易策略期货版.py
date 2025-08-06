@@ -25,6 +25,7 @@ import numpy as np
 
 def init(ContextInfo):
     """
+    测试
     初始化函数
     设置策略参数、交易标的等
     """
