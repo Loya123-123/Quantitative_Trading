@@ -93,7 +93,7 @@ def handlebar(ContextInfo):
         print(f"当前ATR(N值): {ContextInfo.N:.2f}")
 
         # 获取当前账户信息
-        account_info = get_account_info( ContextInfo.account_id)
+        account_info = get_account_info(ContextInfo.account_id)
         if account_info is None:
             print("无法获取账户信息，跳过本次处理")
             return
@@ -179,7 +179,7 @@ def calculate_atr(data, window):
         return 0
 
 
-def get_account_info( account_id):
+def get_account_info(account_id):
     """
     获取账户信息
     包括可用资金、总权益、持仓等
@@ -324,7 +324,8 @@ def execute_trade(ContextInfo, signal, price_data, available_cash, total_value, 
             if ContextInfo.position_type <= 0:  # 当前无仓位或持有空头
                 # 23: 买入开仓  1101: 限价单  5: 对手价 -1: 市价  position_size: 数量
                 print(f"执行买入开仓操作: {position_size} 手，价格: {current_price:.2f}")
-                order_info = passorder(0, 1101, ContextInfo.account_id, ContextInfo.stock_code, 5, -1, position_size)
+                order_info = passorder(0, 1101, ContextInfo.account_id, ContextInfo.stock_code, 5, -1, position_size, 1,
+                                       ContextInfo)
                 print(order_info)
                 ContextInfo.position_type = 1
                 ContextInfo.entry_price = current_price
@@ -336,7 +337,8 @@ def execute_trade(ContextInfo, signal, price_data, available_cash, total_value, 
             if ContextInfo.position_type >= 0:  # 当前无仓位或持有多头
                 # 37: 卖出开仓
                 print(f"执行卖出开仓操作: {position_size} 手，价格: {current_price:.2f}")
-                order_info = passorder(3, 1101, ContextInfo.account_id, ContextInfo.stock_code, 5, -1, position_size)
+                order_info = passorder(3, 1101, ContextInfo.account_id, ContextInfo.stock_code, 5, -1, position_size, 1,
+                                       ContextInfo)
                 print(order_info)
                 ContextInfo.position_type = -1
                 ContextInfo.entry_price = current_price
@@ -347,7 +349,8 @@ def execute_trade(ContextInfo, signal, price_data, available_cash, total_value, 
             if ContextInfo.position_type == 1 and signal < 0:  # 平多仓
                 # 24: 买入平仓
                 print(f"执行买入平仓操作: {abs(current_position)} 手，价格: {current_price:.2f}")
-                order_info = passorder(2, 1101, ContextInfo.account_id, ContextInfo.stock_code, 5, -1, abs(current_position))
+                order_info = passorder(2, 1101, ContextInfo.account_id, ContextInfo.stock_code, 5, -1,
+                                       abs(current_position), 1, ContextInfo)
                 print(order_info)
                 ContextInfo.position_type = 0
                 ContextInfo.entry_price = 0
@@ -357,7 +360,8 @@ def execute_trade(ContextInfo, signal, price_data, available_cash, total_value, 
             elif ContextInfo.position_type == -1 and signal > 0:  # 平空仓
                 print(f"执行卖出平仓操作: {current_position} 手，价格: {current_price:.2f}")
                 # 38: 卖出平仓
-                order_info = passorder(5, 1101, ContextInfo.account_id, ContextInfo.stock_code, 5, -1, current_position)
+                order_info = passorder(5, 1101, ContextInfo.account_id, ContextInfo.stock_code, 5, -1, current_position,
+                                       1, ContextInfo)
                 print(order_info)
                 ContextInfo.position_type = 0
                 ContextInfo.entry_price = 0
