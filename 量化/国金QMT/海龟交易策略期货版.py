@@ -322,7 +322,7 @@ def generate_signal(ContextInfo, price_data, current_position):
         # 计算离市信号 - 离市通道
         # 离市上轨
         exit_upper = np.max(high_prices[-ContextInfo.exit_window - 1:-1])
-        # 离市下轨
+        # 离市下轨 -
         exit_lower = np.min(low_prices[-ContextInfo.exit_window - 1:-1])
 
         print(f"  [信号生成] 通道信息:")
