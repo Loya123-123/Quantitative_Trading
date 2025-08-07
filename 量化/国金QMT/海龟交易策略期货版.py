@@ -467,7 +467,7 @@ def execute_trade(ContextInfo, signal, price_data, available_cash, total_value, 
 
         if signal > 0:  # 买入信号（做多）
             if ContextInfo.position_type <= 0:  # 当前无仓位或持有空头
-                # 23: 买入开仓  1101: 限价单  5: 对手价 -1: 市价  position_size: 数量
+                # 0	开多  1101: 限价单  5: 对手价 -1: 市价  position_size: 数量
                 print(f"  [交易执行] 执行买入开仓操作: {position_size} 手，价格: {current_price:.4f}")
                 print(f"  [交易执行] 下单参数: 买入开仓, 限价单, 对手价, 市价, {position_size}手")
                 order_info = passorder(0, 1101, ContextInfo.account_id, ContextInfo.stock_code, 5, -1, position_size, 1,
@@ -483,7 +483,7 @@ def execute_trade(ContextInfo, signal, price_data, available_cash, total_value, 
 
         elif signal < 0:  # 卖出信号（做空）
             if ContextInfo.position_type >= 0:  # 当前无仓位或持有多头
-                # 37: 卖出开仓
+                # 3: 开空
                 print(f"  [交易执行] 执行卖出开仓操作: {position_size} 手，价格: {current_price:.4f}")
                 print(f"  [交易执行] 下单参数: 卖出开仓, 限价单, 对手价, 市价, {position_size}手")
                 order_info = passorder(3, 1101, ContextInfo.account_id, ContextInfo.stock_code, 5, -1, position_size, 1,
@@ -499,10 +499,10 @@ def execute_trade(ContextInfo, signal, price_data, available_cash, total_value, 
 
         else:  # 平仓操作
             if ContextInfo.position_type == 1 and signal < 0:  # 平多仓
-                # 24: 买入平仓
+                # 7 平多, 优先平昨
                 print(f"  [交易执行] 执行买入平仓操作: {abs(current_position)} 手，价格: {current_price:.4f}")
                 print(f"  [交易执行] 下单参数: 买入平仓, 限价单, 对手价, 市价, {abs(current_position)}手")
-                order_info = passorder(2, 1101, ContextInfo.account_id, ContextInfo.stock_code, 5, -1,
+                order_info = passorder(7, 1101, ContextInfo.account_id, ContextInfo.stock_code, 5, -1,
                                        abs(current_position), 1, ContextInfo)
                 print(f"  [交易执行] 下单结果: {order_info}")
                 ContextInfo.position_type = 0
@@ -513,9 +513,9 @@ def execute_trade(ContextInfo, signal, price_data, available_cash, total_value, 
 
             elif ContextInfo.position_type == -1 and signal > 0:  # 平空仓
                 print(f"  [交易执行] 执行卖出平仓操作: {current_position} 手，价格: {current_price:.4f}")
-                # 38: 卖出平仓
+                # 9 平空, 优先平昨
                 print(f"  [交易执行] 下单参数: 卖出平仓, 限价单, 对手价, 市价, {current_position}手")
-                order_info = passorder(5, 1101, ContextInfo.account_id, ContextInfo.stock_code, 5, -1, current_position,
+                order_info = passorder(9, 1101, ContextInfo.account_id, ContextInfo.stock_code, 5, -1, current_position,
                                        1, ContextInfo)
                 print(f"  [交易执行] 下单结果: {order_info}")
                 ContextInfo.position_type = 0
