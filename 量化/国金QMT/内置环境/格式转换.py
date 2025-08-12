@@ -26,26 +26,6 @@ import numpy as np
 import pandas as pd
 
 
-# # 导入QMT平台相关函数
-# try:
-#     from gm.api import *
-# except ImportError:
-#     # 如果在非QMT环境中，创建模拟函数用于测试
-#     def timetag_to_datetime(timetag, format_str):
-#         from datetime import datetime
-#         return datetime.now().strftime(format_str)
-# 
-# 
-#     def get_trade_detail_data(account_id, market, detail_type):
-#         # 模拟返回空数据
-#         return []
-# 
-# 
-#     def passorder(order_type, order_style, account_id, stock_code, price_type, price, volume, strategy_id, context):
-#         # 模拟下单函数
-#         return f"模拟下单: 类型={order_type}, 账户={account_id}, 标的={stock_code}, 数量={volume}"
-
-
 def log_info(message):
     """
     简单的日志记录函数，用于记录info级别日志
@@ -53,9 +33,11 @@ def log_info(message):
     from datetime import datetime
     timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
     import logging
-    filename = f"C:\datelog\datelog-{timestamp}.log"
+    filename = f"C:\datalog\datalog-{timestamp}.log"
+    # logging.basicConfig(filename=filename, level=logging.DEBUG,
+    #                     format='%(asctime)s - %(levelname)s - %(message)s')
     logging.basicConfig(filename=filename, level=logging.DEBUG,
-                        format='%(asctime)s - %(levelname)s - %(message)s')
+                        format='%(message)s')
     logging.info(message)
 
     print(f"[{timestamp}] {message}")
@@ -174,6 +156,7 @@ def handlebar(ContextInfo):
         # 计算ATR和N值
         log_info("[ATR计算] 开始计算ATR和N值...")
         ContextInfo.N = calculate_atr(price_data, ContextInfo.atr_window)
+
         if ContextInfo.N <= 0:
             log_info("[ATR计算] ATR值计算异常，跳过本次处理")
             log_separator()
@@ -182,7 +165,7 @@ def handlebar(ContextInfo):
 
         # 获取当前账户信息
         log_info("[账户信息] 开始获取账户信息...")
-        account_info = get_account_info(ContextInfo.account_id)
+        account_info = get_account_info(ContextInfo)
         if account_info is None:
             log_info("[账户信息] 无法获取账户信息，跳过本次处理")
             log_separator()
@@ -228,16 +211,15 @@ def get_price_data(ContextInfo):
         required_bars = max(ContextInfo.entry_window, ContextInfo.exit_window, ContextInfo.atr_window) + 5
         log_info(f"  [价格数据] 需要获取 {required_bars} 条历史数据")
 
-        # 获取历史数据
+        # 获取历史数据 获取数据的截止时间
         bar_date = timetag_to_datetime(ContextInfo.get_bar_timetag(ContextInfo.barpos), '%Y%m%d%H%M%S')
         log_info(f"  [价格数据] 获取截止时间: {bar_date}")
 
         # 获取非当日的历史数据，使用1d周期
-        log_info(f"  [价格数据] 请求历史市场数据...")
-        log_info(
-            f"  [价格数据] 请求参数 - 标的: {ContextInfo.stock_code}, 周期: 1d, 数量: {required_bars}")
+        # log_info(f"  [价格数据] 请求历史市场数据...")
+        # log_info(f"  [价格数据] 请求参数 - 标的: {ContextInfo.stock_code}, 周期: 1d, 数量: {required_bars}")
         history_market_data = ContextInfo.get_market_data_ex(
-            ['open', 'high', 'low', 'close'],
+            ['time', 'open', 'high', 'low', 'close'],
             [ContextInfo.stock_code],
             end_time=bar_date,
             period='1d',
@@ -246,11 +228,11 @@ def get_price_data(ContextInfo):
         )
 
         # 获取当日最新数据，使用ContextInfo.period周期
-        log_info(f"  [价格数据] 请求当日最新市场数据...")
+        # log_info(f"  [价格数据] 请求当日最新市场数据...")
         log_info(
             f"  [价格数据] 请求参数 - 标的: {ContextInfo.stock_code}, 周期: {ContextInfo.period}, 数量: 1")
         current_market_data = ContextInfo.get_market_data_ex(
-            ['open', 'high', 'low', 'close'],
+            ['time', 'open', 'high', 'low', 'close'],
             [ContextInfo.stock_code],
             end_time=bar_date,
             period=ContextInfo.period,
@@ -279,9 +261,9 @@ def get_price_data(ContextInfo):
         else:
             df = history_df
 
-        log_info(f"  [价格数据] 成功获取合并后市场数据，共 {len(df)} 条记录")
+        # log_info(f"  [价格数据] 成功获取合并后市场数据，共 {len(df)} 条记录")
         log_info("  [价格数据] 所有数据:")
-        log_info(str(df))
+        log_info(f"\n {str(df)}")
         return df
 
     except Exception as e:
@@ -311,8 +293,7 @@ def calculate_atr(data, window):
         log_info(f"    收盘价范围: {close[-window - 1:-1]}")
 
         # TR = MAX(High-Low, ABS(High-Close_prev), ABS(Low-Close_prev))
-        tr = np.maximum(high[1:] - low[1:],
-                        np.abs(high[1:] - close[:-1]))
+        tr = np.maximum(high[1:] - low[1:], np.abs(high[1:] - close[:-1]))
         tr = np.maximum(tr, np.abs(low[1:] - close[:-1]))
 
         log_info(f"  [ATR计算] 计算得到TR值: {tr[-window:]}")
@@ -320,6 +301,11 @@ def calculate_atr(data, window):
         # 计算ATR(N日均值)
         atr = np.mean(tr[-window:])
         log_info(f"  [ATR计算] ATR计算结果: {atr}")
+        # TR值和ATR值写到data中用于查询记录信息
+        # 修复长度不匹配问题：tr数组比原始数据少一个元素（因为计算差值）
+        data['tr'] = np.append([np.nan], tr)  # 在前面添加NaN以匹配长度
+        data['atr'] = atr
+
         return atr
 
     except Exception as e:
@@ -327,7 +313,7 @@ def calculate_atr(data, window):
         return 0
 
 
-def get_account_info(account_id):
+def get_account_info(ContextInfo):
     """
     获取账户信息
     包括可用资金、总权益、持仓等
@@ -337,7 +323,7 @@ def get_account_info(account_id):
 
         # 获取账户资金信息
         log_info("  [账户信息] 获取账户资金详情...")
-        account_details = get_trade_detail_data(account_id, 'FUTURE', 'ACCOUNT')
+        account_details = get_trade_detail_data(ContextInfo.account_id, 'FUTURE', 'ACCOUNT')
         if not account_details:
             log_info("  [账户信息] 获取账户详情失败")
             return None
@@ -350,16 +336,43 @@ def get_account_info(account_id):
 
         # 获取持仓信息
         log_info("  [账户信息] 获取持仓详情...")
-        position_details = get_trade_detail_data(account_id, 'FUTURE', 'POSITION')
+        position_details = get_trade_detail_data(ContextInfo.account_id, 'FUTURE', 'POSITION')
         positions = {}
+        PositionInfo_dict = {}
         if position_details:
             log_info(f"  [账户信息] 获取到 {len(position_details)} 条持仓记录")
             for pos in position_details:
+                log_info(pos.m_strInstrumentID)
+                # 查看有哪些属性字段
+                log_info(dir(pos))
+                PositionInfo_dict[pos.m_strInstrumentID + "." + pos.m_strExchangeID] = {
+                    # 持仓类型 48：多 49：空
+                    "持仓类型": pos.m_nDirection,
+                    # "持仓": pos.m_nPosition,
+                    "成本": pos.m_dPositionCost,
+                    "浮动盈亏": pos.m_dFloatProfit,
+                    "持仓量": pos.m_nVolume
+                }
+                log_info(f"  [账户信息自查] 持仓信息: {PositionInfo_dict}")
                 symbol = pos.m_strInstrumentID + '.' + pos.m_strExchangeID
                 positions[symbol] = pos.m_nVolume  # 持仓量
                 log_info(f"    [账户信息] 持仓: {symbol} = {pos.m_nVolume}")
         else:
             log_info("  [账户信息] 无持仓记录")
+        log_info(f"  [账户信息] 持仓信息: {positions}")
+        # 更新多头和空头持仓状态
+        current_position = positions.get(ContextInfo.stock_code, 0) if positions else 0
+        if current_position > 0:
+            ContextInfo.long_position = 1
+            ContextInfo.short_position = 0
+        elif current_position < 0:
+            ContextInfo.long_position = 0
+            ContextInfo.short_position = 1
+        else:
+            ContextInfo.long_position = 0
+            ContextInfo.short_position = 0
+
+        log_info(f"  [账户信息] 更新持仓状态: 多头={ContextInfo.long_position}, 空头={ContextInfo.short_position}")
 
         return {
             'available': available,
