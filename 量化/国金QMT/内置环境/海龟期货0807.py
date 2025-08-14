@@ -91,10 +91,13 @@ def init(ContextInfo):
     log_section("开始初始化海龟交易策略...")
 
     # 设置交易标的（以螺纹钢期货为例，实际使用时请根据需要修改）
-    # ContextInfo.stock_code = ContextInfo.stockcode + '.' + ContextInfo.market
-    ContextInfo.stock_code = 'rb00.SF'
+    ContextInfo.stock_code = ContextInfo.stockcode + '.' + ContextInfo.market
+    # ContextInfo.stock_code = 'rb00.SF'
     ContextInfo.set_universe([ContextInfo.stock_code])
     log_info(f"[初始化] 设置交易标的: {ContextInfo.stock_code}")
+
+    dividend_type = ContextInfo.dividend_type
+    log_info(f"[初始化] 复权方式: {dividend_type}")
 
     # 策略参数
     ContextInfo.entry_window = 10  # 入市通道周期（突破周期）
@@ -230,11 +233,10 @@ def get_price_data(ContextInfo):
             end_time=ContextInfo.current_date,
             period='1d',
             count=required_bars,
+            dividend_type=ContextInfo.dividend_type,
             subscribe=True
         )
 
-        # 获取当日最新数据，使用ContextInfo.period周期
-        # log_info(f"  [价格数据] 请求当日最新市场数据...")
         log_info(
             f"  [价格数据] 请求参数 - 标的: {ContextInfo.stock_code}, 周期: {ContextInfo.period}, 数量: 1")
         current_market_data = ContextInfo.get_market_data_ex(
@@ -243,6 +245,7 @@ def get_price_data(ContextInfo):
             end_time=ContextInfo.current_date,
             period=ContextInfo.period,
             count=1,
+            dividend_type=ContextInfo.dividend_type,
             subscribe=True
         )
 
@@ -276,8 +279,6 @@ def get_price_data(ContextInfo):
         else:
             df = history_df
 
-        # log_info(f"  [价格数据] 成功获取合并后市场数据，共 {len(df)} 条记录")
-
         return df
 
     except Exception as e:
@@ -289,13 +290,11 @@ def calculate_atr(data, window):
     """
     计算ATR(N值)
     ATR是真实波幅的N日平均值，用于衡量市场波动性
-
     TR = MAX(High-Low, ABS(High-Close_prev), ABS(Low-Close_prev))
     ATR = MA(TR, N)
     """
     try:
         log_info(f"  [ATR计算] 开始计算ATR，使用 {window} 日数据")
-
         # 计算真实波幅(TR)
         high = data['high'].values
         low = data['low'].values
@@ -305,7 +304,6 @@ def calculate_atr(data, window):
         log_info(f"    最高价范围: {high[-window - 1:-1]}")
         log_info(f"    最低价范围: {low[-window - 1:-1]}")
         log_info(f"    收盘价范围: {close[-window - 1:-1]}")
-        #
         # TR = MAX(High-Low, ABS(High-Close_prev), ABS(Low-Close_prev))
         tr = np.maximum(high[1:] - low[1:], np.abs(high[1:] - close[:-1]))
         tr = np.maximum(tr, np.abs(low[1:] - close[:-1]))
@@ -315,14 +313,11 @@ def calculate_atr(data, window):
         # 计算ATR(N日均值)
         atr = np.mean(tr[-window:])
         log_info(f"  [ATR计算] ATR计算结果: {atr}")
-
-        # df['MADKX'] = df['DKX'].rolling(window=madk_period).mean()
         # TR值和ATR值写到data中用于查询记录信息
         # 修复长度不匹配问题：tr数组比原始数据少一个元素（因为计算差值）
         data['tr'] = np.append([np.nan], tr)  # 在前面添加NaN以匹配长度
         data['atr'] = atr
-        log_info("  [价格数据] 所有数据:")
-        log_info(f"\n {str(data)}")
+
         return atr
 
     except Exception as e:
@@ -348,7 +343,9 @@ def get_account_info(ContextInfo):
         account = account_details[0]
         available = account.m_dAvailable  # 可用资金
         total_value = account.m_dBalance  # 总权益
+        margin_rate = account.m_dMaxMarginRate  # 保证金
 
+        ContextInfo.margin_rate = margin_rate  # 保证金
         log_info(f"  [账户信息] 账户资金信息: 可用资金={available:.2f}, 总资产={total_value:.2f}")
         # 重置持仓状态
         ContextInfo.long_position = 0  # 重置多头持仓状态
@@ -390,7 +387,6 @@ def get_account_info(ContextInfo):
 
                 PositionInfo_dfs = pd.concat([PositionInfo_dfs, PositionInfo_df], ignore_index=True)
 
-            log_info(f"    [账户信息] 持仓: {PositionInfo_dict} ")
             log_info(f"    [账户信息] 持仓: {str(PositionInfo_dfs)} ")
             log_info(f"  [账户信息] 更新持仓状态: 多头={ContextInfo.long_position}, 空头={ContextInfo.short_position}")
 
@@ -400,6 +396,7 @@ def get_account_info(ContextInfo):
         return {
             'available': available,
             'total_value': total_value,
+            'margin_rate': margin_rate,
             'PositionInfo_dfs': PositionInfo_dfs,
             'PositionInfo_dict': PositionInfo_dict  # 返回更多持仓信息
         }
@@ -425,9 +422,6 @@ def generate_signal(ContextInfo, price_data):
         current_high = price_data['high'].values[-1]
         current_low = price_data['low'].values[-1]
 
-        log_info(f"  [信号生成] 当前价格信息:")
-        log_info(f"    当前价格价: {current_price:.4f}")
-
         # 计算入市信号 - 前N日高低点突破
         # 做多：过去entry_window天收盘价的最高价
         upper_channel = price_data['close'].iloc[-ContextInfo.entry_window - 1:-1].max()
@@ -443,10 +437,14 @@ def generate_signal(ContextInfo, price_data):
         exit_upper = price_data['close'].iloc[-ContextInfo.exit_window - 1:-1].max()
 
         log_info(f"  [信号生成] 通道信息:")
+        log_info(f"    当前价格价: {current_price:.4f}")
         log_info(f"    做多: {upper_channel:.4f}")
         log_info(f"    做空: {lower_channel:.4f}")
         log_info(f"    做多止盈: {exit_lower:.4f}")
         log_info(f"    做空止盈: {exit_upper:.4f}")
+        log_info(f"    多头持仓: {ContextInfo.long_position}")
+        log_info(f"    空头持仓: {ContextInfo.short_position}")
+        log_info(f"    当前ATR值: {ContextInfo.N:.4f}")
 
         # 修改后：检查是否持有多头或空头仓位
         if ContextInfo.long_position == 1:  # 多头已有持仓
@@ -458,17 +456,13 @@ def generate_signal(ContextInfo, price_data):
                 start_time=ContextInfo.long_open_date,
                 end_time=ContextInfo.current_date,
                 period='1d',
+                dividend_type=ContextInfo.dividend_type,
                 subscribe=True
             )
-            # 历史最高价
-            long_history_market_data_df = long_history_market_data[ContextInfo.stock_code]
-            # log_info(f'{ContextInfo.short_open_date}, {str(short_history_market_data)}')
-            # 历史最高价
-            high_hist_price_tmp = long_history_market_data_df['high'].iloc[:-1].max()
-            # 历史最高价 和 当日最高价比较
-            high_hist_price = max(high_hist_price_tmp, current_high)
 
-            ContextInfo.highest_after_entry = high_hist_price
+            # 历史最高价 和 当日最高价比较
+            ContextInfo.highest_after_entry = max(
+                long_history_market_data[ContextInfo.stock_code]['high'].iloc[:-1].max(), current_high)
             log_info(f"    更新后最高价: {ContextInfo.highest_after_entry}")
 
         if ContextInfo.short_position == 1:  # 空头已有持仓
@@ -479,20 +473,14 @@ def generate_signal(ContextInfo, price_data):
                 start_time=ContextInfo.short_open_date,
                 end_time=ContextInfo.current_date,
                 period='1d',
+                dividend_type=ContextInfo.dividend_type,
                 subscribe=True
             )
-            short_history_market_data_df = short_history_market_data[ContextInfo.stock_code]
-            # 历史最低价
-            low_hist_price_tmp = short_history_market_data_df['low'].iloc[:-1].min()
-            # 历史最低价 和 当日最低价比较
-            low_hist_price = min(low_hist_price_tmp, current_low)
-            ContextInfo.lowest_after_entry = low_hist_price
-            log_info(f"    更新后最低价: {ContextInfo.lowest_after_entry}")
 
-        # 修改后：分别显示多头和空头持仓状态
-        log_info(f"    多头持仓: {ContextInfo.long_position}")
-        log_info(f"    空头持仓: {ContextInfo.short_position}")
-        log_info(f"    当前ATR值: {ContextInfo.N:.4f}")
+            # 历史最低价 和 当日最低价比较
+            ContextInfo.lowest_after_entry = min(
+                short_history_market_data[ContextInfo.stock_code]['low'].iloc[:-1].min(), current_low)
+            log_info(f"    更新后最低价: {ContextInfo.lowest_after_entry}")
 
         # 海龟交易法则信号判断
         # 判断多头信号（无多头持仓时可做多，有多头持仓时判断是否平多）
@@ -615,7 +603,10 @@ def execute_trade(ContextInfo, signal, price_data):
             position_value = ContextInfo.short_capital
             log_info(f"  [交易执行] 做空资金: {position_value}")
 
-        position_size = int(position_value / (current_price * contract_multiplier))
+        margin_size = ContextInfo.margin_rate * (current_price * contract_multiplier)
+        log_info(f"  [交易执行] 仓位保证金: {margin_size:.2f}元 :仓位保证金比例: {ContextInfo.margin_rate:.2f} ")
+
+        position_size = int(position_value / margin_size)
         log_info(f"  [交易执行] 头寸规模: {position_size} 手")
         position_size = max(1, position_size)  # 至少为1合约乘数
         # 股数
