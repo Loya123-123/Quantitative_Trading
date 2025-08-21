@@ -3,6 +3,13 @@
   <component name="CsvFileAttributes">
     <option name="attributeMap">
       <map>
+        <entry key="/yooda/backtrader_bilibili_study/hist_data/510300_D_2013.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/量化/聚宽/本地/data.csv">
           <value>
             <Attribute>

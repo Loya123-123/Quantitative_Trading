@@ -101,10 +101,10 @@ def init(ContextInfo):
 
     # 策略参数
     ContextInfo.entry_window = 10  # 入市通道周期（突破周期）
-    ContextInfo.exit_window = 4  # 止盈通道周期
+    ContextInfo.exit_window = 2  # 止盈通道周期
     ContextInfo.atr_window = 10  # ATR计算周期
     ContextInfo.stop_profit_ratio = 0.2  # 止盈比例
-    ContextInfo.stop_loss_multiplier = 2  # 止损ATR倍数
+    ContextInfo.stop_loss_multiplier = 1  # 止损ATR倍数
     log_info(f"[初始化] 策略参数设置完成:")
     log_info(f"        入市通道周期: {ContextInfo.entry_window}")
     log_info(f"        止盈通道周期: {ContextInfo.exit_window}")
@@ -113,8 +113,8 @@ def init(ContextInfo):
     log_info(f"        止损ATR倍数: {ContextInfo.stop_loss_multiplier}")
 
     # 资金管理参数
-    ContextInfo.long_capital = 40000  # 做多资金
-    ContextInfo.short_capital = 40000  # 做空资金
+    ContextInfo.long_capital = 10000  # 做多资金
+    ContextInfo.short_capital = 10000  # 做空资金
     log_info(f"[初始化] 资金管理参数设置完成:")
     log_info(f"        做多资金: {ContextInfo.long_capital}")
     log_info(f"        做空资金: {ContextInfo.short_capital}")
@@ -165,7 +165,8 @@ def handlebar(ContextInfo):
         # 获取计算需要的数据
         log_info("[数据获取] 开始获取价格数据...")
         price_data = get_price_data(ContextInfo)
-        if price_data is None or len(price_data) < max(ContextInfo.entry_window, ContextInfo.atr_window):
+        log_info(f'[数据获取]: \n {str(price_data)}')
+        if price_data is None or len(price_data) <= max(ContextInfo.entry_window, ContextInfo.atr_window):
             log_info("[数据获取] 数据不足，跳过本次处理")
             log_separator()
             return
@@ -437,7 +438,9 @@ def generate_signal(ContextInfo, price_data):
         exit_upper = price_data['close'].iloc[-ContextInfo.exit_window - 1:-1].max()
 
         log_info(f"  [信号生成] 通道信息:")
-        log_info(f"    当前价格价: {current_price:.4f}")
+        log_info(f"    当日价格: {current_price:.4f}")
+        log_info(f"    当日最高价: {current_high:.4f}")
+        log_info(f"    当日最低价: {current_low:.4f}")
         log_info(f"    做多: {upper_channel:.4f}")
         log_info(f"    做空: {lower_channel:.4f}")
         log_info(f"    做多止盈: {exit_lower:.4f}")
@@ -459,10 +462,14 @@ def generate_signal(ContextInfo, price_data):
                 dividend_type=ContextInfo.dividend_type,
                 subscribe=True
             )
+            # log_info(f'开始时间： {ContextInfo.short_open_date} 结束时间： {ContextInfo.current_date}')
 
+            long_history_market_data_max = long_history_market_data[ContextInfo.stock_code]['low'].iloc[:-1].max()
             # 历史最高价 和 当日最高价比较
-            ContextInfo.highest_after_entry = max(
-                long_history_market_data[ContextInfo.stock_code]['high'].iloc[:-1].max(), current_high)
+            ContextInfo.highest_after_entry = current_high if np.isnan(long_history_market_data_max) else max(
+                long_history_market_data_max, current_high)
+            # ContextInfo.highest_after_entry = max(long_history_market_data[ContextInfo.stock_code]['high'].iloc[:-1].max(), current_high)
+
             log_info(f"    更新后最高价: {ContextInfo.highest_after_entry}")
 
         if ContextInfo.short_position == 1:  # 空头已有持仓
@@ -476,10 +483,14 @@ def generate_signal(ContextInfo, price_data):
                 dividend_type=ContextInfo.dividend_type,
                 subscribe=True
             )
+            # log_info(f'开始时间： {ContextInfo.short_open_date} 结束时间： {ContextInfo.current_date}')
 
+            short_history_market_data_min = short_history_market_data[ContextInfo.stock_code]['low'].iloc[:-1].min()
             # 历史最低价 和 当日最低价比较
-            ContextInfo.lowest_after_entry = min(
-                short_history_market_data[ContextInfo.stock_code]['low'].iloc[:-1].min(), current_low)
+            ContextInfo.lowest_after_entry = current_low if np.isnan(short_history_market_data_min) else min(
+                short_history_market_data_min, current_low)
+
+            # ContextInfo.lowest_after_entry = min(short_history_market_data_min, current_low)
             log_info(f"    更新后最低价: {ContextInfo.lowest_after_entry}")
 
         # 海龟交易法则信号判断
@@ -622,11 +633,11 @@ def execute_trade(ContextInfo, signal, price_data):
             if position_type > 0:  # 做多
                 # 检查是否当前没有多头持仓
                 if ContextInfo.long_position == 0:
-                    # 0	开多  1101: 限价单  5: 对手价 -1: 市价  position_num: 数量
-                    log_info(f"  [交易执行] 执行买入开仓操作: {position_num} 股，价格: {current_price:.4f}")
-                    log_info(f"  [交易执行] 下单参数: 买入开仓, 限价单, 对手价, 市价, {position_num}股")
+                    # 0	开多  1101: 限价单  5: 对手价 -1: 市价  position_size: 手数
+                    log_info(f"  [交易执行] 执行买入开仓操作: {position_size} 手数，价格: {current_price:.4f}")
+                    log_info(f"  [交易执行] 下单参数: 买入开仓, 限价单, 对手价, 市价, {position_size}手数")
                     order_info = passorder(0, 1101, ContextInfo.account_id, ContextInfo.stock_code, 5, -1,
-                                           position_num, 1,
+                                           position_size, 1,
                                            ContextInfo)
                     log_info(f"  [交易执行] 下单结果: {order_info}")
                     ContextInfo.long_position = 1
@@ -640,10 +651,10 @@ def execute_trade(ContextInfo, signal, price_data):
                 # 检查是否当前没有空头持仓
                 if ContextInfo.short_position == 0:
                     # 3: 开空
-                    log_info(f"  [交易执行] 执行卖出开仓操作: {position_num} 股数，价格: {current_price:.4f}")
-                    log_info(f"  [交易执行] 下单参数: 卖出开仓, 限价单, 对手价, 市价, {position_num} 股数")
+                    log_info(f"  [交易执行] 执行卖出开仓操作: {position_size} 手数，价格: {current_price:.4f}")
+                    log_info(f"  [交易执行] 下单参数: 卖出开仓, 限价单, 对手价, 市价, {position_size} 手数")
                     order_info = passorder(3, 1101, ContextInfo.account_id, ContextInfo.stock_code, 5, -1,
-                                           position_num, 1,
+                                           position_size, 1,
                                            ContextInfo)
                     log_info(f"  [交易执行] 下单结果: {order_info}")
                     ContextInfo.short_position = 1
