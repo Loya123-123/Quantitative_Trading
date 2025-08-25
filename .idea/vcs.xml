@@ -2,6 +2,7 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/XtQuant" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/yooda/backtrader_bilibili_study" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/yooda/trading-battle-back" vcs="Git" />
   </component>

@@ -1,11 +1,11 @@
 
 
 # 根据情况指定xtquant的路径
-import sys
 import numpy as np
 import pandas as pd
-from xtquant import xtdata
 import xtquant
+from xtquant import xtdata
+
 print(xtquant)
 print(xtdata.data_dir)
 # 指定获取投研端数据(可不指定，默认优先连接投研)
@@ -131,7 +131,24 @@ def handlebar(C):
         for s in buy_list:
             price = g.open_df.loc[backtest_time, s]
             if price > 0:
-                passorder(23, 1102, g.accid, s, 11, float(price), g.per_money,1,"backtest","小市值",C)
+                # passorder( opType, orderType, accountid , orderCode, prType, price, volume , strategyName, quickTrade, userOrderId , ContextInfo)
+                '''
+                passorder(
+                    , 2 #opType 操作号
+                    , 1101 #orderType 组合方式
+                    , '1000044' #accountid 资金账号
+                    , 'cu2403.SF' #orderCode 品种代码
+                    , 14 #prType 报价类型
+                    , 0.0 #price 价格
+                    , 2 #volume 下单量
+                    , '示例下单' #strategyName 策略名称
+                    , 1 #quickTrade 快速下单标记
+                    , '投资备注' #userOrderId 投资备注
+                    , C #ContextInfo 策略上下文
+                )
+                '''
+
+                passorder(23, 1102, g.accid, s, 11, float(price), g.per_money, 1, "backtest", "小市值", C)
 
 
 def daily_filter(factor_series, backtest_time):
