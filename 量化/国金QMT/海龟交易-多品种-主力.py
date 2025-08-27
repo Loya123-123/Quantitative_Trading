@@ -132,11 +132,12 @@ def init(ContextInfo):
 
     # 策略参数
     g.entry_window = 10  # 入市通道周期（突破周期）
-    g.exit_window = 2  # 止盈通道周期
+    g.exit_window = 4  # 止盈通道周期
     g.atr_window = 10  # ATR计算周期
     g.stop_profit_ratio = 0.2  # 止盈比例
     g.stop_loss_multiplier = 1  # 止损ATR倍数
-
+    g.position_limit = 4  # 持仓上线
+    g.near_expiry_days = 30  # 临近到期日天数上线
     g.capital_rate = 0.1  # 资金比例 资金固定值，参数失效
 
     # 资金管理参数
@@ -173,7 +174,8 @@ def init(ContextInfo):
     log_info(f"[初始化] 策略状态变量初始化完成")
 
     # 账户信息
-    ContextInfo.account_id = '809213023'  # 期货账户ID
+    # ContextInfo.account_id = '809213023'  # 期货账户ID
+    ContextInfo.account_id = account  # 期货账户ID
     log_info(f"[初始化] 账户信息设置完成:")
     log_info(f"        期货账户ID: {ContextInfo.account_id}")
 
@@ -185,6 +187,11 @@ def handlebar(ContextInfo):
     主要处理函数
     在每个K线周期都会被调用
     """
+
+    # if not ContextInfo.is_last_bar() :
+    #     log_info("[处理函数] 当前不是最后一个K线周期，跳过本次处理")
+    #     return
+
     log_section("[处理函数] 开始执行handlebar函数")
 
     # 获取历史数据 获取数据的截止时间
@@ -240,13 +247,13 @@ def handlebar(ContextInfo):
         # 当前合约的到期日(YYYYMMDD) 和 当前日期 g.current_date[:8](YYYYMMDD) 差几天
         g.expire_date_diff[g.current_stock_code] = (datetime.strptime(g.expire_date[g.current_stock_code],
                                                                       '%Y%m%d') - datetime.strptime(
-            g.current_date[:8], '%Y%m%d')).days if g.expire_date[g.current_stock_code] else 99
+            g.current_date[:8], '%Y%m%d')).days if g.expire_date[g.current_stock_code] else 999
         log_info(f"[数据获取] 获取合约的到期日和当前日期的差: {g.expire_date_diff[g.current_stock_code]}")
 
-        if g.expire_date_diff[g.current_stock_code] < 30:
-            log_info(f"[数据获取] {g.current_stock_code} 的到期日小于30天，不执行新的开仓操作")
+        if g.expire_date_diff[g.current_stock_code] < g.near_expiry_days:
+            log_info(f"[数据获取] {g.current_stock_code} 的到期日小于{g.near_expiry_days}天，不执行新的开仓操作")
         else:
-            log_info(f"[数据获取] {g.current_stock_code} 的到期日大于30天，可以执行新的开仓操作")
+            log_info(f"[数据获取] {g.current_stock_code} 的到期日大于{g.near_expiry_days}天，可以执行新的开仓操作")
 
         # LongMarginRatio	float	多头保证金率
         # ShortMarginRatio	float	空头保证金率
@@ -291,10 +298,10 @@ def handlebar(ContextInfo):
                 continue
             log_info(f"[ATR计算] 当前ATR(N值): {g.N[stock_code]:.4f}")
 
-            if g.position_count >= 4:
-                log_info("[交易执行] 当前持仓已满4个，不执行新的开仓操作")
+            if g.position_count >= g.position_limit:
+                log_info(f"[交易执行] 当前持仓已满{g.position_limit}个，不执行新的开仓操作")
             else:
-                log_info("[交易执行] 当前持仓不满4个，可以执行新的开仓操作")
+                log_info(f"[交易执行] 当前持仓不满{g.position_limit}个，可以执行新的开仓操作")
 
             # 决策分区 - 判断是否需要交易
             log_info("[信号生成] 开始生成交易信号...")
@@ -626,7 +633,7 @@ def generate_signal(ContextInfo, price_data):
         # 海龟交易法则信号判断
         # 判断多头信号（无多头持仓时可做多，有多头持仓时判断是否平多）
         if g.long_position[g.current_stock_code] == 0 and g.expire_date_diff[
-            g.current_stock_code] > 30 and g.position_count < 4:  # 无多头持仓，判断是否做多 距离到期日大于30天 持仓小于4个
+            g.current_stock_code] > g.near_expiry_days and g.position_count < g.position_limit:  # 无多头持仓，判断是否做多 距离到期日大于30天 持仓小于4个
             # 买入1（做多）：当日价格 > 前10日收盘价最高点时，即当前价格突破前10日高点，当日立刻执行做多
             if current_price >= upper_channel:  # 突破上轨，买入信号（做多）
                 log_info("  [信号生成] 产生买入信号：价格突破入市上轨")
@@ -668,7 +675,7 @@ def generate_signal(ContextInfo, price_data):
 
         # 判断空头信号（无空头持仓时可做空，有空头持仓时判断是否平空）
         if g.short_position[g.current_stock_code] == 0 and g.expire_date_diff[
-            g.current_stock_code] > 30 and g.position_count < 4:  # 无空头持仓，判断是否做空 且 距离到期日大于30天 持仓小于4个
+            g.current_stock_code] > g.near_expiry_days and g.position_count < g.position_limit:  # 无空头持仓，判断是否做空 且 距离到期日大于30天 持仓小于4个
             log_info("  [信号生成] 检测空头信号")
             # 买入2（做空）：当日价格 < 前10日收盘价最低点时，即当前价格突破10日低点，当日立刻执行做空
             if current_price < lower_channel:  # 突破下轨，卖空信号（做空）
@@ -782,10 +789,11 @@ def execute_trade(ContextInfo, signal, price_data):
                     log_info(f"  [交易执行] 执行买入开仓操作: {position_size} 手数，价格: {current_price:.4f}")
                     log_info(f"  [交易执行] 下单参数: 买入开仓, 限价单, 对手价, 市价, {position_size}手数")
                     # passorder( opType, orderType, accountid , orderCode, prType, price, volume , strategyName, quickTrade, userOrderId , ContextInfo)
-                    #  操作号    组合方式     资金账号    品种代码     报价类型  价格    下单量    策略名称        快速下单标记  投资备注        策略上下文
-                    order_info = passorder(0, 1101, ContextInfo.account_id, g.current_stock_code, 5, -1,
+                    #        #  操作号    组合方式     资金账号    品种代码     报价类型  价格    下单量    策略名称        快速下单标记  投资备注        策略上下文
+                    order_info = passorder(0, 1101, ContextInfo.account_id, g.current_stock_code, 14, -1,
                                            position_size, 1,
                                            ContextInfo)
+
                     log_info(f"  [交易执行] 下单结果: {order_info}")
                     g.long_position[g.current_stock_code] = 1
                     ContextInfo.entry_price = current_price
@@ -803,7 +811,7 @@ def execute_trade(ContextInfo, signal, price_data):
                     # 3: 开空
                     log_info(f"  [交易执行] 执行卖出开仓操作: {position_size} 手数，价格: {current_price:.4f}")
                     log_info(f"  [交易执行] 下单参数: 卖出开仓, 限价单, 对手价, 市价, {position_size} 手数")
-                    order_info = passorder(3, 1101, ContextInfo.account_id, g.current_stock_code, 5, -1,
+                    order_info = passorder(3, 1101, ContextInfo.account_id, g.current_stock_code, 14, -1,
                                            position_size, 1,
                                            ContextInfo)
                     log_info(f"  [交易执行] 下单结果: {order_info}")
@@ -827,7 +835,7 @@ def execute_trade(ContextInfo, signal, price_data):
                 log_info(
                     f"  [交易执行] 下单参数: 买入平仓, 限价单, 对手价, 市价, {g.long_volume[g.current_stock_code]} 手 ")
 
-                order_info = passorder(7, 1101, ContextInfo.account_id, g.current_stock_code, 5, -1,
+                order_info = passorder(7, 1101, ContextInfo.account_id, g.current_stock_code, 14, -1,
                                        g.long_volume[g.current_stock_code], 1, ContextInfo)
                 log_info(f"  [交易执行] 下单结果: {order_info}")
                 g.long_position[g.current_stock_code] = 0
@@ -847,7 +855,7 @@ def execute_trade(ContextInfo, signal, price_data):
                     f"  [交易执行] 执行卖出平仓操作: {g.short_volume[g.current_stock_code]} 手，价格: {current_price:.4f}")
                 log_info(
                     f"  [交易执行] 下单参数: 卖出平仓, 限价单, 对手价, 市价, {g.short_volume[g.current_stock_code]} 手 ")
-                order_info = passorder(9, 1101, ContextInfo.account_id, g.current_stock_code, 5, -1,
+                order_info = passorder(9, 1101, ContextInfo.account_id, g.current_stock_code, 14, -1,
                                        g.short_volume[g.current_stock_code],
                                        1, ContextInfo)
                 log_info(f"  [交易执行] 下单结果: {order_info}")

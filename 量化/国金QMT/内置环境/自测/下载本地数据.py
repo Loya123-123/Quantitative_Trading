@@ -16,9 +16,10 @@ g = G()
 
 
 def init(ContextInfo):
-    code_list = ['sp2511.SF', 'FG601.ZF', 'c2511.DF', 'a2511.DF', 'CF601.ZF', 'si2511.GF']
+    code_list = ['CF07.ZF', 'CF05.ZF', 'CF03.ZF', 'CF09.ZF', 'CF001.ZF', 'CF511.ZF', 'CF509.ZF', 'CFL0.ZF', 'CFL1.ZF',
+                 'CF603.ZF', 'CF601.ZF', 'CF607.ZF', 'CF605.ZF', 'CF11.ZF', 'CF00.ZF', 'CF01.ZF', 'CFL9.ZF']
     for code in code_list:
-        for i in ['id', '1m']:
+        for i in ['1d', '1m']:
             re = download_history_data(code, i, "20230101", "")
             print(f"下载完成 : {re} , code : {code}, 周期 ： {i}")
 

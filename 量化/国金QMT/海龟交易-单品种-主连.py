@@ -484,7 +484,6 @@ def generate_signal(ContextInfo, price_data):
         current_high = price_data['high'].values[-1]
         current_low = price_data['low'].values[-1]
 
-
         # 计算入市信号 - 前N日高低点突破
         # 做多：过去entry_window天收盘价的最高价
         upper_channel = price_data['close'].iloc[-g.entry_window - 1:-1].max()
