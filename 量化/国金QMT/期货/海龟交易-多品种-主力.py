@@ -375,7 +375,7 @@ def get_price_data(ContextInfo):
 
         current_df_more['time'] = current_df_more['time'].apply(lambda x: timetag_to_datetime(x, '%Y-%m-%d %H:%M:%S'))
 
-        # print(f"  获取当天数据: \n {current_df}")
+        print(f"  获取当天数据: \n {current_df_more}")
 
         open_price = current_df_more['open'].iloc[0]
         high_price = current_df_more['high'].max()

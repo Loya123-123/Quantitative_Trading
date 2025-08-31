@@ -17,11 +17,7 @@ g = G()
 
 
 def init(ContextInfo):
-    pass
-    # ContextInfo.stock_code = ContextInfo.stockcode + '.' + ContextInfo.market
 
-
-def handlebar(ContextInfo):
     stock_list = ContextInfo.get_stock_list_in_sector("SF")
     # 创建一个列表用于存储所有合约信息
     contract_data_list = []
@@ -42,3 +38,7 @@ def handlebar(ContextInfo):
         print(f"[数据获取] 多头保证金率: {g.long_margin_ratio}, 空头保证金率: {g.short_margin_ratio}")
     df = pd.DataFrame(contract_data_list)
     print(f"[数据获取] 数据框信息\n{df}")
+
+
+def handlebar(ContextInfo):
+    pass
