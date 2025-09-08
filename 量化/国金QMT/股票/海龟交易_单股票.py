@@ -55,7 +55,7 @@ def init(ContextInfo):
 
     timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
     filename = f"C:\datalog\datalog-{timestamp}.log"
-    logging.basicConfig(filename=filename, level=logging.INFO,
+    logging.basicConfig(filename=filename, level=logging.DEBUG,
                         format='%(asctime)s - %(levelname)s - %(message)s')
     log_info("开始初始化海龟交易策略...")
 
@@ -92,17 +92,29 @@ def init(ContextInfo):
     g.long_open_date = None  # 重置开仓日期
 
     # 账户信息
-    ContextInfo.account_id = '809213023'  # 期货账户ID
+    ContextInfo.account_id = '809213023'  # 期货账户ID  # 回测
+    # ContextInfo.account_id = account  # 期货账户ID 实盘
+
     log_info(f"        期货账户ID: {ContextInfo.account_id}")
 
     log_info("海龟交易策略初始化完成")
+    # 实盘使用
+    # ContextInfo.run_time("run_time_handlebar", "60nSecond", "2025-01-01 09:30:00") # 实盘
 
 
-def handlebar(ContextInfo):
+def handlebar(ContextInfo):  # 回测
+    # def run_time_handlebar(ContextInfo):  # 定时运行  # 实盘
+
     """
     主要处理函数
     在每个K线周期都会被调用
     """
+
+    # 实盘使用
+    # if not ContextInfo.is_last_bar():
+    #     log_info("[处理函数] 当前不是最后一个K线周期，跳过本次处理")
+    #     return
+
     log_info("=" * 60)
     log_info("[处理函数] 开始执行handlebar函数")
 
@@ -300,6 +312,28 @@ def get_account_info(ContextInfo):
 
         log_info(f"  [账户信息] 账户资金信息: 可用资金={available:.2f}, 总资产={total_value:.2f}")
 
+        # 获取未成交委托信息并撤销未成交委托
+        log_debug("  [账户信息] 获取未成交委托详情...")
+        order_details = get_trade_detail_data(ContextInfo.account_id, 'STOCK', 'ORDER')
+        if order_details:
+            log_info(f"  [账户信息] 获取到 {len(order_details)} 条委托记录")
+            for order in order_details:
+                # 获取委托状态，50-54表示未成交状态
+                order_status = order.m_nOrderStatus
+                symbol = order.m_strInstrumentID + '.' + order.m_strExchangeID
+
+                # 检查是否为未成交状态(状态码49-54)
+                if 49 <= order_status <= 54:
+                    log_info(
+                        f"  [账户信息] 发现未成交委托，合约: {symbol}, 状态: {order_status}, 委托编号: {order.m_strOrderSysID}")
+                    # 撤销未成交委托
+                    cancel_result = cancel(order.m_strOrderSysID, ContextInfo.account_id, 'FUTURE', ContextInfo)
+                    log_info(f"  [账户信息] 撤销委托结果: {cancel_result}")
+                else:
+                    log_debug(f"  [账户信息] 合约: {symbol} ,委托状态为: {order_status}，无需撤销")
+        else:
+            log_info("  [账户信息] 无委托记录")
+
         # 获取持仓信息
         log_debug("  [账户信息] 获取持仓详情...")
         position_details = get_trade_detail_data(ContextInfo.account_id, 'STOCK', 'POSITION')
@@ -315,9 +349,9 @@ def get_account_info(ContextInfo):
                     g.long_position = 1
                     g.long_open_date = pos.m_strOpenDate  # 开仓日期
 
-                    ContextInfo.long_volume = pos.m_nVolume  # 持仓量
-                    ContextInfo.long_use_volume = pos.m_nCanUseVolume  # 可用持仓量
-                    ContextInfo.long_entry_price = pos.m_dOpenPrice  # 持仓成本
+                    g.long_volume = pos.m_nVolume  # 持仓量
+                    g.long_use_volume = pos.m_nCanUseVolume  # 可用持仓量
+                    g.long_entry_price = pos.m_dOpenPrice  # 持仓成本
 
                     PositionInfo_dict['持仓量'] = pos.m_nVolume  # 持仓量
                     PositionInfo_dict['代码'] = symbol
@@ -414,15 +448,17 @@ def generate_signal(ContextInfo, price_data):
             log_info(f"    更新后最高价: {g.highest_after_entry}")
             log_debug(f"  [信号生成] 止盈价格计算:")
             stop_profit_price = g.highest_after_entry - (
-                    g.highest_after_entry - ContextInfo.long_entry_price) * g.stop_profit_ratio
+                    g.highest_after_entry - g.long_entry_price) * g.stop_profit_ratio
             log_debug(f"    公式: 最高价 - (最高价 - 入场价) * 止盈比例")
             log_info(
-                f"    止盈公式： {g.highest_after_entry} - ({g.highest_after_entry} - {ContextInfo.long_entry_price}) * {g.stop_profit_ratio} = {stop_profit_price:.4f}")
+                f"    止盈公式： {g.highest_after_entry} - ({g.highest_after_entry} - {g.long_entry_price}) * {g.stop_profit_ratio} = {stop_profit_price:.4f}")
 
             # 止损信号2 买入价 - N * ATR
-            stop_loss_price = ContextInfo.long_entry_price - g.stop_loss_multiplier * g.N
             log_info(
-                f" 止损公式： {ContextInfo.long_entry_price} - {g.stop_loss_multiplier} * {g.N} = {stop_loss_price:.4fs} ")
+                f" 止损公式： {g.long_entry_price} - {g.stop_loss_multiplier} * {g.N}  ")
+            stop_loss_price = g.long_entry_price - g.stop_loss_multiplier * g.N
+            # log_info(
+            #     f" 止损公式： {g.long_entry_price} - {g.stop_loss_multiplier} * {g.N} = {stop_loss_price:.4fs} ")
             # 止盈卖出1：买入第二天开始，当价格 < 前4日收盘价最低点时，且价格 < 最高价 -（最高价 - 买入价）*20 % （最高价是指买入后到计算时的最高价）时，立刻执行卖出。
             if current_price < exit_lower and current_price < stop_profit_price:
                 log_info("  [信号生成] 产生止盈信号：价格跌破离市下轨且回撤达到阈值")
@@ -435,7 +471,7 @@ def generate_signal(ContextInfo, price_data):
             elif current_price < stop_loss_price:
                 log_info(f"  [信号生成] 产生止损信号：价格下跌超过 {g.N}")
                 log_info(f"    当前价格: {current_price} < 止损价格: {stop_loss_price:.4f}")
-                log_info(f"    入场价: {ContextInfo.long_entry_price}, ATR: {g.N:.4f}")
+                log_info(f"    入场价: {g.long_entry_price}, ATR: {g.N:.4f}")
                 return -1
             else:
                 log_info("  [信号生成] 无平多信号")
@@ -471,9 +507,9 @@ def execute_trade(ContextInfo, signal_type, price_data):
             g.long_position = 1  # 持仓状态
         # 清仓操作
         elif signal_type == -1 and g.long_position == 1:  # 清仓信号
-            log_info(f"  [交易执行] 执行买入清仓操作: {ContextInfo.long_use_volume} 股，价格: {current_price:.4f}")
+            log_info(f"  [交易执行] 执行买入清仓操作: {g.long_use_volume} 股，价格: {current_price:.4f}")
             order_info = passorder(24, 1101, ContextInfo.account_id, ContextInfo.stock_code, 14, -1,
-                                   ContextInfo.long_use_volume, 1, ContextInfo)
+                                   g.long_use_volume, 1, ContextInfo)
             log_info(f"  [交易执行] 下单结果: {order_info}")
             g.long_position = 0  # 清仓持仓状态
 
