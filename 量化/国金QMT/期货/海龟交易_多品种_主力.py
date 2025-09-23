@@ -57,13 +57,14 @@ def init(ContextInfo):
     # ContextInfo.stock_codes = ['rb00.SF', 'cu00.SF', 'au00.SF']  # 可以根据需要修改
     # 连续合约
     ContextInfo.stock_codes_dict = {
-        "FG": {"code": "FG00", "market": "ZF", "size": 3}  # 玻璃
+        "FG": {"code": "FG00", "market": "ZF", "size": 3}  # 玻璃 1
+        , "jm": {"code": "jm00", "market": "DF", "size": 1}  # 焦煤 1
+        , "ao": {"code": "ao00", "market": "SF", "size": 1}  # 氧化铝 1
         , "c": {"code": "c00", "market": "DF", "size": 4}  # 玉米
-        , "a": {"code": "a00", "market": "DF", "size": 2}  # 豆一
+        # , "a": {"code": "a00", "market": "DF", "size": 2}  # 豆一
         , "sp": {"code": "sp00", "market": "SF", "size": 1}  # 纸浆
-        , "ao": {"code": "ao00", "market": "SF", "size": 1}  # 氧化铝
         , "CF": {"code": "CF00", "market": "ZF", "size": 1}  # 棉花
-        , "jm": {"code": "jm00", "market": "DF", "size": 1}  # 焦煤
+
     }
 
     ContextInfo.stock_codes = [stock_info["code"] + '.' + stock_info["market"] for stock_code, stock_info in
