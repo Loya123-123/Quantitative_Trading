@@ -4,6 +4,7 @@
     <file url="file://$PROJECT_DIR$/量化" charset="GBK" />
     <file url="file://$PROJECT_DIR$/量化/国金QMT/log/datalog-20250824125022.log" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/量化/国金QMT/log/datalog-20250824184519.log" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/量化/国金QMT/log/datalog-20250911181750 - 日线.log" charset="GBK" />
     <file url="file://$PROJECT_DIR$/量化/国金QMT/log/多合约交易.txt" charset="GBK" />
     <file url="file://$PROJECT_DIR$/量化/国金QMT/log/问题排查" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/量化/国金QMT/log/问题排查/datalog-20250901081606 - 副本.log" charset="GBK" />
@@ -16,6 +17,7 @@
     <file url="file://$PROJECT_DIR$/量化/国金QMT/期货/海龟交易_多品种_主力.py" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/量化/国金QMT/期货/海龟交易_多品种_主力_固定手数.py" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/量化/国金QMT/期货/海龟交易_多品种_主力_固定手数副本.py" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/量化/国金QMT/股票/海龟交易_多股票.py" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/量化/聚宽/本地/均线交叉本地测试.py" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/量化/聚宽/本地/本地连接聚宽测试.py" charset="UTF-8" />
   </component>

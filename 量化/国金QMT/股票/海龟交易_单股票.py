@@ -24,29 +24,6 @@ import numpy as np
 import pandas as pd
 
 
-def log_info(message):
-    """
-    简单的日志记录函数，用于记录info级别日志
-    """
-    logging.info(message)
-    print(f"{message}")
-
-
-def log_debug(message):
-    """
-    简单的日志记录函数，用于记录debug级别日志
-    """
-    logging.debug(message)
-    print(f"{message}")
-
-
-# 自定义类 用来保存状态
-class G(): pass
-
-
-g = G()
-
-
 def init(ContextInfo):
     """
     初始化函数
@@ -61,6 +38,7 @@ def init(ContextInfo):
 
     # 设置交易标的（以螺纹钢期货为例，实际使用时请根据需要修改）
     ContextInfo.stock_code = ContextInfo.stockcode + '.' + ContextInfo.market
+
     # ContextInfo.stock_code = 'rb00.SF'
     ContextInfo.set_universe([ContextInfo.stock_code])
     log_debug(f"[初始化] 设置交易标的: {ContextInfo.stock_code}")
@@ -71,6 +49,7 @@ def init(ContextInfo):
     g.exit_window = 4  # 止盈通道周期
     g.atr_window = 10  # ATR计算周期
     g.stop_profit_ratio = 0.2  # 止盈比例
+    g.position_limit = 5  # 持仓上线
     g.stop_loss_multiplier = 1  # 止损ATR倍数
     g.capital_rate = 0.1  # 资金比例 暂时无效
     g.long_capital = 10000  # 做多资金
@@ -90,6 +69,9 @@ def init(ContextInfo):
     g.long_position = 0  # 持仓：0-无仓位，1-持有
     g.current_date = None  # 回测时间
     g.long_open_date = None  # 重置开仓日期
+    g.long_volume = 0  # 持仓量
+    g.long_use_volume = 0  # 可用持仓量
+    g.long_entry_price = 0  # 持仓成本价
 
     # 账户信息
     ContextInfo.account_id = '809213023'  # 期货账户ID  # 回测
@@ -323,11 +305,11 @@ def get_account_info(ContextInfo):
                 symbol = order.m_strInstrumentID + '.' + order.m_strExchangeID
 
                 # 检查是否为未成交状态(状态码49-54)
-                if 49 <= order_status <= 54:
+                if 49 <= order_status < 54:
                     log_info(
                         f"  [账户信息] 发现未成交委托，合约: {symbol}, 状态: {order_status}, 委托编号: {order.m_strOrderSysID}")
                     # 撤销未成交委托
-                    cancel_result = cancel(order.m_strOrderSysID, ContextInfo.account_id, 'FUTURE', ContextInfo)
+                    cancel_result = cancel(order.m_strOrderSysID, ContextInfo.account_id, 'STOCK', ContextInfo)
                     log_info(f"  [账户信息] 撤销委托结果: {cancel_result}")
                 else:
                     log_debug(f"  [账户信息] 合约: {symbol} ,委托状态为: {order_status}，无需撤销")
@@ -343,7 +325,7 @@ def get_account_info(ContextInfo):
             log_debug(f"  [账户信息] 获取到 {len(position_details)} 条持仓记录")
             for pos in position_details:
                 symbol = pos.m_strInstrumentID + '.' + pos.m_strExchangeID
-                if symbol == ContextInfo.stock_code:
+                if symbol == ContextInfo.stock_code and pos.m_nVolume != 0:
                     position_type = pos.m_nDirection
 
                     g.long_position = 1
@@ -515,3 +497,79 @@ def execute_trade(ContextInfo, signal_type, price_data):
 
     except Exception as e:
         log_info(f"  [交易执行] 执行交易操作时发生错误: {e}")
+
+
+def get_log_filename():
+    """
+    获取当前日志文件名
+    """
+    global log_filename
+    if log_filename is None:
+        timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
+        log_filename = f"C:\\datalog\\datalog-{timestamp}.log"
+    return log_filename
+
+
+def clear_log_file():
+    """
+    清空日志文件内容，防止之前的脏数据影响
+    """
+    try:
+        # 清空文件内容
+        open(get_log_filename(), 'w').close()
+    except Exception as e:
+        pass  # 忽略文件操作错误
+
+
+def log_info(message):
+    """
+    简单的日志记录函数，用于记录info级别日志
+    """
+
+    logging.info(message)
+
+    print(f"[{datetime.now().strftime('%Y%m%d%H%M%S')}] {message}")
+
+
+def log_debug(message):
+    """
+    简单的日志记录函数，用于记录debug级别日志
+    """
+    logging.debug(message)
+    print(f"{message}")
+
+
+def log_section(title):
+    """
+    输出带标题的分隔区块
+
+    Args:
+        title (str): 区块标题
+    """
+    log_info(60 * "=")
+    log_info(title)
+
+
+def to_dict(obj):
+    attr_dict = {}
+    for attr in dir(obj):
+        try:
+            if attr[:2] == 'm_':
+                attr_dict[attr] = getattr(obj, attr)
+        except:
+            pass
+    return attr_dict
+
+
+def log_separator():
+    """
+    输出分隔线
+    """
+    log_info(60 * "-")
+
+
+# 自定义类 用来保存状态
+class G(): pass
+
+
+g = G()

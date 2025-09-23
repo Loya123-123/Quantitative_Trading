@@ -36,6 +36,7 @@ import pandas as pd
 log_filename = None
 
 
+
 def init(ContextInfo):
     """
     初始化函数
@@ -56,12 +57,12 @@ def init(ContextInfo):
     # 设置交易标的（支持多个期货合约） 存储期权连续合约
     # ContextInfo.stock_codes = ['rb00.SF', 'cu00.SF', 'au00.SF']  # 可以根据需要修改
     # 连续合约
-    ContextInfo.stock_codes_dict = {"sp": {"code": "sp00", "market": "SF", "size": 1}  # 纸浆
-        , "FG": {"code": "FG00", "market": "ZF", "size": 3}  # 玻璃
+    ContextInfo.stock_codes_dict = {"FG": {"code": "FG00", "market": "ZF", "size": 3}  # 玻璃
         , "c": {"code": "c00", "market": "DF", "size": 4}  # 玉米
         , "a": {"code": "a00", "market": "DF", "size": 2}  # 豆一
-        , "CF": {"code": "CF00", "market": "ZF", "size": 1}  # 棉花
+        , "sp": {"code": "sp00", "market": "SF", "size": 1}  # 纸浆
         , "ao": {"code": "ao00", "market": "SF", "size": 1}  # 氧化铝
+        , "CF": {"code": "CF00", "market": "ZF", "size": 1}  # 棉花
         , "jm": {"code": "jm00", "market": "DF", "size": 1}  # 焦煤
                                     }
 
@@ -80,7 +81,7 @@ def init(ContextInfo):
     g.atr_window = 10  # ATR计算周期
     g.stop_profit_ratio = 0.2  # 止盈比例
     g.stop_loss_multiplier = 1  # 止损ATR倍数
-    g.position_limit = 4  # 持仓上线
+    g.position_limit = 5  # 持仓上线
     g.near_expiry_days = 30  # 临近到期日天数上线
     g.capital_rate = 0.1  # 资金比例 资金固定值，参数失效
 
@@ -435,7 +436,7 @@ def get_account_info(ContextInfo):
         if order_details:
             order_len = 0
             for order in order_details:
-                log_info(f"  [账户信息] 获取到委托记录：\n {to_dict(order)}")
+                # log_info(f"  [账户信息] 获取到委托记录：\n {to_dict(order)}")
                 # 获取委托状态，50-54表示未成交状态
                 order_status = order.m_nOrderStatus
                 symbol = order.m_strInstrumentID + '.' + order.m_strExchangeID
