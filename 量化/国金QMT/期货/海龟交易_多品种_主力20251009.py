@@ -47,8 +47,8 @@ def init(ContextInfo):
     # clear_log_file()
 
     filename = get_log_filename()
-    # INFO 简要信息  DEBUG 详细日志
-    logging.basicConfig(filename=filename, level=logging.INFO,
+
+    logging.basicConfig(filename=filename, level=logging.DEBUG,
                         format='%(asctime)s - %(levelname)s - %(message)s')
 
     log_section("开始初始化海龟交易策略...")
@@ -71,11 +71,7 @@ def init(ContextInfo):
         "FG": {"code": "FG00", "market": "ZF", "size": 6}  # 玻璃 1
         , "jm": {"code": "jm00", "market": "DF", "size": 2}  # 焦煤 1
         , "ao": {"code": "ao00", "market": "SF", "size": 2}  # 氧化铝 1
-        , "CF": {"code": "CF00", "market": "ZF", "size": 3}  # 棉花
-        , "sp": {"code": "sp00", "market": "SF", "size": 4}  # 纸浆
     }
-
-
 
     ContextInfo.stock_codes = [stock_info["code"] + '.' + stock_info["market"] for stock_code, stock_info in
                                ContextInfo.stock_codes_dict.items()]
@@ -96,23 +92,16 @@ def init(ContextInfo):
     g.near_expiry_days = 30  # 临近到期日天数上线
     g.capital_rate = 0.1  # 资金比例 资金固定值，参数失效
 
-    g.current_hour = datetime.now().hour
-
-    # 日盘或者夜盘
-    g.day_trade = '夜' if g.current_hour >= 20 or g.current_hour < 3 else '日'
-
-    log_debug(f"[处理函数] 当前时间: {g.current_hour}, 日盘或者夜盘: {g.day_trade}")
-
-    # # 21:00-次日2:30，入市通道周期、止盈通道周期、ATR计算周期 参数减1
-    # if g.day_trade == '夜':
-    #     g.entry_window -= 1
-    #     g.exit_window -= 1
-    #     g.atr_window -= 1
-    #     log_info(f"[处理函数] 21:00-次日2:30，入市通道周期、止盈通道周期、ATR计算周期 减1")
-    #     log_info(
-    #         f"[处理函数] 策略参数设置为:入市通道周期： {g.entry_window},止盈通道周期： {g.exit_window}, ATR计算周期：{g.atr_window} ")
-    # else:
-    #     log_info(f"[处理函数] 非21:00-次日2:30，入市通道周期、止盈通道周期、ATR计算周期 不减1")
+    current_hour = datetime.now().hour
+    # 21:00-次日2:30，入市通道周期、止盈通道周期、ATR计算周期 参数减1
+    if current_hour >= 20 or current_hour < 3 :
+        g.entry_window -= 1
+        g.exit_window -= 1
+        g.atr_window -= 1
+        log_info(f"[处理函数] 21:00-次日2:30，入市通道周期、止盈通道周期、ATR计算周期 减1")
+        log_info(f"[处理函数] 策略参数设置为:入市通道周期： {g.entry_window},止盈通道周期： {g.exit_window}, ATR计算周期：{g.atr_window} ")
+    else:
+        log_info(f"[处理函数] 非21:00-次日2:30，入市通道周期、止盈通道周期、ATR计算周期 不减1")
 
     # # 资金管理参数
     # g.long_capital = 10000  # 做多资金
@@ -157,6 +146,7 @@ def init(ContextInfo):
     ContextInfo.run_time("run_time_handlebar", "1nSecond", "2025-01-01 09:30:00")
 
 
+
 # def handlebar(ContextInfo):  # 策略处理函数
 
 
@@ -171,10 +161,10 @@ def run_time_handlebar(ContextInfo):  # 定时运行
         return
 
     # 根据当前时间计算如果如果时间不在开盘时间内就直接退出，已知的开盘时间段有：0:00-2:30，9:00-11:30，13:30-15:00，21:00-24:00
-
     if not is_trading_time(datetime.now()):
         log_info(f"[处理函数] 当前时间不在交易时间段内，跳过本次处理")
         return
+
 
     log_section("[处理函数] 开始执行handlebar函数")
 
@@ -338,14 +328,13 @@ def get_price_data(ContextInfo):
 
         # 将时间戳转换为可读的时间格式
         history_df['time'] = history_df['time'].apply(lambda x: timetag_to_datetime(x, '%Y-%m-%d %H:%M:%S'))
-        log_debug(f"\n{history_df}")
+
         log_debug(f"  [价格数据] 请求参数 - 标的: {g.current_stock_code}, 周期: {ContextInfo.period}, 数量: 1")
 
-        # 当日K线集合
         current_market_data_more = ContextInfo.get_market_data_ex(
             ['time', 'open', 'high', 'low', 'close'],
             [g.current_stock_code],
-            start_time=get_futures_start_time(g.current_date),  # 根据期货交易时间规则确定开始时间
+            start_time=g.current_date[:8] + '000000',  # 当天00:00:00开始
             end_time=g.current_date,
             period=ContextInfo.period,  # 使用1分钟周期
             dividend_type=ContextInfo.dividend_type,
@@ -378,9 +367,8 @@ def get_price_data(ContextInfo):
 
         # 替换历史数据中的最后一条为当日最新数据
         if len(history_df) > 0 and len(current_df) > 0:
-
-            # 日盘和夜盘的0-2点（后半段）删除历史数据中的最后一条（当天数据）。 夜盘21点-24点 最后一条是当天白天的记录不删除
-            history_df = history_df[:-1] if datetime.now().hour < 21 else history_df
+            # 删除历史数据中的最后一条（当天数据）
+            history_df = history_df[:-1]
             # 将当日最新数据添加到历史数据末尾
             df = pd.concat([history_df, current_df], ignore_index=True)
         else:
@@ -552,8 +540,8 @@ def get_account_info(ContextInfo):
                     g.short_open_date[symbol] = open_date  # 空头开仓日期
                     g.short_volume[symbol] = volume  # 空头持仓量
                     g.short_entry_price[symbol] = entry_price  # 空头持仓成本
-            log_debug(f"    [账户信息] 持仓明细:\n {str(PositionInfo_dfs)} ")
-            log_debug(f"    [账户信息] 聚合后持仓:\n {str(aggregated_positions)} ")
+            print(f"    [账户信息] 持仓明细:\n {str(PositionInfo_dfs)} ")
+            print(f"    [账户信息] 聚合后持仓:\n {str(aggregated_positions)} ")
 
             # 持仓数量通过PositionInfo_dfs有几行数据来决定
             g.position_count = aggregated_positions.shape[0]
@@ -997,24 +985,3 @@ class G(): pass
 
 
 g = G()
-
-
-def get_futures_start_time(current_date):
-    """
-    根据当前时间确定期货交易起始时间
-    如果current_date的小时在21点之后，那么期货的交易时间从今天晚上九点开始
-    否则期货交易时间从昨天晚上9点开始
-    """
-
-    current_time = datetime.strptime(current_date, '%Y%m%d%H%M%S')
-    current_hour = current_time.hour
-
-    # 期货交易日从晚上9点开始
-    start_time = current_time.replace(hour=21, minute=0, second=0)
-
-    # 如果当前时间在21点之前，说明是当天的日盘交易，需要从前一晚的夜盘开始
-    if current_hour < 21:
-        # 往前推一天
-        start_time = start_time - pd.Timedelta(days=1)
-
-    return start_time.strftime('%Y%m%d%H%M%S')

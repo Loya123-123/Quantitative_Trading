@@ -17,18 +17,18 @@ g = G()
 
 
 def init(ContextInfo):
-    g.stock_codes_dict = {
+    stock_codes_dict = {
         "FG": {"code": "FG00", "market": "ZF", "size": 6}  # 玻璃 1
         , "jm": {"code": "jm00", "market": "DF", "size": 2}  # 焦煤 1
         , "ao": {"code": "ao00", "market": "SF", "size": 2}  # 氧化铝 1
         , "CF": {"code": "CF00", "market": "ZF", "size": 3}  # 棉花
         , "sp": {"code": "sp00", "market": "SF", "size": 4}  # 纸浆
     }
-    ProductID_list = [stock_code for stock_code, stock_info in g.stock_codes_dict.items()]
+    ProductID_list = [stock_code for stock_code, stock_info in stock_codes_dict.items()]
 
     print(f"[数据获取] 合约产品ID集合: {ProductID_list}")
 
-    market_list = [stock_info["market"] for stock_code, stock_info in g.stock_codes_dict.items()]
+    market_list = [stock_info["market"] for stock_code, stock_info in stock_codes_dict.items()]
 
     stock_codes_list = []
     # 根据 市场编码获取所有合约
@@ -50,7 +50,7 @@ def init(ContextInfo):
             ExchangeCode = g.stock_contract_info.get("ExchangeCode")
             print(f"[数据获取] 合约产品ID: {ProductID}")
             print(f"[数据获取] 主合约基础信息: {g.stock_contract_info}")
-            stock_codes = ExchangeCode + '.' + 'SF'
+            stock_codes = ExchangeCode + '.' + market
             # 将字典数据添加到列表中
             stock_codes_list.append(stock_codes)
 

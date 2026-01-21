@@ -22,10 +22,10 @@ g = G()
 
 
 def init(ContextInfo):
-    code_list = ['600276.SH']
+    code_list = [ 'sp2601.SF']
     for code in code_list:
-        for i in ['1d', '1m']:
-            re = download_history_data(code, i, "20240101", "")
+        for i in ['1m', '1d']:
+            re = download_history_data(code, i, "20250101", "")
             print(f"下载完成 : {re} , code : {code}, 周期 ： {i}")
 
 

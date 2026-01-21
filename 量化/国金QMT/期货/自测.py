@@ -1,25 +1,26 @@
+# coding:gbk
 """
-æµ·é¾Ÿäº¤æ˜“ç­–ç•¥æœŸè´§ç‰ˆ
-åŸºäºå›½é‡‘QMTå¹³å°å®ç°çš„æµ·é¾Ÿäº¤æ˜“ç­–ç•¥
+º£¹ê½»Ò×²ßÂÔÆÚ»õ°æ
+»ùÓÚ¹ú½ğQMTÆ½Ì¨ÊµÏÖµÄº£¹ê½»Ò×²ßÂÔ
 
-è¯¥ç­–ç•¥å…·æœ‰å®Œæ•´çš„è§„åˆ™ä½“ç³»ï¼ŒåŒ…æ‹¬ï¼š
-å›½é‡‘QMT ç­–ç•¥éœ€æ±‚
-è®¡ç®—é¢‘ç‡ï¼šåˆ†é’Ÿ
-äº¤æ˜“å“ç§ï¼šè¿ç»­åˆçº¦ä¸­å½“å‰çš„ä¸»åŠ›æœŸè´§åˆçº¦åŠ ä¸Šç›®å‰æœ‰æŒä»“çš„åˆçº¦
+¸Ã²ßÂÔ¾ßÓĞÍêÕûµÄ¹æÔòÌåÏµ£¬°üÀ¨£º
+¹ú½ğQMT ²ßÂÔĞèÇó
+¼ÆËãÆµÂÊ£º·ÖÖÓ
+½»Ò×Æ·ÖÖ£ºÁ¬ĞøºÏÔ¼ÖĞµ±Ç°µÄÖ÷Á¦ÆÚ»õºÏÔ¼¼ÓÉÏÄ¿Ç°ÓĞ³Ö²ÖµÄºÏÔ¼
 
-æå‰è®¡ç®—çš„æŒ‡æ ‡ï¼šå‰10æ—¥ATRå¹³å‡å€¼ï¼Œå¹¶è®°å½•ä¸‹æ¥
-ä¹°å…¥1ï¼ˆåšå¤šï¼‰ï¼šå½“æ—¥ä»·æ ¼>å‰10æ—¥æ”¶ç›˜ä»·æœ€é«˜ç‚¹æ—¶ï¼Œå³å½“å‰ä»·æ ¼çªç ´å‰10æ—¥é«˜ç‚¹ï¼Œå½“æ—¥ç«‹åˆ»æ‰§è¡Œåšå¤š
-åšå¤šæ­¢ç›ˆå–å‡º1ï¼šä¹°å…¥ç¬¬äºŒå¤©å¼€å§‹ï¼Œå½“ä»·æ ¼<å‰4æ—¥æ”¶ç›˜ä»·æœ€ä½ç‚¹æ—¶ï¼Œä¸”ä»·æ ¼ < æœ€é«˜ä»·-ï¼ˆæœ€é«˜ä»·-ä¹°å…¥ä»·ï¼‰*20% ï¼ˆæœ€é«˜ä»·æ˜¯æŒ‡ä¹°å…¥ååˆ°è®¡ç®—æ—¶çš„æœ€é«˜ä»·ï¼‰æ—¶ï¼Œç«‹åˆ»æ‰§è¡Œå–å‡ºã€‚
-åšå¤šæ­¢æŸå–å‡º1ï¼šä¹°å…¥ç¬¬äºŒå¤©å¼€å§‹ï¼Œå½“ä»·æ ¼ < ä¹°å…¥ä»·-N*ATRæ—¶ï¼Œç«‹åˆ»æ‰§è¡Œå–å‡º
+ÌáÇ°¼ÆËãµÄÖ¸±ê£ºÇ°10ÈÕATRÆ½¾ùÖµ£¬²¢¼ÇÂ¼ÏÂÀ´
+ÂòÈë1£¨×ö¶à£©£ºµ±ÈÕ¼Û¸ñ>Ç°10ÈÕÊÕÅÌ¼Û×î¸ßµãÊ±£¬¼´µ±Ç°¼Û¸ñÍ»ÆÆÇ°10ÈÕ¸ßµã£¬µ±ÈÕÁ¢¿ÌÖ´ĞĞ×ö¶à
+×ö¶àÖ¹Ó¯Âô³ö1£ºÂòÈëµÚ¶şÌì¿ªÊ¼£¬µ±¼Û¸ñ<Ç°4ÈÕÊÕÅÌ¼Û×îµÍµãÊ±£¬ÇÒ¼Û¸ñ < ×î¸ß¼Û-£¨×î¸ß¼Û-ÂòÈë¼Û£©*20% £¨×î¸ß¼ÛÊÇÖ¸ÂòÈëºóµ½¼ÆËãÊ±µÄ×î¸ß¼Û£©Ê±£¬Á¢¿ÌÖ´ĞĞÂô³ö¡£
+×ö¶àÖ¹ËğÂô³ö1£ºÂòÈëµÚ¶şÌì¿ªÊ¼£¬µ±¼Û¸ñ < ÂòÈë¼Û-N*ATRÊ±£¬Á¢¿ÌÖ´ĞĞÂô³ö
 
-ä¹°å…¥2ï¼ˆåšç©ºï¼‰ï¼šå½“æ—¥ä»·æ ¼<å‰10æ—¥æ”¶ç›˜ä»·æœ€ä½ç‚¹æ—¶ï¼Œå³å½“å‰ä»·æ ¼çªç ´10æ—¥ä½ç‚¹ï¼Œå½“æ—¥ç«‹åˆ»æ‰§è¡Œåšç©º
-åšç©ºæ­¢ç›ˆå–å‡º2ï¼šä¹°å…¥ç¬¬äºŒå¤©å¼€å§‹ï¼Œå½“ä»·æ ¼>å‰4æ—¥æ”¶ç›˜ä»·æœ€é«˜ç‚¹æ—¶ï¼Œä¸”ä»·æ ¼>æœ€ä½ä»·+ï¼ˆä¹°å…¥ä»·-æœ€ä½ä»·ï¼‰*20% ï¼ˆæœ€ä½ä»·æ˜¯æŒ‡ä¹°å…¥ååˆ°è®¡ç®—æ—¶çš„æœ€ä½ä»·ï¼‰æ—¶ï¼Œç«‹åˆ»æ‰§è¡Œå–å‡º
-åšç©ºæ­¢æŸå–å‡º2ï¼šä¹°å…¥ç¬¬äºŒå¤©å¼€å§‹ï¼Œå½“ä»·æ ¼>ä¹°å…¥ä»·+N*ATRæ—¶ï¼Œç«‹åˆ»æ‰§è¡Œå–å‡º
+ÂòÈë2£¨×ö¿Õ£©£ºµ±ÈÕ¼Û¸ñ<Ç°10ÈÕÊÕÅÌ¼Û×îµÍµãÊ±£¬¼´µ±Ç°¼Û¸ñÍ»ÆÆ10ÈÕµÍµã£¬µ±ÈÕÁ¢¿ÌÖ´ĞĞ×ö¿Õ
+×ö¿ÕÖ¹Ó¯Âô³ö2£ºÂòÈëµÚ¶şÌì¿ªÊ¼£¬µ±¼Û¸ñ>Ç°4ÈÕÊÕÅÌ¼Û×î¸ßµãÊ±£¬ÇÒ¼Û¸ñ>×îµÍ¼Û+£¨ÂòÈë¼Û-×îµÍ¼Û£©*20% £¨×îµÍ¼ÛÊÇÖ¸ÂòÈëºóµ½¼ÆËãÊ±µÄ×îµÍ¼Û£©Ê±£¬Á¢¿ÌÖ´ĞĞÂô³ö
+×ö¿ÕÖ¹ËğÂô³ö2£ºÂòÈëµÚ¶şÌì¿ªÊ¼£¬µ±¼Û¸ñ>ÂòÈë¼Û+N*ATRÊ±£¬Á¢¿ÌÖ´ĞĞÂô³ö
 
-ä¹°å…¥å¤´å¯¸ï¼šèµ„é‡‘é‡=100000ï¼Œå•åªå“ç§å•æ¬¡ä¹°å…¥é‡‘é¢10000ï¼ŒæŒ‰ç…§æœ€å¤§æ‰‹æ•°ä¹°ï¼Œå³æ¯ä¸ªå“ç§æœ€å¤š20000ï¼Œåšå¤š/åšç©ºå„10000
-åŠ ä»“è§„åˆ™ï¼šåšå¤šæˆ–è€…åšç©ºä¹°å…¥åä¸å†è¿›è¡ŒåŠ ä»“ï¼Œä½†æ˜¯åšå¤šä¸€ç¬”ï¼Œä¸å½±å“åšç©ºçš„å¼€å•ï¼Œåä¹‹åšç©ºä¸€ç¬”ï¼Œä¹Ÿä¸å½±å“åšå¤šå¼€å•ã€‚
+ÂòÈëÍ·´ç£º×Ê½ğÁ¿=100000£¬µ¥Ö»Æ·ÖÖµ¥´ÎÂòÈë½ğ¶î10000£¬°´ÕÕ×î´óÊÖÊıÂò£¬¼´Ã¿¸öÆ·ÖÖ×î¶à20000£¬×ö¶à/×ö¿Õ¸÷10000
+¼Ó²Ö¹æÔò£º×ö¶à»òÕß×ö¿ÕÂòÈëºó²»ÔÙ½øĞĞ¼Ó²Ö£¬µ«ÊÇ×ö¶àÒ»±Ê£¬²»Ó°Ïì×ö¿ÕµÄ¿ªµ¥£¬·´Ö®×ö¿ÕÒ»±Ê£¬Ò²²»Ó°Ïì×ö¶à¿ªµ¥¡£
 
-å¦‚æœæ˜¯å¼€ä»“ä¿¡å·ä¸”æŒä»“ä¸æ»¡4ä¸ª æˆ– åˆçº¦è·ç¦»åˆ°æœŸå°äº30å¤© åˆ™æ‰èƒ½å¼€ä»“ã€‚
+Èç¹ûÊÇ¿ª²ÖĞÅºÅÇÒ³Ö²Ö²»Âú4¸ö »ò ºÏÔ¼¾àÀëµ½ÆÚĞ¡ÓÚ30Ìì Ôò²ÅÄÜ¿ª²Ö¡£
 
 """
 # coding:gbk
@@ -31,18 +32,18 @@ from datetime import datetime
 import numpy as np
 import pandas as pd
 
-# å…¨å±€å˜é‡ç”¨äºå­˜å‚¨æ—¥å¿—æ–‡ä»¶å
+# È«¾Ö±äÁ¿ÓÃÓÚ´æ´¢ÈÕÖ¾ÎÄ¼şÃû
 log_filename = None
 
 
 def init(ContextInfo):
     """
-    åˆå§‹åŒ–å‡½æ•°
-    è®¾ç½®ç­–ç•¥å‚æ•°ã€äº¤æ˜“æ ‡çš„ç­‰
+    ³õÊ¼»¯º¯Êı
+    ÉèÖÃ²ßÂÔ²ÎÊı¡¢½»Ò×±êµÄµÈ
     """
-    # åœ¨åˆå§‹åŒ–æ—¶æ¸…ç©ºæ—¥å¿—æ–‡ä»¶å†…å®¹
+    # ÔÚ³õÊ¼»¯Ê±Çå¿ÕÈÕÖ¾ÎÄ¼şÄÚÈİ
     global log_filename
-    log_filename = None  # é‡ç½®æ—¥å¿—æ–‡ä»¶å
+    log_filename = None  # ÖØÖÃÈÕÖ¾ÎÄ¼şÃû
     # clear_log_file()
 
     filename = get_log_filename()
@@ -50,240 +51,239 @@ def init(ContextInfo):
     logging.basicConfig(filename=filename, level=logging.INFO,
                         format='%(asctime)s - %(levelname)s - %(message)s')
 
-    log_section("å¼€å§‹åˆå§‹åŒ–æµ·é¾Ÿäº¤æ˜“ç­–ç•¥...")
+    log_section("¿ªÊ¼³õÊ¼»¯º£¹ê½»Ò×²ßÂÔ...")
 
-    # è®¾ç½®äº¤æ˜“æ ‡çš„ï¼ˆæ”¯æŒå¤šä¸ªæœŸè´§åˆçº¦ï¼‰ å­˜å‚¨æœŸæƒè¿ç»­åˆçº¦
-    # ContextInfo.stock_codes = ['rb00.SF', 'cu00.SF', 'au00.SF']  # å¯ä»¥æ ¹æ®éœ€è¦ä¿®æ”¹
-    # è¿ç»­åˆçº¦
+    # ÉèÖÃ½»Ò×±êµÄ£¨Ö§³Ö¶à¸öÆÚ»õºÏÔ¼£© ´æ´¢ÆÚÈ¨Á¬ĞøºÏÔ¼
+    # ContextInfo.stock_codes = ['rb00.SF', 'cu00.SF', 'au00.SF']  # ¿ÉÒÔ¸ù¾İĞèÒªĞŞ¸Ä
+    # Á¬ĞøºÏÔ¼
     ContextInfo.stock_codes_dict = {
-        "FG": {"code": "FG00", "market": "ZF", "size": 3}  # ç»ç’ƒ 1
-        , "jm": {"code": "jm00", "market": "DF", "size": 1}  # ç„¦ç…¤ 1
-        , "ao": {"code": "ao00", "market": "SF", "size": 1}  # æ°§åŒ–é“ 1
-        , "c": {"code": "c00", "market": "DF", "size": 4}  # ç‰ç±³
-        # , "a": {"code": "a00", "market": "DF", "size": 2}  # è±†ä¸€
-        , "sp": {"code": "sp00", "market": "SF", "size": 1}  # çº¸æµ†
-        , "CF": {"code": "CF00", "market": "ZF", "size": 1}  # æ£‰èŠ±
-
+        "FG": {"code": "FG00", "market": "ZF", "size": 3}  # ²£Á§
+        , "c": {"code": "c00", "market": "DF", "size": 4}  # ÓñÃ×
+        # , "a": {"code": "a00", "market": "DF", "size": 2}  # ¶¹Ò»
+        , "sp": {"code": "sp00", "market": "SF", "size": 1}  # Ö½½¬
+        , "ao": {"code": "ao00", "market": "SF", "size": 1}  # Ñõ»¯ÂÁ
+        , "CF": {"code": "CF00", "market": "ZF", "size": 1}  # ÃŞ»¨
+        , "jm": {"code": "jm00", "market": "DF", "size": 1}  # ½¹Ãº
     }
 
     ContextInfo.stock_codes = [stock_info["code"] + '.' + stock_info["market"] for stock_code, stock_info in
                                ContextInfo.stock_codes_dict.items()]
 
     ContextInfo.set_universe(ContextInfo.stock_codes)
-    log_info(f"[åˆå§‹åŒ–] è®¾ç½®äº¤æ˜“æ ‡çš„: {ContextInfo.stock_codes}")
+    log_info(f"[³õÊ¼»¯] ÉèÖÃ½»Ò×±êµÄ: {ContextInfo.stock_codes}")
 
     dividend_type = ContextInfo.dividend_type
-    log_info(f"[åˆå§‹åŒ–] å¤æƒæ–¹å¼: {dividend_type}")
+    log_info(f"[³õÊ¼»¯] ¸´È¨·½Ê½: {dividend_type}")
 
-    # ç­–ç•¥å‚æ•°
-    g.entry_window = 10  # å…¥å¸‚é€šé“å‘¨æœŸï¼ˆçªç ´å‘¨æœŸï¼‰
-    g.exit_window = 4  # æ­¢ç›ˆé€šé“å‘¨æœŸ
-    g.atr_window = 10  # ATRè®¡ç®—å‘¨æœŸ
-    g.stop_profit_ratio = 0.2  # æ­¢ç›ˆæ¯”ä¾‹
-    g.stop_loss_multiplier = 1  # æ­¢æŸATRå€æ•°
-    g.position_limit = 6  # æŒä»“ä¸Šçº¿
-    g.near_expiry_days = 30  # ä¸´è¿‘åˆ°æœŸæ—¥å¤©æ•°ä¸Šçº¿
-    g.capital_rate = 0.1  # èµ„é‡‘æ¯”ä¾‹ èµ„é‡‘å›ºå®šå€¼ï¼Œå‚æ•°å¤±æ•ˆ
+    # ²ßÂÔ²ÎÊı
+    g.entry_window = 10  # ÈëÊĞÍ¨µÀÖÜÆÚ£¨Í»ÆÆÖÜÆÚ£©
+    g.exit_window = 4  # Ö¹Ó¯Í¨µÀÖÜÆÚ
+    g.atr_window = 10  # ATR¼ÆËãÖÜÆÚ
+    g.stop_profit_ratio = 0.2  # Ö¹Ó¯±ÈÀı
+    g.stop_loss_multiplier = 1  # Ö¹ËğATR±¶Êı
+    g.position_limit = 5  # ³Ö²ÖÉÏÏß
+    g.near_expiry_days = 30  # ÁÙ½üµ½ÆÚÈÕÌìÊıÉÏÏß
+    g.capital_rate = 0.1  # ×Ê½ğ±ÈÀı ×Ê½ğ¹Ì¶¨Öµ£¬²ÎÊıÊ§Ğ§
 
-    # # èµ„é‡‘ç®¡ç†å‚æ•°
-    # g.long_capital = 10000  # åšå¤šèµ„é‡‘
-    # g.short_capital = 10000  # åšç©ºèµ„é‡‘
+    # # ×Ê½ğ¹ÜÀí²ÎÊı
+    # g.long_capital = 10000  # ×ö¶à×Ê½ğ
+    # g.short_capital = 10000  # ×ö¿Õ×Ê½ğ
 
-    log_info(f"[åˆå§‹åŒ–] ç­–ç•¥å‚æ•°è®¾ç½®å®Œæˆ:")
-    log_info(f"        å…¥å¸‚é€šé“å‘¨æœŸ: {g.entry_window}")
-    log_info(f"        æ­¢ç›ˆé€šé“å‘¨æœŸ: {g.exit_window}")
-    log_info(f"        ATRè®¡ç®—å‘¨æœŸ: {g.atr_window}")
-    log_info(f"        æ­¢ç›ˆæ¯”ä¾‹: {g.stop_profit_ratio}")
-    log_info(f"        æ­¢æŸATRå€æ•°: {g.stop_loss_multiplier}")
-    log_info(f"        èµ„é‡‘æ¯”ä¾‹: {g.capital_rate}")
+    log_info(f"[³õÊ¼»¯] ²ßÂÔ²ÎÊıÉèÖÃÍê³É:")
+    log_info(f"        ÈëÊĞÍ¨µÀÖÜÆÚ: {g.entry_window}")
+    log_info(f"        Ö¹Ó¯Í¨µÀÖÜÆÚ: {g.exit_window}")
+    log_info(f"        ATR¼ÆËãÖÜÆÚ: {g.atr_window}")
+    log_info(f"        Ö¹Ó¯±ÈÀı: {g.stop_profit_ratio}")
+    log_info(f"        Ö¹ËğATR±¶Êı: {g.stop_loss_multiplier}")
+    log_info(f"        ×Ê½ğ±ÈÀı: {g.capital_rate}")
 
-    # ç­–ç•¥çŠ¶æ€å˜é‡
-    g.N = {}  # æ³¢åŠ¨å¹…åº¦(Nå€¼/ATR)ï¼Œä¸ºæ¯ä¸ªåˆçº¦ä¿å­˜
-    g.long_position = {}  # å¤šå¤´æŒä»“ï¼š0-æ— ä»“ä½ï¼Œ1-æŒæœ‰å¤šå¤´ï¼Œä¸ºæ¯ä¸ªåˆçº¦ä¿å­˜
-    g.short_position = {}  # ç©ºå¤´æŒä»“ï¼š0-æ— ä»“ä½ï¼Œ1-æŒæœ‰ç©ºå¤´ï¼Œä¸ºæ¯ä¸ªåˆçº¦ä¿å­˜
-    g.highest_after_entry = {}  # å…¥å¸‚åçš„æœ€é«˜ä»·ï¼Œä¸ºæ¯ä¸ªåˆçº¦ä¿å­˜
-    g.lowest_after_entry = {}  # å…¥å¸‚åçš„æœ€ä½ä»·ï¼Œä¸ºæ¯ä¸ªåˆçº¦ä¿å­˜
-    g.long_open_date = {}  # å¤šå¤´å¼€ä»“æ—¥æœŸï¼Œä¸ºæ¯ä¸ªåˆçº¦ä¿å­˜
-    g.short_open_date = {}  # ç©ºå¤´å¼€ä»“æ—¥æœŸï¼Œä¸ºæ¯ä¸ªåˆçº¦ä¿å­˜
-    g.long_volume = {}  # å¤šå¤´æŒä»“é‡ï¼Œä¸ºæ¯ä¸ªåˆçº¦ä¿å­˜
-    g.long_entry_price = {}  # å¤šå¤´æŒä»“ä»·ï¼Œä¸ºæ¯ä¸ªåˆçº¦ä¿å­˜
-    g.short_volume = {}  # ç©ºå¤´æŒä»“é‡ï¼Œä¸ºæ¯ä¸ªåˆçº¦ä¿å­˜
-    g.short_entry_price = {}  # ç©ºå¤´æŒä»“ä»·ï¼Œä¸ºæ¯ä¸ªåˆçº¦ä¿å­˜
+    # ²ßÂÔ×´Ì¬±äÁ¿
+    g.N = {}  # ²¨¶¯·ù¶È(NÖµ/ATR)£¬ÎªÃ¿¸öºÏÔ¼±£´æ
+    g.long_position = {}  # ¶àÍ·³Ö²Ö£º0-ÎŞ²ÖÎ»£¬1-³ÖÓĞ¶àÍ·£¬ÎªÃ¿¸öºÏÔ¼±£´æ
+    g.short_position = {}  # ¿ÕÍ·³Ö²Ö£º0-ÎŞ²ÖÎ»£¬1-³ÖÓĞ¿ÕÍ·£¬ÎªÃ¿¸öºÏÔ¼±£´æ
+    g.highest_after_entry = {}  # ÈëÊĞºóµÄ×î¸ß¼Û£¬ÎªÃ¿¸öºÏÔ¼±£´æ
+    g.lowest_after_entry = {}  # ÈëÊĞºóµÄ×îµÍ¼Û£¬ÎªÃ¿¸öºÏÔ¼±£´æ
+    g.long_open_date = {}  # ¶àÍ·¿ª²ÖÈÕÆÚ£¬ÎªÃ¿¸öºÏÔ¼±£´æ
+    g.short_open_date = {}  # ¿ÕÍ·¿ª²ÖÈÕÆÚ£¬ÎªÃ¿¸öºÏÔ¼±£´æ
+    g.long_volume = {}  # ¶àÍ·³Ö²ÖÁ¿£¬ÎªÃ¿¸öºÏÔ¼±£´æ
+    g.long_entry_price = {}  # ¶àÍ·³Ö²Ö¼Û£¬ÎªÃ¿¸öºÏÔ¼±£´æ
+    g.short_volume = {}  # ¿ÕÍ·³Ö²ÖÁ¿£¬ÎªÃ¿¸öºÏÔ¼±£´æ
+    g.short_entry_price = {}  # ¿ÕÍ·³Ö²Ö¼Û£¬ÎªÃ¿¸öºÏÔ¼±£´æ
 
-    g.expire_date = {}  # å½“å‰éœ€è¦äº¤æ˜“çš„åˆçº¦çš„åˆ°æœŸæ—¥ï¼Œä¸ºæ¯ä¸ªåˆçº¦ä¿å­˜
-    g.current_trading_contracts = []  # å½“å‰éœ€è¦äº¤æ˜“çš„åˆçº¦ï¼Œä¸ºæ¯ä¸ªåˆçº¦ä¿å­˜
-    g.expire_date_diff = {}  # åˆ°æœŸæ—¥ä¸å½“å‰æ—¥æœŸçš„å·®å€¼ï¼Œä¸ºæ¯ä¸ªåˆçº¦ä¿å­˜
-    g.position_count = 0  # å½“å‰æŒä»“æ•°é‡
-    g.position_code = []  # å½“å‰æŒä»“çš„åˆçº¦
-    g.position_size = {}  # äº¤æ˜“åˆçº¦å¯¹åº”çš„æ‰‹æ•°ï¼Œä¸ºæ¯ä¸ªåˆçº¦ä¿å­˜
-    log_info(f"[åˆå§‹åŒ–] ç­–ç•¥çŠ¶æ€å˜é‡åˆå§‹åŒ–å®Œæˆ")
+    g.expire_date = {}  # µ±Ç°ĞèÒª½»Ò×µÄºÏÔ¼µÄµ½ÆÚÈÕ£¬ÎªÃ¿¸öºÏÔ¼±£´æ
+    g.current_trading_contracts = []  # µ±Ç°ĞèÒª½»Ò×µÄºÏÔ¼£¬ÎªÃ¿¸öºÏÔ¼±£´æ
+    g.expire_date_diff = {}  # µ½ÆÚÈÕÓëµ±Ç°ÈÕÆÚµÄ²îÖµ£¬ÎªÃ¿¸öºÏÔ¼±£´æ
+    g.position_count = 0  # µ±Ç°³Ö²ÖÊıÁ¿
+    g.position_code = []  # µ±Ç°³Ö²ÖµÄºÏÔ¼
+    g.position_size = {}  # ½»Ò×ºÏÔ¼¶ÔÓ¦µÄÊÖÊı£¬ÎªÃ¿¸öºÏÔ¼±£´æ
+    log_info(f"[³õÊ¼»¯] ²ßÂÔ×´Ì¬±äÁ¿³õÊ¼»¯Íê³É")
 
-    # è´¦æˆ·ä¿¡æ¯
-    # ContextInfo.account_id = '809213023'  # æœŸè´§è´¦æˆ·ID
-    ContextInfo.account_id = account  # æœŸè´§è´¦æˆ·ID
-    log_info(f"[åˆå§‹åŒ–] è´¦æˆ·ä¿¡æ¯è®¾ç½®å®Œæˆ:")
-    log_info(f"        æœŸè´§è´¦æˆ·ID: {ContextInfo.account_id}")
+    # ÕË»§ĞÅÏ¢
+    # ContextInfo.account_id = '809213023'  # ÆÚ»õÕË»§ID
+    ContextInfo.account_id = account  # ÆÚ»õÕË»§ID
+    log_info(f"[³õÊ¼»¯] ÕË»§ĞÅÏ¢ÉèÖÃÍê³É:")
+    log_info(f"        ÆÚ»õÕË»§ID: {ContextInfo.account_id}")
 
-    log_section("æµ·é¾Ÿäº¤æ˜“ç­–ç•¥åˆå§‹åŒ–å®Œæˆ")
+    log_section("º£¹ê½»Ò×²ßÂÔ³õÊ¼»¯Íê³É")
     ContextInfo.run_time("run_time_handlebar", "60nSecond", "2025-01-01 09:30:00")
 
 
-# def handlebar(ContextInfo):  # ç­–ç•¥å¤„ç†å‡½æ•°
-def run_time_handlebar(ContextInfo):  # å®šæ—¶è¿è¡Œ
+# def handlebar(ContextInfo):  # ²ßÂÔ´¦Àíº¯Êı
+def run_time_handlebar(ContextInfo):  # ¶¨Ê±ÔËĞĞ
     """
-    ä¸»è¦å¤„ç†å‡½æ•°
-    åœ¨æ¯ä¸ªKçº¿å‘¨æœŸéƒ½ä¼šè¢«è°ƒç”¨
+    Ö÷Òª´¦Àíº¯Êı
+    ÔÚÃ¿¸öKÏßÖÜÆÚ¶¼»á±»µ÷ÓÃ
     """
 
     if not ContextInfo.is_last_bar():
-        log_info("[å¤„ç†å‡½æ•°] å½“å‰ä¸æ˜¯æœ€åä¸€ä¸ªKçº¿å‘¨æœŸï¼Œè·³è¿‡æœ¬æ¬¡å¤„ç†")
+        log_info("[´¦Àíº¯Êı] µ±Ç°²»ÊÇ×îºóÒ»¸öKÏßÖÜÆÚ£¬Ìø¹ı±¾´Î´¦Àí")
         return
 
-    log_section("[å¤„ç†å‡½æ•°] å¼€å§‹æ‰§è¡Œhandlebarå‡½æ•°")
+    log_section("[´¦Àíº¯Êı] ¿ªÊ¼Ö´ĞĞhandlebarº¯Êı")
 
-    # è·å–å†å²æ•°æ® è·å–æ•°æ®çš„æˆªæ­¢æ—¶é—´
+    # »ñÈ¡ÀúÊ·Êı¾İ »ñÈ¡Êı¾İµÄ½ØÖ¹Ê±¼ä
     bar_date = timetag_to_datetime(ContextInfo.get_bar_timetag(ContextInfo.barpos), '%Y%m%d%H%M%S')
     g.current_date = bar_date
-    log_info(f"  è·å–æˆªæ­¢æ—¶é—´: {g.current_date}")
+    log_info(f"  »ñÈ¡½ØÖ¹Ê±¼ä: {g.current_date}")
 
-    # æ¸…ç©ºä¸Šä¸€æ¬¡çš„äº¤æ˜“åˆçº¦åˆ—è¡¨
+    # Çå¿ÕÉÏÒ»´ÎµÄ½»Ò×ºÏÔ¼ÁĞ±í
     g.current_trading_contracts = []
-    # è·å–ä¸»åŠ›åˆçº¦ä»£ç æ›¿ä»£è¿ç»­åˆçº¦
+    # »ñÈ¡Ö÷Á¦ºÏÔ¼´úÂëÌæ´úÁ¬ĞøºÏÔ¼
     for stock_key, stock_info in ContextInfo.stock_codes_dict.items():
         main_stock_code = stock_info["code"] + '.' + stock_info["market"]
-        # è·å–ä¸»åŠ›åˆçº¦ä»£ç ï¼Œä½¿ç”¨å½“å‰æ—¥æœŸ
+        # »ñÈ¡Ö÷Á¦ºÏÔ¼´úÂë£¬Ê¹ÓÃµ±Ç°ÈÕÆÚ
         main_contract = ContextInfo.get_main_contract(main_stock_code) + '.' + stock_info["market"]
         g.position_size[main_contract] = stock_info["size"]
         if main_contract:
             g.current_trading_contracts.append(main_contract)
-            print(f"[åˆå§‹åŒ–] è¿ç»­åˆçº¦ {main_stock_code} å¯¹åº”çš„ä¸»åŠ›åˆçº¦ä¸º: {main_contract}")
+            print(f"[³õÊ¼»¯] Á¬ĞøºÏÔ¼ {main_stock_code} ¶ÔÓ¦µÄÖ÷Á¦ºÏÔ¼Îª: {main_contract}")
         else:
-            # å¦‚æœè·å–ä¸åˆ°ä¸»åŠ›åˆçº¦ï¼Œåˆ™ä½¿ç”¨åŸè¿ç»­åˆçº¦
+            # Èç¹û»ñÈ¡²»µ½Ö÷Á¦ºÏÔ¼£¬ÔòÊ¹ÓÃÔ­Á¬ĞøºÏÔ¼
             g.current_trading_contracts.append(main_stock_code)
-            print(f"[åˆå§‹åŒ–] æ— æ³•è·å– {main_stock_code} çš„ä¸»åŠ›åˆçº¦ï¼Œç»§ç»­ä½¿ç”¨åŸåˆçº¦")
+            print(f"[³õÊ¼»¯] ÎŞ·¨»ñÈ¡ {main_stock_code} µÄÖ÷Á¦ºÏÔ¼£¬¼ÌĞøÊ¹ÓÃÔ­ºÏÔ¼")
 
-    log_info(f"[åˆå§‹åŒ–] å½“å‰åœ¨äº¤æ˜“çš„åˆçº¦: {g.current_trading_contracts}")
+    log_info(f"[³õÊ¼»¯] µ±Ç°ÔÚ½»Ò×µÄºÏÔ¼: {g.current_trading_contracts}")
 
-    # è·å–å½“å‰è´¦æˆ·ä¿¡æ¯ï¼ˆåªéœ€è¦è·å–ä¸€æ¬¡ï¼‰
-    log_info("[è´¦æˆ·ä¿¡æ¯] å¼€å§‹è·å–è´¦æˆ·ä¿¡æ¯...")
+    # »ñÈ¡µ±Ç°ÕË»§ĞÅÏ¢£¨Ö»ĞèÒª»ñÈ¡Ò»´Î£©
+    log_info("[ÕË»§ĞÅÏ¢] ¿ªÊ¼»ñÈ¡ÕË»§ĞÅÏ¢...")
     account_info = get_account_info(ContextInfo)
     if account_info is None:
-        log_info("[è´¦æˆ·ä¿¡æ¯] æ— æ³•è·å–è´¦æˆ·ä¿¡æ¯ï¼Œè·³è¿‡æœ¬æ¬¡å¤„ç†")
+        log_info("[ÕË»§ĞÅÏ¢] ÎŞ·¨»ñÈ¡ÕË»§ĞÅÏ¢£¬Ìø¹ı±¾´Î´¦Àí")
         log_separator()
         return
-    log_info("[è´¦æˆ·ä¿¡æ¯] æˆåŠŸè·å–è´¦æˆ·ä¿¡æ¯")
+    log_info("[ÕË»§ĞÅÏ¢] ³É¹¦»ñÈ¡ÕË»§ĞÅÏ¢")
 
-    # éœ€è¦äº¤æ˜“çš„åˆçº¦g.current_trading_contracts å’ŒæŒä»“ä»£ç  position_code ä¸¤ä¸ªlist åˆå¹¶å»é‡å¾—åˆ°è¦æ‰§è¡Œçš„åˆçº¦ä»£ç 
+    # ĞèÒª½»Ò×µÄºÏÔ¼g.current_trading_contracts ºÍ³Ö²Ö´úÂë position_code Á½¸ölist ºÏ²¢È¥ÖØµÃµ½ÒªÖ´ĞĞµÄºÏÔ¼´úÂë
     g.current_trading_contracts = list(set(g.current_trading_contracts + g.position_code))
-    log_info(f"[åˆå§‹åŒ–]  éœ€è¦å¤„ç†çš„åˆçº¦: {g.current_trading_contracts}")
+    log_info(f"[³õÊ¼»¯]  ĞèÒª´¦ÀíµÄºÏÔ¼: {g.current_trading_contracts}")
 
-    # ä¸ºæ¯ä¸ªåˆçº¦æ‰§è¡Œç­–ç•¥é€»è¾‘
+    # ÎªÃ¿¸öºÏÔ¼Ö´ĞĞ²ßÂÔÂß¼­
     for stock_code in g.current_trading_contracts:
-        log_info(f"{60 * '-'} \n [å¤„ç†å‡½æ•°] å¤„ç†åˆçº¦: {stock_code}")
+        log_info(f"{60 * '-'} \n [´¦Àíº¯Êı] ´¦ÀíºÏÔ¼: {stock_code}")
 
-        # è®¾ç½®å½“å‰å¤„ç†çš„åˆçº¦ä¸ºå…¨å±€å˜é‡ï¼Œä¾›å…¶ä»–å‡½æ•°ä½¿ç”¨
+        # ÉèÖÃµ±Ç°´¦ÀíµÄºÏÔ¼ÎªÈ«¾Ö±äÁ¿£¬¹©ÆäËûº¯ÊıÊ¹ÓÃ
         g.current_stock_code = stock_code
 
-        # è·å–åˆçº¦åŸºç¡€ä¿¡æ¯
+        # »ñÈ¡ºÏÔ¼»ù´¡ĞÅÏ¢
         stock_contract_info = ContextInfo.get_instrument_detail(g.current_stock_code)
-        log_debug(f"[æ•°æ®è·å–] åˆçº¦åŸºç¡€ä¿¡æ¯: {stock_contract_info}")
+        log_debug(f"[Êı¾İ»ñÈ¡] ºÏÔ¼»ù´¡ĞÅÏ¢: {stock_contract_info}")
 
-        # è·åˆçº¦çš„é€€å¸‚æ—¥æˆ–è€…åˆ°æœŸæ—¥ ExpireDate
+        # »ñºÏÔ¼µÄÍËÊĞÈÕ»òÕßµ½ÆÚÈÕ ExpireDate
         g.expire_date[g.current_stock_code] = str(stock_contract_info.get('ExpireDate', 0))
-        log_info(f"[æ•°æ®è·å–] åˆçº¦çš„é€€å¸‚æ—¥æˆ–è€…åˆ°æœŸæ—¥: {g.expire_date[g.current_stock_code]}")
+        log_info(f"[Êı¾İ»ñÈ¡] ºÏÔ¼µÄÍËÊĞÈÕ»òÕßµ½ÆÚÈÕ: {g.expire_date[g.current_stock_code]}")
 
-        # å½“å‰åˆçº¦çš„åˆ°æœŸæ—¥(YYYYMMDD) å’Œ å½“å‰æ—¥æœŸ g.current_date[:8](YYYYMMDD) å·®å‡ å¤©
+        # µ±Ç°ºÏÔ¼µÄµ½ÆÚÈÕ(YYYYMMDD) ºÍ µ±Ç°ÈÕÆÚ g.current_date[:8](YYYYMMDD) ²î¼¸Ìì
         g.expire_date_diff[g.current_stock_code] = (datetime.strptime(g.expire_date[g.current_stock_code],
                                                                       '%Y%m%d') - datetime.strptime(
             g.current_date[:8], '%Y%m%d')).days if g.expire_date[g.current_stock_code] else 999
-        log_info(f"[æ•°æ®è·å–] è·å–åˆçº¦çš„åˆ°æœŸæ—¥å’Œå½“å‰æ—¥æœŸçš„å·®: {g.expire_date_diff[g.current_stock_code]}")
+        log_info(f"[Êı¾İ»ñÈ¡] »ñÈ¡ºÏÔ¼µÄµ½ÆÚÈÕºÍµ±Ç°ÈÕÆÚµÄ²î: {g.expire_date_diff[g.current_stock_code]}")
 
         if g.expire_date_diff[g.current_stock_code] < g.near_expiry_days:
-            log_info(f"[æ•°æ®è·å–] {g.current_stock_code} çš„åˆ°æœŸæ—¥å°äº{g.near_expiry_days}å¤©ï¼Œä¸æ‰§è¡Œæ–°çš„å¼€ä»“æ“ä½œ")
+            log_info(f"[Êı¾İ»ñÈ¡] {g.current_stock_code} µÄµ½ÆÚÈÕĞ¡ÓÚ{g.near_expiry_days}Ìì£¬²»Ö´ĞĞĞÂµÄ¿ª²Ö²Ù×÷")
         else:
-            log_info(f"[æ•°æ®è·å–] {g.current_stock_code} çš„åˆ°æœŸæ—¥å¤§äº{g.near_expiry_days}å¤©ï¼Œå¯ä»¥æ‰§è¡Œæ–°çš„å¼€ä»“æ“ä½œ")
+            log_info(f"[Êı¾İ»ñÈ¡] {g.current_stock_code} µÄµ½ÆÚÈÕ´óÓÚ{g.near_expiry_days}Ìì£¬¿ÉÒÔÖ´ĞĞĞÂµÄ¿ª²Ö²Ù×÷")
 
-        # LongMarginRatio	float	å¤šå¤´ä¿è¯é‡‘ç‡
-        # ShortMarginRatio	float	ç©ºå¤´ä¿è¯é‡‘ç‡
+        # LongMarginRatio	float	¶àÍ·±£Ö¤½ğÂÊ
+        # ShortMarginRatio	float	¿ÕÍ·±£Ö¤½ğÂÊ
         g.long_margin_ratio = stock_contract_info.get('LongMarginRatio', 0.0)
         g.short_margin_ratio = stock_contract_info.get('ShortMarginRatio', 0.0)
 
-        # æ£€æŸ¥æ•°æ®æ˜¯å¦è¶³å¤Ÿ
+        # ¼ì²éÊı¾İÊÇ·ñ×ã¹»
         required_data = max(g.entry_window, g.exit_window, g.atr_window)
-        log_debug(f"[æ•°æ®æ£€æŸ¥] å½“å‰barä½ç½®: {ContextInfo.barpos}, æ‰€éœ€æ•°æ®: {required_data}")
+        log_debug(f"[Êı¾İ¼ì²é] µ±Ç°barÎ»ÖÃ: {ContextInfo.barpos}, ËùĞèÊı¾İ: {required_data}")
         if ContextInfo.barpos < required_data:
-            log_info("[æ•°æ®æ£€æŸ¥] æ•°æ®ä¸è¶³ï¼Œè·³è¿‡æœ¬æ¬¡å¤„ç†")
+            log_info("[Êı¾İ¼ì²é] Êı¾İ²»×ã£¬Ìø¹ı±¾´Î´¦Àí")
             log_separator()
             continue
 
         try:
-            # è·å–å½“å‰æ—¶é—´å’Œä»·æ ¼æ•°æ®
+            # »ñÈ¡µ±Ç°Ê±¼äºÍ¼Û¸ñÊı¾İ
             current_time = timetag_to_datetime(ContextInfo.get_bar_timetag(ContextInfo.barpos), '%Y-%m-%d %H:%M:%S')
-            log_info(f"[æ—¶é—´ä¿¡æ¯] å¤„ç†æ—¶é—´: {current_time}")
+            log_info(f"[Ê±¼äĞÅÏ¢] ´¦ÀíÊ±¼ä: {current_time}")
             log_info(current_time[11:16])
-            # æ—¶é—´å¦‚æœæ˜¯ä¹ç‚¹æ•´æ—¶ï¼Œå½“å‰åˆ†é’Ÿäº¤æ˜“ 9ç‚¹æ•´çš„1åˆ†é’Ÿkçº¿æ˜¯å½“æ—¥çš„æ•°æ®æ²¡æœ‰åŠæ³•ä½¿ç”¨
+            # Ê±¼äÈç¹ûÊÇ¾ÅµãÕûÊ±£¬µ±Ç°·ÖÖÓ½»Ò× 9µãÕûµÄ1·ÖÖÓkÏßÊÇµ±ÈÕµÄÊı¾İÃ»ÓĞ°ì·¨Ê¹ÓÃ
             if current_time[11:16] == "09:00":
-                log_info(f"  å½“å‰åˆ†é’Ÿä¸äº¤æ˜“{current_time}")
+                log_info(f"  µ±Ç°·ÖÖÓ²»½»Ò×{current_time}")
                 continue
 
-            # è·å–è®¡ç®—éœ€è¦çš„æ•°æ®
-            log_debug("[æ•°æ®è·å–] å¼€å§‹è·å–ä»·æ ¼æ•°æ®...")
+            # »ñÈ¡¼ÆËãĞèÒªµÄÊı¾İ
+            log_debug("[Êı¾İ»ñÈ¡] ¿ªÊ¼»ñÈ¡¼Û¸ñÊı¾İ...")
             price_data = get_price_data(ContextInfo)
-            log_debug(f'[æ•°æ®è·å–]: \n {str(price_data)}')
+            log_debug(f'[Êı¾İ»ñÈ¡]: \n {str(price_data)}')
             if price_data is None or len(price_data) <= max(g.entry_window, g.atr_window):
-                log_info("[æ•°æ®è·å–] æ•°æ®ä¸è¶³ï¼Œè·³è¿‡æœ¬æ¬¡å¤„ç†")
+                log_info("[Êı¾İ»ñÈ¡] Êı¾İ²»×ã£¬Ìø¹ı±¾´Î´¦Àí")
                 log_separator()
                 continue
-            log_debug(f"[æ•°æ®è·å–] æˆåŠŸè·å–ä»·æ ¼æ•°æ®ï¼Œå…± {len(price_data)} æ¡è®°å½•")
+            log_debug(f"[Êı¾İ»ñÈ¡] ³É¹¦»ñÈ¡¼Û¸ñÊı¾İ£¬¹² {len(price_data)} Ìõ¼ÇÂ¼")
 
-            # è®¡ç®—ATRå’ŒNå€¼
-            log_debug("[ATRè®¡ç®—] å¼€å§‹è®¡ç®—ATRå’ŒNå€¼...")
+            # ¼ÆËãATRºÍNÖµ
+            log_debug("[ATR¼ÆËã] ¿ªÊ¼¼ÆËãATRºÍNÖµ...")
             g.N[stock_code] = calculate_atr(stock_code, price_data, g.atr_window)
 
             if g.N[stock_code] <= 0:
-                log_info("[ATRè®¡ç®—] ATRå€¼è®¡ç®—å¼‚å¸¸ï¼Œè·³è¿‡æœ¬æ¬¡å¤„ç†")
+                log_info("[ATR¼ÆËã] ATRÖµ¼ÆËãÒì³££¬Ìø¹ı±¾´Î´¦Àí")
                 log_separator()
                 continue
-            log_debug(f"[ATRè®¡ç®—] å½“å‰ATR(Nå€¼): {g.N[stock_code]:.4f}")
+            log_debug(f"[ATR¼ÆËã] µ±Ç°ATR(NÖµ): {g.N[stock_code]:.4f}")
 
             if g.position_count >= g.position_limit:
-                log_info(f"[äº¤æ˜“æ‰§è¡Œ] å½“å‰æŒä»“{g.position_count}ä¸ªï¼Œ å·²æ»¡è¶³{g.position_limit}ä¸ªï¼Œä¸æ‰§è¡Œæ–°çš„å¼€ä»“æ“ä½œ")
+                log_info(f"[½»Ò×Ö´ĞĞ] µ±Ç°³Ö²Ö{g.position_count}¸ö£¬ ÒÑÂú×ã{g.position_limit}¸ö£¬²»Ö´ĞĞĞÂµÄ¿ª²Ö²Ù×÷")
             else:
-                log_info(f"[äº¤æ˜“æ‰§è¡Œ] å½“å‰æŒä»“{g.position_count}ä¸ªï¼Œä¸æ»¡{g.position_limit}ä¸ªï¼Œå¯ä»¥æ‰§è¡Œæ–°çš„å¼€ä»“æ“ä½œ")
+                log_info(f"[½»Ò×Ö´ĞĞ] µ±Ç°³Ö²Ö{g.position_count}¸ö£¬²»Âú{g.position_limit}¸ö£¬¿ÉÒÔÖ´ĞĞĞÂµÄ¿ª²Ö²Ù×÷")
 
-            # å†³ç­–åˆ†åŒº - åˆ¤æ–­æ˜¯å¦éœ€è¦äº¤æ˜“
-            log_debug("[ä¿¡å·ç”Ÿæˆ] å¼€å§‹ç”Ÿæˆäº¤æ˜“ä¿¡å·...")
+            # ¾ö²ß·ÖÇø - ÅĞ¶ÏÊÇ·ñĞèÒª½»Ò×
+            log_debug("[ĞÅºÅÉú³É] ¿ªÊ¼Éú³É½»Ò×ĞÅºÅ...")
             signal = generate_signal(ContextInfo, price_data)
-            log_info(f"[ä¿¡å·ç”Ÿæˆ] ç”Ÿæˆçš„äº¤æ˜“ä¿¡å·: {signal}")
+            log_info(f"[ĞÅºÅÉú³É] Éú³ÉµÄ½»Ò×ĞÅºÅ: {signal}")
 
-            # æ‰§è¡Œä¹°å–æ“ä½œ
+            # Ö´ĞĞÂòÂô²Ù×÷
             if signal != (0, 0):
-                log_debug("[äº¤æ˜“æ‰§è¡Œ] æ£€æµ‹åˆ°äº¤æ˜“ä¿¡å·ï¼Œå¼€å§‹æ‰§è¡Œäº¤æ˜“...")
+                log_debug("[½»Ò×Ö´ĞĞ] ¼ì²âµ½½»Ò×ĞÅºÅ£¬¿ªÊ¼Ö´ĞĞ½»Ò×...")
                 execute_trade(ContextInfo, signal, price_data)
             else:
-                log_info("[äº¤æ˜“æ‰§è¡Œ] æ— äº¤æ˜“ä¿¡å·ï¼Œç»§ç»­è§‚å¯Ÿå¸‚åœº")
+                log_info("[½»Ò×Ö´ĞĞ] ÎŞ½»Ò×ĞÅºÅ£¬¼ÌĞø¹Û²ìÊĞ³¡")
 
         except Exception as e:
-            log_info(f"[å¼‚å¸¸å¤„ç†] å¤„ç†è¿‡ç¨‹ä¸­å‘ç”Ÿé”™è¯¯: {e}")
+            log_info(f"[Òì³£´¦Àí] ´¦Àí¹ı³ÌÖĞ·¢Éú´íÎó: {e}")
             log_separator()
             continue
 
-    log_section("[å¤„ç†å‡½æ•°] handlebarå‡½æ•°æ‰§è¡Œå®Œæˆ")
+    log_section("[´¦Àíº¯Êı] handlebarº¯ÊıÖ´ĞĞÍê³É")
 
 
 def get_price_data(ContextInfo):
     """
-    è·å–è®¡ç®—éœ€è¦çš„æ•°æ®
-    è¿”å›åŒ…å«OHLCæ•°æ®çš„DataFrame
+    »ñÈ¡¼ÆËãĞèÒªµÄÊı¾İ
+    ·µ»Ø°üº¬OHLCÊı¾İµÄDataFrame
     """
     try:
-        log_debug("  [ä»·æ ¼æ•°æ®] å¼€å§‹è·å–ä»·æ ¼æ•°æ®...")
+        log_debug("  [¼Û¸ñÊı¾İ] ¿ªÊ¼»ñÈ¡¼Û¸ñÊı¾İ...")
 
-        # è®¡ç®—éœ€è¦çš„å†å²æ•°æ®å¤©æ•°
+        # ¼ÆËãĞèÒªµÄÀúÊ·Êı¾İÌìÊı
         required_bars = max(g.entry_window, g.exit_window, g.atr_window) + 5
-        log_debug(f"  [ä»·æ ¼æ•°æ®] éœ€è¦è·å– {required_bars} æ¡å†å²æ•°æ®")
+        log_debug(f"  [¼Û¸ñÊı¾İ] ĞèÒª»ñÈ¡ {required_bars} ÌõÀúÊ·Êı¾İ")
 
-        # è·å–éå½“æ—¥çš„å†å²æ•°æ®ï¼Œä½¿ç”¨1då‘¨æœŸ
+        # »ñÈ¡·Çµ±ÈÕµÄÀúÊ·Êı¾İ£¬Ê¹ÓÃ1dÖÜÆÚ
         history_market_data = ContextInfo.get_market_data_ex(
             ['time', 'open', 'high', 'low', 'close'],
             [g.current_stock_code],
@@ -294,28 +294,28 @@ def get_price_data(ContextInfo):
             subscribe=True
         )
         if not history_market_data or g.current_stock_code not in history_market_data:
-            log_info("  [ä»·æ ¼æ•°æ®] è·å–å†å²å¸‚åœºæ•°æ®ä¸ºç©º")
+            log_info("  [¼Û¸ñÊı¾İ] »ñÈ¡ÀúÊ·ÊĞ³¡Êı¾İÎª¿Õ")
             return None
 
         history_df = history_market_data[g.current_stock_code]
 
-        # å°†æ—¶é—´æˆ³è½¬æ¢ä¸ºå¯è¯»çš„æ—¶é—´æ ¼å¼
+        # ½«Ê±¼ä´Á×ª»»Îª¿É¶ÁµÄÊ±¼ä¸ñÊ½
         history_df['time'] = history_df['time'].apply(lambda x: timetag_to_datetime(x, '%Y-%m-%d %H:%M:%S'))
 
-        log_debug(f"  [ä»·æ ¼æ•°æ®] è¯·æ±‚å‚æ•° - æ ‡çš„: {g.current_stock_code}, å‘¨æœŸ: {ContextInfo.period}, æ•°é‡: 1")
+        log_debug(f"  [¼Û¸ñÊı¾İ] ÇëÇó²ÎÊı - ±êµÄ: {g.current_stock_code}, ÖÜÆÚ: {ContextInfo.period}, ÊıÁ¿: 1")
 
         current_market_data_more = ContextInfo.get_market_data_ex(
             ['time', 'open', 'high', 'low', 'close'],
             [g.current_stock_code],
-            start_time=g.current_date[:8] + '000000',  # å½“å¤©00:00:00å¼€å§‹
+            start_time=g.current_date[:8] + '000000',  # µ±Ìì00:00:00¿ªÊ¼
             end_time=g.current_date,
-            period=ContextInfo.period,  # ä½¿ç”¨1åˆ†é’Ÿå‘¨æœŸ
+            period=ContextInfo.period,  # Ê¹ÓÃ1·ÖÖÓÖÜÆÚ
             dividend_type=ContextInfo.dividend_type,
             subscribe=True
         )
 
         if not current_market_data_more or g.current_stock_code not in current_market_data_more:
-            log_info("  [ä»·æ ¼æ•°æ®] è·å–å½“æ—¥å¸‚åœºæ•°æ®ä¸ºç©º")
+            log_info("  [¼Û¸ñÊı¾İ] »ñÈ¡µ±ÈÕÊĞ³¡Êı¾İÎª¿Õ")
             return None
 
         current_df_more = current_market_data_more[g.current_stock_code]
@@ -327,7 +327,7 @@ def get_price_data(ContextInfo):
         low_price = current_df_more['low'].min()
         close_price = current_df_more['close'].iloc[-1]
 
-        # æ„é€ æ–°çš„DataFrameï¼ŒåªåŒ…å«ä¸€æ¡è®°å½•
+        # ¹¹ÔìĞÂµÄDataFrame£¬Ö»°üº¬Ò»Ìõ¼ÇÂ¼
         current_data_dict = {
             'time': [current_df_more['time'].iloc[-1]],
             'open': [open_price],
@@ -336,13 +336,13 @@ def get_price_data(ContextInfo):
             'close': [close_price]
         }
         current_df = pd.DataFrame(current_data_dict)
-        log_info(f"  è·å–å½“å¤©æ•°æ®: \n {current_df}")
+        log_info(f"  »ñÈ¡µ±ÌìÊı¾İ: \n {current_df}")
 
-        # æ›¿æ¢å†å²æ•°æ®ä¸­çš„æœ€åä¸€æ¡ä¸ºå½“æ—¥æœ€æ–°æ•°æ®
+        # Ìæ»»ÀúÊ·Êı¾İÖĞµÄ×îºóÒ»ÌõÎªµ±ÈÕ×îĞÂÊı¾İ
         if len(history_df) > 0 and len(current_df) > 0:
-            # åˆ é™¤å†å²æ•°æ®ä¸­çš„æœ€åä¸€æ¡ï¼ˆå½“å¤©æ•°æ®ï¼‰
+            # É¾³ıÀúÊ·Êı¾İÖĞµÄ×îºóÒ»Ìõ£¨µ±ÌìÊı¾İ£©
             history_df = history_df[:-1]
-            # å°†å½“æ—¥æœ€æ–°æ•°æ®æ·»åŠ åˆ°å†å²æ•°æ®æœ«å°¾
+            # ½«µ±ÈÕ×îĞÂÊı¾İÌí¼Óµ½ÀúÊ·Êı¾İÄ©Î²
             df = pd.concat([history_df, current_df], ignore_index=True)
         else:
             df = history_df
@@ -350,244 +350,218 @@ def get_price_data(ContextInfo):
         return df
 
     except Exception as e:
-        log_info(f"  [ä»·æ ¼æ•°æ®] è·å–ä»·æ ¼æ•°æ®æ—¶å‘ç”Ÿé”™è¯¯: {e}")
+        log_info(f"  [¼Û¸ñÊı¾İ] »ñÈ¡¼Û¸ñÊı¾İÊ±·¢Éú´íÎó: {e}")
         return None
 
 
 def calculate_atr(stock_code, data, window):
     """
-    è®¡ç®—ATR(Nå€¼)ï¼Œæ”¯æŒå¤šåˆçº¦ç‹¬ç«‹è®¡ç®—
-    ATRæ˜¯çœŸå®æ³¢å¹…çš„Næ—¥å¹³å‡å€¼ï¼Œç”¨äºè¡¡é‡å¸‚åœºæ³¢åŠ¨æ€§
+    ¼ÆËãATR(NÖµ)£¬Ö§³Ö¶àºÏÔ¼¶ÀÁ¢¼ÆËã
+    ATRÊÇÕæÊµ²¨·ùµÄNÈÕÆ½¾ùÖµ£¬ÓÃÓÚºâÁ¿ÊĞ³¡²¨¶¯ĞÔ
     TR = MAX(High-Low, ABS(High-Close_prev), ABS(Low-Close_prev))
     ATR = MA(TR, N)
     """
     try:
-        log_debug(f"  [ATRè®¡ç®—] å¼€å§‹è®¡ç®—ATRï¼Œä½¿ç”¨ {window} æ—¥æ•°æ® (åˆçº¦: {stock_code})")
-        # è®¡ç®—çœŸå®æ³¢å¹…(TR)
+        log_debug(f"  [ATR¼ÆËã] ¿ªÊ¼¼ÆËãATR£¬Ê¹ÓÃ {window} ÈÕÊı¾İ (ºÏÔ¼: {stock_code})")
+        # ¼ÆËãÕæÊµ²¨·ù(TR)
         high = data['high'].values
         low = data['low'].values
         close = data['close'].values
 
-        log_debug(f"  [ATRè®¡ç®—] ä»·æ ¼æ•°æ®ç»Ÿè®¡ (åˆçº¦: {stock_code}):")
-        log_debug(f"    æœ€é«˜ä»·èŒƒå›´: {high[-window - 1:-1]}")
-        log_debug(f"    æœ€ä½ä»·èŒƒå›´: {low[-window - 1:-1]}")
-        log_debug(f"    æ”¶ç›˜ä»·èŒƒå›´: {close[-window - 1:-1]}")
+        log_debug(f"  [ATR¼ÆËã] ¼Û¸ñÊı¾İÍ³¼Æ (ºÏÔ¼: {stock_code}):")
+        log_debug(f"    ×î¸ß¼Û·¶Î§: {high[-window - 1:-1]}")
+        log_debug(f"    ×îµÍ¼Û·¶Î§: {low[-window - 1:-1]}")
+        log_debug(f"    ÊÕÅÌ¼Û·¶Î§: {close[-window - 1:-1]}")
 
         # TR = MAX(High-Low, ABS(High-Close_prev), ABS(Low-Close_prev))
         tr = np.maximum(high[1:] - low[1:], np.abs(high[1:] - close[:-1]))
         tr = np.maximum(tr, np.abs(low[1:] - close[:-1]))
 
-        log_debug(f"  [ATRè®¡ç®—] è®¡ç®—å¾—åˆ°TRå€¼: {tr[-window:]}")
+        log_debug(f"  [ATR¼ÆËã] ¼ÆËãµÃµ½TRÖµ: {tr[-window:]}")
 
-        # è®¡ç®—ATR(Næ—¥å‡å€¼)
+        # ¼ÆËãATR(NÈÕ¾ùÖµ)
         atr = np.mean(tr[-window:])
-        log_info(f"  [ATRè®¡ç®—] ATRè®¡ç®—ç»“æœ: {atr} (åˆçº¦: {stock_code})")
+        log_info(f"  [ATR¼ÆËã] ATR¼ÆËã½á¹û: {atr} (ºÏÔ¼: {stock_code})")
 
-        # TRå€¼å’ŒATRå€¼å†™åˆ°dataä¸­ç”¨äºæŸ¥è¯¢è®°å½•ä¿¡æ¯
-        # ä¿®å¤é•¿åº¦ä¸åŒ¹é…é—®é¢˜ï¼štræ•°ç»„æ¯”åŸå§‹æ•°æ®å°‘ä¸€ä¸ªå…ƒç´ ï¼ˆå› ä¸ºè®¡ç®—å·®å€¼ï¼‰
-        data['tr'] = np.append([np.nan], tr)  # åœ¨å‰é¢æ·»åŠ NaNä»¥åŒ¹é…é•¿åº¦
+        # TRÖµºÍATRÖµĞ´µ½dataÖĞÓÃÓÚ²éÑ¯¼ÇÂ¼ĞÅÏ¢
+        # ĞŞ¸´³¤¶È²»Æ¥ÅäÎÊÌâ£ºtrÊı×é±ÈÔ­Ê¼Êı¾İÉÙÒ»¸öÔªËØ£¨ÒòÎª¼ÆËã²îÖµ£©
+        data['tr'] = np.append([np.nan], tr)  # ÔÚÇ°ÃæÌí¼ÓNaNÒÔÆ¥Åä³¤¶È
         data['atr'] = atr
 
-        # ä¿å­˜åˆ°å…¨å±€å˜é‡ä¸­ï¼Œæ¯ä¸ªåˆçº¦ç‹¬ç«‹å­˜å‚¨
+        # ±£´æµ½È«¾Ö±äÁ¿ÖĞ£¬Ã¿¸öºÏÔ¼¶ÀÁ¢´æ´¢
         g.N[stock_code] = atr
 
         return atr
 
     except Exception as e:
-        log_info(f"  [ATRè®¡ç®—] è®¡ç®—ATRæ—¶å‘ç”Ÿé”™è¯¯: {e} (åˆçº¦: {stock_code})")
+        log_info(f"  [ATR¼ÆËã] ¼ÆËãATRÊ±·¢Éú´íÎó: {e} (ºÏÔ¼: {stock_code})")
         return 0
 
 
 def get_account_info(ContextInfo):
     """
-    è·å–è´¦æˆ·ä¿¡æ¯
-    åŒ…æ‹¬å¯ç”¨èµ„é‡‘ã€æ€»æƒç›Šã€æŒä»“ç­‰
+    »ñÈ¡ÕË»§ĞÅÏ¢
+    °üÀ¨¿ÉÓÃ×Ê½ğ¡¢×ÜÈ¨Òæ¡¢³Ö²ÖµÈ
     """
     try:
-        log_debug("  [è´¦æˆ·ä¿¡æ¯] å¼€å§‹è·å–è´¦æˆ·ä¿¡æ¯...")
+        log_debug("  [ÕË»§ĞÅÏ¢] ¿ªÊ¼»ñÈ¡ÕË»§ĞÅÏ¢...")
 
-        # è·å–è´¦æˆ·èµ„é‡‘ä¿¡æ¯
-        log_debug("  [è´¦æˆ·ä¿¡æ¯] è·å–è´¦æˆ·èµ„é‡‘è¯¦æƒ…...")
+        # »ñÈ¡ÕË»§×Ê½ğĞÅÏ¢
+        log_debug("  [ÕË»§ĞÅÏ¢] »ñÈ¡ÕË»§×Ê½ğÏêÇé...")
         account_details = get_trade_detail_data(ContextInfo.account_id, 'FUTURE', 'ACCOUNT')
         if not account_details:
-            log_info("  [è´¦æˆ·ä¿¡æ¯] è·å–è´¦æˆ·è¯¦æƒ…å¤±è´¥")
+            log_info("  [ÕË»§ĞÅÏ¢] »ñÈ¡ÕË»§ÏêÇéÊ§°Ü")
             return None
-        g.position_code = []  # ä»“ä½ä»£ç 
+        g.position_code = []  # ²ÖÎ»´úÂë
         account = account_details[0]
-        available = account.m_dAvailable  # å¯ç”¨èµ„é‡‘
-        total_value = account.m_dBalance  # æ€»æƒç›Š
-        # å›æ’¤å‚æ•°è·å–ä¿è¯é‡‘æ¯”ä¾‹ ç³»ç»Ÿé…ç½®å‚æ•°
-        # margin_rate = account.m_dMaxMarginRate  # ä¿è¯é‡‘
-        # ContextInfo.margin_rate = margin_rate  # ä¿è¯é‡‘
+        available = account.m_dAvailable  # ¿ÉÓÃ×Ê½ğ
+        total_value = account.m_dBalance  # ×ÜÈ¨Òæ
+        # »Ø³·²ÎÊı»ñÈ¡±£Ö¤½ğ±ÈÀı ÏµÍ³ÅäÖÃ²ÎÊı
+        # margin_rate = account.m_dMaxMarginRate  # ±£Ö¤½ğ
+        # ContextInfo.margin_rate = margin_rate  # ±£Ö¤½ğ
 
-        log_info(f"  [è´¦æˆ·ä¿¡æ¯] è´¦æˆ·èµ„é‡‘ä¿¡æ¯: å¯ç”¨èµ„é‡‘={available:.2f}, æ€»èµ„äº§={total_value:.2f}")
+        log_info(f"  [ÕË»§ĞÅÏ¢] ÕË»§×Ê½ğĞÅÏ¢: ¿ÉÓÃ×Ê½ğ={available:.2f}, ×Ü×Ê²ú={total_value:.2f}")
 
-        # é‡ç½®æ‰€æœ‰åˆçº¦çš„æŒä»“çŠ¶æ€
+        # ÖØÖÃËùÓĞºÏÔ¼µÄ³Ö²Ö×´Ì¬
         for stock_code in g.current_trading_contracts:
-            g.long_position[stock_code] = 0  # é‡ç½®å¤šå¤´æŒä»“çŠ¶æ€
-            g.short_position[stock_code] = 0  # é‡ç½®ç©ºå¤´æŒä»“çŠ¶æ€
-            g.long_open_date[stock_code] = None  # é‡ç½®å¤šå¤´å¼€ä»“æ—¥æœŸ
-            g.short_open_date[stock_code] = None  # é‡ç½®ç©ºå¤´å¼€ä»“æ—¥æœŸ
+            g.long_position[stock_code] = 0  # ÖØÖÃ¶àÍ·³Ö²Ö×´Ì¬
+            g.short_position[stock_code] = 0  # ÖØÖÃ¿ÕÍ·³Ö²Ö×´Ì¬
+            g.long_open_date[stock_code] = None  # ÖØÖÃ¶àÍ·¿ª²ÖÈÕÆÚ
+            g.short_open_date[stock_code] = None  # ÖØÖÃ¿ÕÍ·¿ª²ÖÈÕÆÚ
         g.position_count = 0
 
-        # è·å–æœªæˆäº¤å§”æ‰˜ä¿¡æ¯å¹¶æ’¤é”€æœªæˆäº¤å§”æ‰˜
-        log_debug("  [è´¦æˆ·ä¿¡æ¯] è·å–æœªæˆäº¤å§”æ‰˜è¯¦æƒ…...")
+        # »ñÈ¡Î´³É½»Î¯ÍĞĞÅÏ¢²¢³·ÏúÎ´³É½»Î¯ÍĞ
+        log_debug("  [ÕË»§ĞÅÏ¢] »ñÈ¡Î´³É½»Î¯ÍĞÏêÇé...")
         order_details = get_trade_detail_data(ContextInfo.account_id, 'FUTURE', 'ORDER')
         if order_details:
             order_len = 0
             for order in order_details:
-                # log_info(f"  [è´¦æˆ·ä¿¡æ¯] è·å–åˆ°å§”æ‰˜è®°å½•ï¼š\n {to_dict(order)}")
-                # è·å–å§”æ‰˜çŠ¶æ€ï¼Œ50-54è¡¨ç¤ºæœªæˆäº¤çŠ¶æ€
+                # log_info(f"  [ÕË»§ĞÅÏ¢] »ñÈ¡µ½Î¯ÍĞ¼ÇÂ¼£º\n {to_dict(order)}")
+                # »ñÈ¡Î¯ÍĞ×´Ì¬£¬50-54±íÊ¾Î´³É½»×´Ì¬
                 order_status = order.m_nOrderStatus
                 symbol = order.m_strInstrumentID + '.' + order.m_strExchangeID
 
-                # æ£€æŸ¥æ˜¯å¦ä¸ºæœªæˆäº¤çŠ¶æ€(çŠ¶æ€ç 49-53)
+                # ¼ì²éÊÇ·ñÎªÎ´³É½»×´Ì¬(×´Ì¬Âë49-53)
                 if 49 <= order_status < 54:
                     log_info(
-                        f"  [è´¦æˆ·ä¿¡æ¯] å‘ç°æœªæˆäº¤å§”æ‰˜ï¼Œåˆçº¦: {symbol}, çŠ¶æ€: {order_status}, å§”æ‰˜ç¼–å·: {order.m_strOrderSysID}")
-                    # æ’¤é”€æœªæˆäº¤å§”æ‰˜
+                        f"  [ÕË»§ĞÅÏ¢] ·¢ÏÖÎ´³É½»Î¯ÍĞ£¬ºÏÔ¼: {symbol}, ×´Ì¬: {order_status}, Î¯ÍĞ±àºÅ: {order.m_strOrderSysID}")
+                    # ³·ÏúÎ´³É½»Î¯ÍĞ
                     cancel_result = cancel(order.m_strOrderSysID, ContextInfo.account_id, 'FUTURE', ContextInfo)
-                    log_info(f"  [è´¦æˆ·ä¿¡æ¯] æ’¤é”€å§”æ‰˜ç»“æœ: {cancel_result}")
+                    log_info(f"  [ÕË»§ĞÅÏ¢] ³·ÏúÎ¯ÍĞ½á¹û: {cancel_result}")
                     order_len += 1
                 else:
-                    log_debug(f"  [è´¦æˆ·ä¿¡æ¯] åˆçº¦: {symbol} ,å§”æ‰˜çŠ¶æ€ä¸º: {order_status}ï¼Œæ— éœ€æ’¤é”€")
-            log_info(f"  [è´¦æˆ·ä¿¡æ¯] å¤„ç†  {order_len} æ¡å§”æ‰˜è®°å½•")
+                    log_debug(f"  [ÕË»§ĞÅÏ¢] ºÏÔ¼: {symbol} ,Î¯ÍĞ×´Ì¬Îª: {order_status}£¬ÎŞĞè³·Ïú")
+            log_info(f"  [ÕË»§ĞÅÏ¢] ´¦Àí  {order_len} ÌõÎ¯ÍĞ¼ÇÂ¼")
         else:
-            log_info("  [è´¦æˆ·ä¿¡æ¯] æ— å§”æ‰˜è®°å½•")
+            log_info("  [ÕË»§ĞÅÏ¢] ÎŞÎ¯ÍĞ¼ÇÂ¼")
 
-        # è·å–æŒä»“ä¿¡æ¯
-        log_debug("  [è´¦æˆ·ä¿¡æ¯] è·å–æŒä»“è¯¦æƒ…...")
+        # »ñÈ¡³Ö²ÖĞÅÏ¢
+        log_debug("  [ÕË»§ĞÅÏ¢] »ñÈ¡³Ö²ÖÏêÇé...")
         position_details = get_trade_detail_data(ContextInfo.account_id, 'FUTURE', 'POSITION')
         PositionInfo_dict = {}
         PositionInfo_dfs = pd.DataFrame()
 
         if position_details:
-            position_data_list = []
             for pos in position_details:
-                if pos.m_nVolume != 0:  # å¿½ç•¥æŒä»“é‡ä¸º0çš„åˆçº¦
-                    # è·å– pos å¯¹è±¡è½¬jsonä¿¡æ¯
-                    # log_info(f"  [è´¦æˆ·ä¿¡æ¯] è·å–æŒä»“å±æ€§ä¿¡æ¯: {dir(pos)}")
+                if pos.m_nVolume != 0:  # ºöÂÔ³Ö²ÖÁ¿Îª0µÄºÏÔ¼
+                    # »ñÈ¡ pos ¶ÔÏó×ªjsonĞÅÏ¢
+                    # log_info(f"  [ÕË»§ĞÅÏ¢] »ñÈ¡³Ö²ÖÊôĞÔĞÅÏ¢: {dir(pos)}")
                     symbol = pos.m_strInstrumentID + '.' + pos.m_strExchangeID
 
                     position_type = pos.m_nDirection
-                    
-                    # æ„å»ºæŒä»“æ•°æ®åˆ—è¡¨ç”¨äºåç»­èšåˆ
-                    position_record = {
-                        'æŒä»“é‡': pos.m_nVolume,
-                        'ä»£ç ': symbol,
-                        'æŒä»“ç±»å‹': position_type,
-                        'æŒä»“æˆæœ¬': pos.m_dOpenPrice,
-                        'æŒä»“ç›ˆäº': pos.m_dPositionProfit,
-                        'å¼€ä»“æ—¥æœŸ': pos.m_strOpenDate
-                    }
-                    position_data_list.append(position_record)
+                    # ¼ì²é³Ö²ÖÊÇ·ñÊôÓÚµ±Ç°²ßÂÔµÄºÏÔ¼
+                    if position_type == 48:  # ¶àÍ·³Ö²Ö
+                        g.long_position[symbol] = 1  # ¶àÍ·³Ö²Ö×´Ì¬
+                        g.long_open_date[symbol] = pos.m_strOpenDate  # ¶àÍ·¿ª²ÖÈÕÆÚ
+                        g.long_volume[symbol] = pos.m_nVolume  # ¶àÍ·³Ö²ÖÁ¿
+                        g.long_entry_price[symbol] = pos.m_dOpenPrice  # ¶àÍ·³Ö²Ö³É±¾
 
-            # åˆ›å»ºDataFrameå¹¶æŒ‰ä»£ç å’ŒæŒä»“ç±»å‹èšåˆæŒä»“æ•°æ®
-            if position_data_list:
-                PositionInfo_dfs = pd.DataFrame(position_data_list)
-                
-                # æŒ‰ä»£ç å’ŒæŒä»“ç±»å‹èšåˆæŒä»“æ•°æ®
-                aggregated_positions = PositionInfo_dfs.groupby(['ä»£ç ', 'æŒä»“ç±»å‹']).agg({
-                    'æŒä»“é‡': 'sum',
-                    'æŒä»“æˆæœ¬': lambda x: np.average(x, weights=PositionInfo_dfs.loc[x.index, 'æŒä»“é‡']),  # åŠ æƒå¹³å‡æˆæœ¬
-                    'æŒä»“ç›ˆäº': 'sum',
-                    'å¼€ä»“æ—¥æœŸ': 'first'
-                }).reset_index()
-                
-                # ä»èšåˆåçš„æ•°æ®ä¸­è·å–æŒä»“ä¿¡æ¯
-                for _, row in aggregated_positions.iterrows():
-                    symbol = row['ä»£ç ']
-                    position_type = row['æŒä»“ç±»å‹']
-                    volume = row['æŒä»“é‡']
-                    entry_price = row['æŒä»“æˆæœ¬']
-                    open_date = row['å¼€ä»“æ—¥æœŸ']
-                    
-                    # æ£€æŸ¥æŒä»“æ˜¯å¦å±äºå½“å‰ç­–ç•¥çš„åˆçº¦
-                    if position_type == 48:  # å¤šå¤´æŒä»“
-                        g.long_position[symbol] = 1  # å¤šå¤´æŒä»“çŠ¶æ€
-                        g.long_open_date[symbol] = open_date  # å¤šå¤´å¼€ä»“æ—¥æœŸ
-                        g.long_volume[symbol] = volume  # å¤šå¤´æŒä»“é‡
-                        g.long_entry_price[symbol] = entry_price  # å¤šå¤´æŒä»“æˆæœ¬
+                    elif position_type == 49:  # ¿ÕÍ·³Ö²Ö
+                        g.short_position[symbol] = 1  # ¿ÕÍ·³Ö²Ö×´Ì¬
+                        g.short_open_date[symbol] = pos.m_strOpenDate  # ¿ÕÍ·¿ª²ÖÈÕÆÚ
+                        g.short_volume[symbol] = pos.m_nVolume  # ¿ÕÍ·³Ö²ÖÁ¿
+                        g.short_entry_price[symbol] = pos.m_dOpenPrice  # ¿ÕÍ·³Ö²Ö³É±¾
 
-                    elif position_type == 49:  # ç©ºå¤´æŒä»“
-                        g.short_position[symbol] = 1  # ç©ºå¤´æŒä»“çŠ¶æ€
-                        g.short_open_date[symbol] = open_date  # ç©ºå¤´å¼€ä»“æ—¥æœŸ
-                        g.short_volume[symbol] = volume  # ç©ºå¤´æŒä»“é‡
-                        g.short_entry_price[symbol] = entry_price  # ç©ºå¤´æŒä»“æˆæœ¬
-                
-                log_info(f"    [è´¦æˆ·ä¿¡æ¯] æŒä»“æ˜ç»†:\n {str(PositionInfo_dfs)} ")
-                log_info(f"    [è´¦æˆ·ä¿¡æ¯] èšåˆåæŒä»“:\n {str(aggregated_positions)} ")
-                
-                # æŒä»“æ•°é‡é€šè¿‡aggregated_positionsæœ‰å‡ è¡Œæ•°æ®æ¥å†³å®š
-                g.position_count = aggregated_positions.shape[0]
-                log_debug(f"  [è´¦æˆ·ä¿¡æ¯] æ›´æ–°æŒä»“çŠ¶æ€ï¼Œå½“å‰æŒä»“åˆçº¦æ•°: {g.position_count}")
+                    PositionInfo_dict['³Ö²ÖÁ¿'] = pos.m_nVolume  # ³Ö²ÖÁ¿
+                    PositionInfo_dict['´úÂë'] = symbol  # ³Ö²Ö´úÂë
+                    PositionInfo_dict['³Ö²ÖÀàĞÍ'] = position_type  # 48£º¶à 49£º¿Õ
+                    PositionInfo_dict['³Ö²Ö³É±¾'] = pos.m_dOpenPrice  # ³Ö²Ö³É±¾
+                    PositionInfo_dict['³Ö²ÖÓ¯¿÷'] = pos.m_dPositionProfit  # ³Ö²ÖÓ¯¿÷
+                    PositionInfo_dict['¿ª²ÖÈÕÆÚ'] = pos.m_strOpenDate  # ¿ª²ÖÈÕÆÚ
+                    PositionInfo_df = pd.DataFrame([PositionInfo_dict])
 
-                g.position_code = aggregated_positions['ä»£ç '].tolist()
-                log_debug(f"  [è´¦æˆ·ä¿¡æ¯] æŒä»“åˆçº¦åˆ—è¡¨: {g.position_code}")
-            else:
-                log_info("  [è´¦æˆ·ä¿¡æ¯] æ— æŒä»“è®°å½•")
+                    PositionInfo_dfs = pd.concat([PositionInfo_dfs, PositionInfo_df], ignore_index=True)
+
+            log_info(f"    [ÕË»§ĞÅÏ¢] ³Ö²Ö:\n {str(PositionInfo_dfs)} ")
+            # ³Ö²ÖÊıÁ¿Í¨¹ıPositionInfo_dfsÓĞ¼¸ĞĞÊı¾İÀ´¾ö¶¨
+            g.position_count = PositionInfo_dfs.shape[0]
+            log_debug(f"  [ÕË»§ĞÅÏ¢] ¸üĞÂ³Ö²Ö×´Ì¬£¬µ±Ç°³Ö²ÖºÏÔ¼Êı: {g.position_count}")
+
+            g.position_code = PositionInfo_dfs['´úÂë'].tolist()
+            log_debug(f"  [ÕË»§ĞÅÏ¢] ³Ö²ÖºÏÔ¼ÁĞ±í: {g.position_code}")
+
 
         else:
-            log_info("  [è´¦æˆ·ä¿¡æ¯] æ— æŒä»“è®°å½•")
+            log_info("  [ÕË»§ĞÅÏ¢] ÎŞ³Ö²Ö¼ÇÂ¼")
 
         return {
             'available': available,
             'total_value': total_value,
             'PositionInfo_dfs': PositionInfo_dfs,
-            'PositionInfo_dict': PositionInfo_dict,  # è¿”å›æ›´å¤šæŒä»“ä¿¡æ¯
+            'PositionInfo_dict': PositionInfo_dict,  # ·µ»Ø¸ü¶à³Ö²ÖĞÅÏ¢
         }
 
     except Exception as e:
-        log_info(f"  [è´¦æˆ·ä¿¡æ¯] è·å–è´¦æˆ·ä¿¡æ¯æ—¶å‘ç”Ÿé”™è¯¯: {e}")
+        log_info(f"  [ÕË»§ĞÅÏ¢] »ñÈ¡ÕË»§ĞÅÏ¢Ê±·¢Éú´íÎó: {e}")
         return None
 
 
 def generate_signal(ContextInfo, price_data):
     """
-    å†³ç­–åˆ†åŒº - ç”Ÿæˆäº¤æ˜“ä¿¡å·
-    æ ¹æ®ä¿®æ”¹åçš„æµ·é¾Ÿäº¤æ˜“æ³•åˆ™ç”Ÿæˆä¹°å…¥ã€å–å‡ºæˆ–æŒæœ‰ä¿¡å·
-    è¿”å›: (signal_type, position_type)
-    signal_type: 1=å¼€ä»“ä¿¡å·, -1=å¹³ä»“ä¿¡å·, 0=æ— ä¿¡å·
-    position_type: 1=å¤šå¤´æ“ä½œ, -1=ç©ºå¤´æ“ä½œ
+    ¾ö²ß·ÖÇø - Éú³É½»Ò×ĞÅºÅ
+    ¸ù¾İĞŞ¸ÄºóµÄº£¹ê½»Ò×·¨ÔòÉú³ÉÂòÈë¡¢Âô³ö»ò³ÖÓĞĞÅºÅ
+    ·µ»Ø: (signal_type, position_type)
+    signal_type: 1=¿ª²ÖĞÅºÅ, -1=Æ½²ÖĞÅºÅ, 0=ÎŞĞÅºÅ
+    position_type: 1=¶àÍ·²Ù×÷, -1=¿ÕÍ·²Ù×÷
     """
     try:
 
-        log_debug("  [ä¿¡å·ç”Ÿæˆ] å¼€å§‹ç”Ÿæˆäº¤æ˜“ä¿¡å·...")
+        log_debug("  [ĞÅºÅÉú³É] ¿ªÊ¼Éú³É½»Ò×ĞÅºÅ...")
 
-        # è·å–å½“å‰æœ€é«˜ä»·
+        # »ñÈ¡µ±Ç°×î¸ß¼Û
         current_price = price_data['close'].values[-1]
         current_high = price_data['high'].values[-1]
         current_low = price_data['low'].values[-1]
 
-        # è®¡ç®—å…¥å¸‚ä¿¡å· - å‰Næ—¥é«˜ä½ç‚¹çªç ´
-        # åšå¤šï¼šè¿‡å»entry_windowå¤©æ”¶ç›˜ä»·çš„æœ€é«˜ä»·
+        # ¼ÆËãÈëÊĞĞÅºÅ - Ç°NÈÕ¸ßµÍµãÍ»ÆÆ
+        # ×ö¶à£º¹ıÈ¥entry_windowÌìÊÕÅÌ¼ÛµÄ×î¸ß¼Û
         upper_channel = price_data['close'].iloc[-g.entry_window - 1:-1].max()
 
-        # åšç©ºï¼šè¿‡å»entry_windowå¤©æ”¶ç›˜ä»·çš„æœ€ä½ä»·
+        # ×ö¿Õ£º¹ıÈ¥entry_windowÌìÊÕÅÌ¼ÛµÄ×îµÍ¼Û
         lower_channel = price_data['close'].iloc[-g.entry_window - 1:-1].min()
 
-        # è®¡ç®—ç¦»å¸‚ä¿¡å· - ç¦»å¸‚é€šé“
-        # åšå¤šæ­¢ç›ˆ è¿‡å»exit_windowå¤©æ”¶ç›˜ä»·çš„æœ€ä½ä»·
+        # ¼ÆËãÀëÊĞĞÅºÅ - ÀëÊĞÍ¨µÀ
+        # ×ö¶àÖ¹Ó¯ ¹ıÈ¥exit_windowÌìÊÕÅÌ¼ÛµÄ×îµÍ¼Û
         exit_lower = price_data['close'].iloc[-g.exit_window - 1:-1].min()
 
-        # åšç©ºæ­¢ç›ˆ è¿‡å»exit_windowå¤©æ”¶ç›˜ä»·çš„æœ€é«˜ä»·
+        # ×ö¿ÕÖ¹Ó¯ ¹ıÈ¥exit_windowÌìÊÕÅÌ¼ÛµÄ×î¸ß¼Û
         exit_upper = price_data['close'].iloc[-g.exit_window - 1:-1].max()
 
-        log_info(f"  [ä¿¡å·ç”Ÿæˆ] é€šé“ä¿¡æ¯: åˆçº¦ä»£ç : {g.current_stock_code}")
-        log_info(f"    å½“æ—¥ä»·æ ¼: {current_price:.4f}")
-        log_info(f"    å½“æ—¥æœ€é«˜ä»·: {current_high:.4f}")
-        log_info(f"    å½“æ—¥æœ€ä½ä»·: {current_low:.4f}")
-        log_info(f"    åšå¤š: {upper_channel:.4f}")
-        log_info(f"    åšç©º: {lower_channel:.4f}")
-        log_info(f"    åšå¤šæ­¢ç›ˆ: {exit_lower:.4f}")
-        log_info(f"    åšç©ºæ­¢ç›ˆ: {exit_upper:.4f}")
-        log_info(f"    å¤šå¤´æŒä»“: {g.long_position[g.current_stock_code]}")
-        log_info(f"    ç©ºå¤´æŒä»“: {g.short_position[g.current_stock_code]}")
-        log_info(f"    å½“å‰ATRå€¼: {g.N[g.current_stock_code]:.4f}")
+        log_info(f"  [ĞÅºÅÉú³É] Í¨µÀĞÅÏ¢: ºÏÔ¼´úÂë: {g.current_stock_code}")
+        log_info(f"    µ±ÈÕ¼Û¸ñ: {current_price:.4f}")
+        log_info(f"    µ±ÈÕ×î¸ß¼Û: {current_high:.4f}")
+        log_info(f"    µ±ÈÕ×îµÍ¼Û: {current_low:.4f}")
+        log_info(f"    ×ö¶à: {upper_channel:.4f}")
+        log_info(f"    ×ö¿Õ: {lower_channel:.4f}")
+        log_info(f"    ×ö¶àÖ¹Ó¯: {exit_lower:.4f}")
+        log_info(f"    ×ö¿ÕÖ¹Ó¯: {exit_upper:.4f}")
+        log_info(f"    ¶àÍ·³Ö²Ö: {g.long_position[g.current_stock_code]}")
+        log_info(f"    ¿ÕÍ·³Ö²Ö: {g.short_position[g.current_stock_code]}")
+        log_info(f"    µ±Ç°ATRÖµ: {g.N[g.current_stock_code]:.4f}")
 
-        # ä¿®æ”¹åï¼šæ£€æŸ¥æ˜¯å¦æŒæœ‰å¤šå¤´æˆ–ç©ºå¤´ä»“ä½
-        if g.long_position[g.current_stock_code] == 1:  # å¤šå¤´å·²æœ‰æŒä»“
-            log_debug(f"  [ä¿¡å·ç”Ÿæˆ] å·²æœ‰å¤šå¤´æŒä»“ï¼Œæ›´æ–°æœ€é«˜:")
+        # ĞŞ¸Äºó£º¼ì²éÊÇ·ñ³ÖÓĞ¶àÍ·»ò¿ÕÍ·²ÖÎ»
+        if g.long_position[g.current_stock_code] == 1:  # ¶àÍ·ÒÑÓĞ³Ö²Ö
+            log_debug(f"  [ĞÅºÅÉú³É] ÒÑÓĞ¶àÍ·³Ö²Ö£¬¸üĞÂ×î¸ß:")
 
             long_history_market_data = ContextInfo.get_market_data_ex(
                 ['time', 'open', 'high', 'low', 'close'],
@@ -600,15 +574,15 @@ def generate_signal(ContextInfo, price_data):
             )
 
             long_history_market_data_max = long_history_market_data[g.current_stock_code]['high'].iloc[:-1].max()
-            # å†å²æœ€é«˜ä»· å’Œ å½“æ—¥æœ€é«˜ä»·æ¯”è¾ƒ
+            # ÀúÊ·×î¸ß¼Û ºÍ µ±ÈÕ×î¸ß¼Û±È½Ï
             g.highest_after_entry[g.current_stock_code] = current_high if np.isnan(
                 long_history_market_data_max) else max(
                 long_history_market_data_max, current_high)
 
-            log_info(f"    æ›´æ–°åæœ€é«˜ä»·: {g.highest_after_entry[g.current_stock_code]}   ")
+            log_info(f"    ¸üĞÂºó×î¸ß¼Û: {g.highest_after_entry[g.current_stock_code]}   ")
 
-        if g.short_position[g.current_stock_code] == 1:  # ç©ºå¤´å·²æœ‰æŒä»“
-            log_debug(f"  [ä¿¡å·ç”Ÿæˆ] å·²æœ‰ç©ºå¤´æŒä»“ï¼Œæ›´æ–°æœ€ä½:")
+        if g.short_position[g.current_stock_code] == 1:  # ¿ÕÍ·ÒÑÓĞ³Ö²Ö
+            log_debug(f"  [ĞÅºÅÉú³É] ÒÑÓĞ¿ÕÍ·³Ö²Ö£¬¸üĞÂ×îµÍ:")
             short_history_market_data = ContextInfo.get_market_data_ex(
                 ['time', 'open', 'high', 'low', 'close'],
                 [g.current_stock_code],
@@ -620,241 +594,241 @@ def generate_signal(ContextInfo, price_data):
             )
 
             short_history_market_data_min = short_history_market_data[g.current_stock_code]['low'].iloc[:-1].min()
-            # å†å²æœ€ä½ä»· å’Œ å½“æ—¥æœ€ä½ä»·æ¯”è¾ƒ
+            # ÀúÊ·×îµÍ¼Û ºÍ µ±ÈÕ×îµÍ¼Û±È½Ï
             g.lowest_after_entry[g.current_stock_code] = current_low if np.isnan(
                 short_history_market_data_min) else min(
                 short_history_market_data_min, current_low)
 
-            log_info(f"    æ›´æ–°åæœ€ä½ä»·: {g.lowest_after_entry[g.current_stock_code]}")
+            log_info(f"    ¸üĞÂºó×îµÍ¼Û: {g.lowest_after_entry[g.current_stock_code]}")
 
-        # æµ·é¾Ÿäº¤æ˜“æ³•åˆ™ä¿¡å·åˆ¤æ–­
-        # åˆ¤æ–­å¤šå¤´ä¿¡å·ï¼ˆæ— å¤šå¤´æŒä»“æ—¶å¯åšå¤šï¼Œæœ‰å¤šå¤´æŒä»“æ—¶åˆ¤æ–­æ˜¯å¦å¹³å¤šï¼‰
+        # º£¹ê½»Ò×·¨ÔòĞÅºÅÅĞ¶Ï
+        # ÅĞ¶Ï¶àÍ·ĞÅºÅ£¨ÎŞ¶àÍ·³Ö²ÖÊ±¿É×ö¶à£¬ÓĞ¶àÍ·³Ö²ÖÊ±ÅĞ¶ÏÊÇ·ñÆ½¶à£©
         if g.long_position[g.current_stock_code] == 0 and g.expire_date_diff[
-            g.current_stock_code] > g.near_expiry_days and g.position_count < g.position_limit:  # æ— å¤šå¤´æŒä»“ï¼Œåˆ¤æ–­æ˜¯å¦åšå¤š è·ç¦»åˆ°æœŸæ—¥å¤§äº30å¤© æŒä»“å°äº4ä¸ª
-            # ä¹°å…¥1ï¼ˆåšå¤šï¼‰ï¼šå½“æ—¥ä»·æ ¼ > å‰10æ—¥æ”¶ç›˜ä»·æœ€é«˜ç‚¹æ—¶ï¼Œå³å½“å‰ä»·æ ¼çªç ´å‰10æ—¥é«˜ç‚¹ï¼Œå½“æ—¥ç«‹åˆ»æ‰§è¡Œåšå¤š
-            if current_price >= upper_channel:  # çªç ´ä¸Šè½¨ï¼Œä¹°å…¥ä¿¡å·ï¼ˆåšå¤šï¼‰
-                log_debug("  [ä¿¡å·ç”Ÿæˆ] äº§ç”Ÿä¹°å…¥ä¿¡å·ï¼šä»·æ ¼çªç ´å…¥å¸‚ä¸Šè½¨")
-                log_info(f"  [ä¿¡å·ç”Ÿæˆ] ä¹°å…¥1ï¼ˆåšå¤šï¼‰: {current_price:.4f} å¤§äºç­‰äº å…¥å¸‚ä¸Šè½¨ {upper_channel}")
-                return (1, 1)  # å¼€ä»“ä¿¡å·ï¼Œå¤šå¤´æ“ä½œ
-        elif g.long_position[g.current_stock_code] == 1:  # æœ‰å¤šå¤´æŒä»“ï¼Œåˆ¤æ–­æ˜¯å¦å¹³å¤š
-            log_debug("  [ä¿¡å·ç”Ÿæˆ] å½“å‰æŒæœ‰å¤šå¤´ä»“ä½ï¼Œåˆ¤æ–­æ˜¯å¦å¹³ä»“")
+            g.current_stock_code] > g.near_expiry_days and g.position_count < g.position_limit:  # ÎŞ¶àÍ·³Ö²Ö£¬ÅĞ¶ÏÊÇ·ñ×ö¶à ¾àÀëµ½ÆÚÈÕ´óÓÚ30Ìì ³Ö²ÖĞ¡ÓÚ4¸ö
+            # ÂòÈë1£¨×ö¶à£©£ºµ±ÈÕ¼Û¸ñ > Ç°10ÈÕÊÕÅÌ¼Û×î¸ßµãÊ±£¬¼´µ±Ç°¼Û¸ñÍ»ÆÆÇ°10ÈÕ¸ßµã£¬µ±ÈÕÁ¢¿ÌÖ´ĞĞ×ö¶à
+            if current_price >= upper_channel:  # Í»ÆÆÉÏ¹ì£¬ÂòÈëĞÅºÅ£¨×ö¶à£©
+                log_debug("  [ĞÅºÅÉú³É] ²úÉúÂòÈëĞÅºÅ£º¼Û¸ñÍ»ÆÆÈëÊĞÉÏ¹ì")
+                log_info(f"  [ĞÅºÅÉú³É] ÂòÈë1£¨×ö¶à£©: {current_price:.4f} ´óÓÚµÈÓÚ ÈëÊĞÉÏ¹ì {upper_channel}")
+                return (1, 1)  # ¿ª²ÖĞÅºÅ£¬¶àÍ·²Ù×÷
+        elif g.long_position[g.current_stock_code] == 1:  # ÓĞ¶àÍ·³Ö²Ö£¬ÅĞ¶ÏÊÇ·ñÆ½¶à
+            log_debug("  [ĞÅºÅÉú³É] µ±Ç°³ÖÓĞ¶àÍ·²ÖÎ»£¬ÅĞ¶ÏÊÇ·ñÆ½²Ö")
 
-            log_debug(f"  [ä¿¡å·ç”Ÿæˆ] å¤šå¤´æ­¢ç›ˆä»·æ ¼è®¡ç®—:")
+            log_debug(f"  [ĞÅºÅÉú³É] ¶àÍ·Ö¹Ó¯¼Û¸ñ¼ÆËã:")
             stop_profit_price = g.highest_after_entry[g.current_stock_code] - (
                     g.highest_after_entry[g.current_stock_code] - g.long_entry_price[
                 g.current_stock_code]) * g.stop_profit_ratio
-            log_info(f"    å…¬å¼: æœ€é«˜ä»· - (æœ€é«˜ä»· - å…¥åœºä»·) * æ­¢ç›ˆæ¯”ä¾‹")
+            log_info(f"    ¹«Ê½: ×î¸ß¼Û - (×î¸ß¼Û - Èë³¡¼Û) * Ö¹Ó¯±ÈÀı")
             log_info(
-                f"    æ­¢ç›ˆå…¬å¼è®¡ç®—æ•°å€¼: {g.highest_after_entry[g.current_stock_code]} - ({g.highest_after_entry[g.current_stock_code]} - {g.long_entry_price[g.current_stock_code]}) * {g.stop_profit_ratio} = {stop_profit_price:.4f}")
-            # æ­¢ç›ˆä¿¡å·1 - ä»·æ ¼è·Œç ´æ­¢ç›ˆåšå¤šç‚¹ä¸”ä»·æ ¼å°äºæœ€é«˜ä»·å›æ’¤ä¸€å®šæ¯”ä¾‹
+                f"    Ö¹Ó¯¹«Ê½¼ÆËãÊıÖµ: {g.highest_after_entry[g.current_stock_code]} - ({g.highest_after_entry[g.current_stock_code]} - {g.long_entry_price[g.current_stock_code]}) * {g.stop_profit_ratio} = {stop_profit_price:.4f}")
+            # Ö¹Ó¯ĞÅºÅ1 - ¼Û¸ñµøÆÆÖ¹Ó¯×ö¶àµãÇÒ¼Û¸ñĞ¡ÓÚ×î¸ß¼Û»Ø³·Ò»¶¨±ÈÀı
 
-            # æ­¢æŸä¿¡å·2 ä¹°å…¥ä»· - N * ATR
+            # Ö¹ËğĞÅºÅ2 ÂòÈë¼Û - N * ATR
             stop_loss_price = g.long_entry_price[g.current_stock_code] - g.stop_loss_multiplier * g.N[
                 g.current_stock_code]
             log_info(
-                f" æ­¢æŸä»·æ ¼è®¡ç®—: {g.long_entry_price[g.current_stock_code]} - {g.stop_loss_multiplier} * {g.N[g.current_stock_code]} = {stop_loss_price:.4f}")
-            # æ­¢ç›ˆå–å‡º1ï¼šä¹°å…¥ç¬¬äºŒå¤©å¼€å§‹ï¼Œå½“ä»·æ ¼ < å‰4æ—¥æ”¶ç›˜ä»·æœ€ä½ç‚¹æ—¶ï¼Œä¸”ä»·æ ¼ < æœ€é«˜ä»· -ï¼ˆæœ€é«˜ä»· - ä¹°å…¥ä»·ï¼‰*20 % ï¼ˆæœ€é«˜ä»·æ˜¯æŒ‡ä¹°å…¥ååˆ°è®¡ç®—æ—¶çš„æœ€é«˜ä»·ï¼‰æ—¶ï¼Œç«‹åˆ»æ‰§è¡Œå–å‡ºã€‚
+                f" Ö¹Ëğ¼Û¸ñ¼ÆËã: {g.long_entry_price[g.current_stock_code]} - {g.stop_loss_multiplier} * {g.N[g.current_stock_code]} = {stop_loss_price:.4f}")
+            # Ö¹Ó¯Âô³ö1£ºÂòÈëµÚ¶şÌì¿ªÊ¼£¬µ±¼Û¸ñ < Ç°4ÈÕÊÕÅÌ¼Û×îµÍµãÊ±£¬ÇÒ¼Û¸ñ < ×î¸ß¼Û -£¨×î¸ß¼Û - ÂòÈë¼Û£©*20 % £¨×î¸ß¼ÛÊÇÖ¸ÂòÈëºóµ½¼ÆËãÊ±µÄ×î¸ß¼Û£©Ê±£¬Á¢¿ÌÖ´ĞĞÂô³ö¡£
             if current_price < exit_lower and current_price < stop_profit_price:
-                log_info("  [ä¿¡å·ç”Ÿæˆ] äº§ç”Ÿå¤šå¤´æ­¢ç›ˆä¿¡å·ï¼šä»·æ ¼è·Œç ´ç¦»å¸‚ä¸‹è½¨ä¸”å›æ’¤è¾¾åˆ°é˜ˆå€¼")
-                log_info(f"    å½“å‰ä»·æ ¼: {current_price} < åšå¤šæ­¢ç›ˆ: {exit_lower}")
-                log_info(f"    å½“å‰ä»·æ ¼: {current_price} < æ­¢ç›ˆä»·æ ¼: {stop_profit_price:.4f}")
-                return (-1, 1)  # å¹³ä»“ä¿¡å·ï¼Œå¤šå¤´æ“ä½œ
+                log_info("  [ĞÅºÅÉú³É] ²úÉú¶àÍ·Ö¹Ó¯ĞÅºÅ£º¼Û¸ñµøÆÆÀëÊĞÏÂ¹ìÇÒ»Ø³·´ïµ½ãĞÖµ")
+                log_info(f"    µ±Ç°¼Û¸ñ: {current_price} < ×ö¶àÖ¹Ó¯: {exit_lower}")
+                log_info(f"    µ±Ç°¼Û¸ñ: {current_price} < Ö¹Ó¯¼Û¸ñ: {stop_profit_price:.4f}")
+                return (-1, 1)  # Æ½²ÖĞÅºÅ£¬¶àÍ·²Ù×÷
 
-            # æ­¢æŸå–å‡º1ï¼šä¹°å…¥ç¬¬äºŒå¤©å¼€å§‹ï¼Œå½“ä»·æ ¼ < ä¹°å…¥ä»· - N * ATRæ—¶ï¼Œç«‹åˆ»æ‰§è¡Œå–å‡º
-            # æ­¢æŸä¿¡å· - ä»·æ ¼ä¸‹è·Œè¶…è¿‡NATR
+            # Ö¹ËğÂô³ö1£ºÂòÈëµÚ¶şÌì¿ªÊ¼£¬µ±¼Û¸ñ < ÂòÈë¼Û - N * ATRÊ±£¬Á¢¿ÌÖ´ĞĞÂô³ö
+            # Ö¹ËğĞÅºÅ - ¼Û¸ñÏÂµø³¬¹ıNATR
             elif current_price < stop_loss_price:
-                log_info("  [ä¿¡å·ç”Ÿæˆ] äº§ç”Ÿå¤šå¤´æ­¢æŸä¿¡å·ï¼šä»·æ ¼ä¸‹è·Œè¶…è¿‡NATR")
-                log_info(f"    å½“å‰ä»·æ ¼: {current_price} < æ­¢æŸä»·æ ¼: {stop_loss_price:.4f}")
+                log_info("  [ĞÅºÅÉú³É] ²úÉú¶àÍ·Ö¹ËğĞÅºÅ£º¼Û¸ñÏÂµø³¬¹ıNATR")
+                log_info(f"    µ±Ç°¼Û¸ñ: {current_price} < Ö¹Ëğ¼Û¸ñ: {stop_loss_price:.4f}")
                 log_info(
-                    f"    å…¥åœºä»·: {g.long_entry_price[g.current_stock_code]}, ATR: {g.N[g.current_stock_code]:.4f}")
-                return (-1, 1)  # å¹³ä»“ä¿¡å·ï¼Œå¤šå¤´æ“ä½œ
+                    f"    Èë³¡¼Û: {g.long_entry_price[g.current_stock_code]}, ATR: {g.N[g.current_stock_code]:.4f}")
+                return (-1, 1)  # Æ½²ÖĞÅºÅ£¬¶àÍ·²Ù×÷
             else:
-                log_info("  [ä¿¡å·ç”Ÿæˆ] æ— å¹³å¤šä¿¡å·")
+                log_info("  [ĞÅºÅÉú³É] ÎŞÆ½¶àĞÅºÅ")
 
-        # åˆ¤æ–­ç©ºå¤´ä¿¡å·ï¼ˆæ— ç©ºå¤´æŒä»“æ—¶å¯åšç©ºï¼Œæœ‰ç©ºå¤´æŒä»“æ—¶åˆ¤æ–­æ˜¯å¦å¹³ç©ºï¼‰
+        # ÅĞ¶Ï¿ÕÍ·ĞÅºÅ£¨ÎŞ¿ÕÍ·³Ö²ÖÊ±¿É×ö¿Õ£¬ÓĞ¿ÕÍ·³Ö²ÖÊ±ÅĞ¶ÏÊÇ·ñÆ½¿Õ£©
         if g.short_position[g.current_stock_code] == 0 and g.expire_date_diff[
-            g.current_stock_code] > g.near_expiry_days and g.position_count < g.position_limit:  # æ— ç©ºå¤´æŒä»“ï¼Œåˆ¤æ–­æ˜¯å¦åšç©º ä¸” è·ç¦»åˆ°æœŸæ—¥å¤§äº30å¤© æŒä»“å°äº4ä¸ª
-            log_info("  [ä¿¡å·ç”Ÿæˆ] æ£€æµ‹ç©ºå¤´ä¿¡å·")
-            # ä¹°å…¥2ï¼ˆåšç©ºï¼‰ï¼šå½“æ—¥ä»·æ ¼ < å‰10æ—¥æ”¶ç›˜ä»·æœ€ä½ç‚¹æ—¶ï¼Œå³å½“å‰ä»·æ ¼çªç ´10æ—¥ä½ç‚¹ï¼Œå½“æ—¥ç«‹åˆ»æ‰§è¡Œåšç©º
-            if current_price < lower_channel:  # çªç ´ä¸‹è½¨ï¼Œå–ç©ºä¿¡å·ï¼ˆåšç©ºï¼‰
-                log_info("  [ä¿¡å·ç”Ÿæˆ] äº§ç”Ÿå–ç©ºä¿¡å·ï¼šä»·æ ¼çªç ´å…¥å¸‚ä¸‹è½¨")
-                log_info(f"  [ä¿¡å·ç”Ÿæˆ] ä¹°å…¥2ï¼ˆåšç©ºï¼‰: {current_price:.4f} å°äº ä¸‹è½¨ {lower_channel}")
+            g.current_stock_code] > g.near_expiry_days and g.position_count < g.position_limit:  # ÎŞ¿ÕÍ·³Ö²Ö£¬ÅĞ¶ÏÊÇ·ñ×ö¿Õ ÇÒ ¾àÀëµ½ÆÚÈÕ´óÓÚ30Ìì ³Ö²ÖĞ¡ÓÚ4¸ö
+            log_info("  [ĞÅºÅÉú³É] ¼ì²â¿ÕÍ·ĞÅºÅ")
+            # ÂòÈë2£¨×ö¿Õ£©£ºµ±ÈÕ¼Û¸ñ < Ç°10ÈÕÊÕÅÌ¼Û×îµÍµãÊ±£¬¼´µ±Ç°¼Û¸ñÍ»ÆÆ10ÈÕµÍµã£¬µ±ÈÕÁ¢¿ÌÖ´ĞĞ×ö¿Õ
+            if current_price < lower_channel:  # Í»ÆÆÏÂ¹ì£¬Âô¿ÕĞÅºÅ£¨×ö¿Õ£©
+                log_info("  [ĞÅºÅÉú³É] ²úÉúÂô¿ÕĞÅºÅ£º¼Û¸ñÍ»ÆÆÈëÊĞÏÂ¹ì")
+                log_info(f"  [ĞÅºÅÉú³É] ÂòÈë2£¨×ö¿Õ£©: {current_price:.4f} Ğ¡ÓÚ ÏÂ¹ì {lower_channel}")
 
-                return (1, -1)  # å¼€ä»“ä¿¡å·ï¼Œç©ºå¤´æ“ä½œ
-        elif g.short_position[g.current_stock_code] == 1:  # æœ‰ç©ºå¤´æŒä»“ï¼Œåˆ¤æ–­æ˜¯å¦å¹³ç©º
+                return (1, -1)  # ¿ª²ÖĞÅºÅ£¬¿ÕÍ·²Ù×÷
+        elif g.short_position[g.current_stock_code] == 1:  # ÓĞ¿ÕÍ·³Ö²Ö£¬ÅĞ¶ÏÊÇ·ñÆ½¿Õ
 
-            # ç©ºä»“æ­¢æŸå–å‡º2ï¼šä¹°å…¥ç¬¬äºŒå¤©å¼€å§‹ï¼Œå½“ä»·æ ¼ > ä¹°å…¥ä»· + N * ATRæ—¶ï¼Œç«‹åˆ»æ‰§è¡Œå–å‡º
-            log_info("  [ä¿¡å·ç”Ÿæˆ] å½“å‰æŒæœ‰ç©ºå¤´ä»“ä½ï¼Œåˆ¤æ–­æ˜¯å¦å¹³ä»“")
+            # ¿Õ²ÖÖ¹ËğÂô³ö2£ºÂòÈëµÚ¶şÌì¿ªÊ¼£¬µ±¼Û¸ñ > ÂòÈë¼Û + N * ATRÊ±£¬Á¢¿ÌÖ´ĞĞÂô³ö
+            log_info("  [ĞÅºÅÉú³É] µ±Ç°³ÖÓĞ¿ÕÍ·²ÖÎ»£¬ÅĞ¶ÏÊÇ·ñÆ½²Ö")
 
-            # ç©ºä»“æ­¢ç›ˆä¿¡å· - ä»·æ ¼çªç ´æ­¢ç›ˆåšç©ºç‚¹ä¸”ä»·æ ¼å¤§äºæœ€ä½ä»·åå¼¹ä¸€å®šæ¯”ä¾‹
+            # ¿Õ²ÖÖ¹Ó¯ĞÅºÅ - ¼Û¸ñÍ»ÆÆÖ¹Ó¯×ö¿ÕµãÇÒ¼Û¸ñ´óÓÚ×îµÍ¼Û·´µ¯Ò»¶¨±ÈÀı
             stop_profit_price = g.lowest_after_entry[g.current_stock_code] + (
                     g.short_entry_price[g.current_stock_code] - g.lowest_after_entry[
                 g.current_stock_code]) * g.stop_profit_ratio
-            log_info(f"  [ä¿¡å·ç”Ÿæˆ] ç©ºå¤´æ­¢ç›ˆä»·æ ¼è®¡ç®—:")
-            log_info(f"    å…¬å¼: æœ€ä½ä»· + (å…¥åœºä»· - æœ€ä½ä»·) * æ­¢ç›ˆæ¯”ä¾‹")
+            log_info(f"  [ĞÅºÅÉú³É] ¿ÕÍ·Ö¹Ó¯¼Û¸ñ¼ÆËã:")
+            log_info(f"    ¹«Ê½: ×îµÍ¼Û + (Èë³¡¼Û - ×îµÍ¼Û) * Ö¹Ó¯±ÈÀı")
             log_info(
-                f"    æ•°å€¼: {g.lowest_after_entry[g.current_stock_code]} + ({g.short_entry_price[g.current_stock_code]} - {g.lowest_after_entry[g.current_stock_code]}) * {g.stop_profit_ratio} = {stop_profit_price:.4f}")
+                f"    ÊıÖµ: {g.lowest_after_entry[g.current_stock_code]} + ({g.short_entry_price[g.current_stock_code]} - {g.lowest_after_entry[g.current_stock_code]}) * {g.stop_profit_ratio} = {stop_profit_price:.4f}")
 
-            # ç©ºä»“æ­¢æŸä¿¡å·3 å–å‡ºä»· + N * ATR
+            # ¿Õ²ÖÖ¹ËğĞÅºÅ3 Âô³ö¼Û + N * ATR
             stop_loss_price = g.short_entry_price[g.current_stock_code] + g.stop_loss_multiplier * g.N[
                 g.current_stock_code]
 
-            # æ­¢ç›ˆå–å‡º2ï¼šä¹°å…¥ç¬¬äºŒå¤©å¼€å§‹ï¼Œå½“ä»·æ ¼ > å‰4æ—¥æ”¶ç›˜ä»·æœ€é«˜ç‚¹æ—¶ï¼Œä¸”ä»·æ ¼ > æœ€ä½ä»· +ï¼ˆä¹°å…¥ä»· - æœ€ä½ä»·ï¼‰*20 % ï¼ˆæœ€ä½ä»·æ˜¯æŒ‡ä¹°å…¥ååˆ°è®¡ç®—æ—¶çš„æœ€ä½ä»·ï¼‰æ—¶ï¼Œç«‹åˆ»æ‰§è¡Œå–å‡º
+            # Ö¹Ó¯Âô³ö2£ºÂòÈëµÚ¶şÌì¿ªÊ¼£¬µ±¼Û¸ñ > Ç°4ÈÕÊÕÅÌ¼Û×î¸ßµãÊ±£¬ÇÒ¼Û¸ñ > ×îµÍ¼Û +£¨ÂòÈë¼Û - ×îµÍ¼Û£©*20 % £¨×îµÍ¼ÛÊÇÖ¸ÂòÈëºóµ½¼ÆËãÊ±µÄ×îµÍ¼Û£©Ê±£¬Á¢¿ÌÖ´ĞĞÂô³ö
             if current_price > exit_upper and current_price > stop_profit_price:
-                log_info("  [ä¿¡å·ç”Ÿæˆ] äº§ç”Ÿç©ºå¤´æ­¢ç›ˆä¿¡å·ï¼šä»·æ ¼çªç ´æ­¢ç›ˆåšç©ºç‚¹ä¸”åå¼¹è¾¾åˆ°é˜ˆå€¼")
-                log_info(f"    å½“å‰ä»·æ ¼: {current_price} > æ­¢ç›ˆåšç©ºç‚¹: {exit_upper}")
-                log_info(f"    å½“å‰ä»·æ ¼: {current_price} > æ­¢ç›ˆä»·æ ¼: {stop_profit_price:.4f}")
-                return (-1, -1)  # å¹³ä»“ä¿¡å·ï¼Œç©ºå¤´æ“ä½œ
-            # æ­¢æŸä¿¡å· - ä»·æ ¼ä¸Šæ¶¨è¶…è¿‡NATR
+                log_info("  [ĞÅºÅÉú³É] ²úÉú¿ÕÍ·Ö¹Ó¯ĞÅºÅ£º¼Û¸ñÍ»ÆÆÖ¹Ó¯×ö¿ÕµãÇÒ·´µ¯´ïµ½ãĞÖµ")
+                log_info(f"    µ±Ç°¼Û¸ñ: {current_price} > Ö¹Ó¯×ö¿Õµã: {exit_upper}")
+                log_info(f"    µ±Ç°¼Û¸ñ: {current_price} > Ö¹Ó¯¼Û¸ñ: {stop_profit_price:.4f}")
+                return (-1, -1)  # Æ½²ÖĞÅºÅ£¬¿ÕÍ·²Ù×÷
+            # Ö¹ËğĞÅºÅ - ¼Û¸ñÉÏÕÇ³¬¹ıNATR
             elif current_price > g.short_entry_price[g.current_stock_code] + g.stop_loss_multiplier * g.N[
                 g.current_stock_code]:
-                log_info("  [ä¿¡å·ç”Ÿæˆ] äº§ç”Ÿç©ºå¤´æ­¢æŸä¿¡å·ï¼šä»·æ ¼ä¸Šæ¶¨è¶…è¿‡NATR")
-                log_info(f"    å½“å‰ä»·æ ¼: {current_price} > æ­¢æŸä»·æ ¼: {stop_loss_price:.4f}")
+                log_info("  [ĞÅºÅÉú³É] ²úÉú¿ÕÍ·Ö¹ËğĞÅºÅ£º¼Û¸ñÉÏÕÇ³¬¹ıNATR")
+                log_info(f"    µ±Ç°¼Û¸ñ: {current_price} > Ö¹Ëğ¼Û¸ñ: {stop_loss_price:.4f}")
                 log_info(
-                    f"    å…¥åœºä»·: {g.short_entry_price[g.current_stock_code]}, ATR: {g.N[g.current_stock_code]:.4f}")
-                return (-1, -1)  # å¹³ä»“ä¿¡å·ï¼Œç©ºå¤´æ“ä½œ
+                    f"    Èë³¡¼Û: {g.short_entry_price[g.current_stock_code]}, ATR: {g.N[g.current_stock_code]:.4f}")
+                return (-1, -1)  # Æ½²ÖĞÅºÅ£¬¿ÕÍ·²Ù×÷
             else:
-                log_info("  [ä¿¡å·ç”Ÿæˆ] æ— å¹³ç©ºä¿¡å·")
+                log_info("  [ĞÅºÅÉú³É] ÎŞÆ½¿ÕĞÅºÅ")
 
-        return (0, 0)  # æ— äº¤æ˜“ä¿¡å·
+        return (0, 0)  # ÎŞ½»Ò×ĞÅºÅ
 
     except Exception as e:
-        log_info(f"  [ä¿¡å·ç”Ÿæˆ] ç”Ÿæˆäº¤æ˜“ä¿¡å·æ—¶å‘ç”Ÿé”™è¯¯: {e}")
+        log_info(f"  [ĞÅºÅÉú³É] Éú³É½»Ò×ĞÅºÅÊ±·¢Éú´íÎó: {e}")
         return (0, 0)
 
 
 def execute_trade(ContextInfo, signal, price_data):
     """
-    æ‰§è¡Œä¹°å–æ“ä½œ
-    æ ¹æ®äº¤æ˜“ä¿¡å·æ‰§è¡Œå…·ä½“çš„ä¸‹å•æ“ä½œ
+    Ö´ĞĞÂòÂô²Ù×÷
+    ¸ù¾İ½»Ò×ĞÅºÅÖ´ĞĞ¾ßÌåµÄÏÂµ¥²Ù×÷
 
-    ç­–ç•¥ä¸‹å•è§„åˆ™ï¼š
-    1. å•åªå“ç§å•æ¬¡ä¹°å…¥é‡‘é¢10000å…ƒ
-    2. æŒ‰ç…§æœ€å¤§æ‰‹æ•°ä¹°ï¼Œæ¯ä¸ªå“ç§æœ€å¤š20000å…ƒï¼Œåšå¤š/åšç©ºå„10000å…ƒ
-    3. åšå¤šå’Œåšç©ºå¯ä»¥åŒæ—¶å­˜åœ¨ï¼Œäº’ä¸å½±å“
+    ²ßÂÔÏÂµ¥¹æÔò£º
+    1. µ¥Ö»Æ·ÖÖµ¥´ÎÂòÈë½ğ¶î10000Ôª
+    2. °´ÕÕ×î´óÊÖÊıÂò£¬Ã¿¸öÆ·ÖÖ×î¶à20000Ôª£¬×ö¶à/×ö¿Õ¸÷10000Ôª
+    3. ×ö¶àºÍ×ö¿Õ¿ÉÒÔÍ¬Ê±´æÔÚ£¬»¥²»Ó°Ïì
 
-    å‚æ•°:
-    signal: (signal_type, position_type) å…ƒç»„
-    signal_type: 1=å¼€ä»“ä¿¡å·, -1=å¹³ä»“ä¿¡å·, 0=æ— ä¿¡å·
-    position_type: 1=å¤šå¤´æ“ä½œ, -1=ç©ºå¤´æ“ä½œ
+    ²ÎÊı:
+    signal: (signal_type, position_type) Ôª×é
+    signal_type: 1=¿ª²ÖĞÅºÅ, -1=Æ½²ÖĞÅºÅ, 0=ÎŞĞÅºÅ
+    position_type: 1=¶àÍ·²Ù×÷, -1=¿ÕÍ·²Ù×÷
     """
     try:
 
-        log_debug("  [äº¤æ˜“æ‰§è¡Œ] å¼€å§‹æ‰§è¡Œäº¤æ˜“æ“ä½œ...")
+        log_debug("  [½»Ò×Ö´ĞĞ] ¿ªÊ¼Ö´ĞĞ½»Ò×²Ù×÷...")
         signal_type, position_type = signal
-        log_info(f"  [äº¤æ˜“æ‰§è¡Œ] äº¤æ˜“ä¿¡å·: ä¿¡å·ç±»å‹={signal_type}, ä»“ä½ç±»å‹={position_type}")
+        log_info(f"  [½»Ò×Ö´ĞĞ] ½»Ò×ĞÅºÅ: ĞÅºÅÀàĞÍ={signal_type}, ²ÖÎ»ÀàĞÍ={position_type}")
 
         current_price = price_data['close'].iloc[-1]
         contract_multiplier = ContextInfo.get_contract_multiplier(g.current_stock_code)
-        log_info(f"  [äº¤æ˜“æ‰§è¡Œ] åˆçº¦ä¿¡æ¯:å½“å‰ä»·æ ¼: {current_price:.4f},åˆçº¦ä¹˜æ•°: {contract_multiplier}")
+        log_info(f"  [½»Ò×Ö´ĞĞ] ºÏÔ¼ĞÅÏ¢:µ±Ç°¼Û¸ñ: {current_price:.4f},ºÏÔ¼³ËÊı: {contract_multiplier}")
 
-        # è®¡ç®—å¤´å¯¸è§„æ¨¡
-        # æ ¹æ®èµ„é‡‘é‡å’Œåˆçº¦ä»·å€¼è®¡ç®—æ‰‹æ•°
-        # if position_type > 0:  # åšå¤š
+        # ¼ÆËãÍ·´ç¹æÄ£
+        # ¸ù¾İ×Ê½ğÁ¿ºÍºÏÔ¼¼ÛÖµ¼ÆËãÊÖÊı
+        # if position_type > 0:  # ×ö¶à
         #     position_value = g.long_capital
-        #     log_info(f"  [äº¤æ˜“æ‰§è¡Œ] åšå¤šèµ„é‡‘: {position_value}")
-        #     # å¤šå¤´ä»“ä½ä¿è¯é‡‘è®¡ç®—
+        #     log_info(f"  [½»Ò×Ö´ĞĞ] ×ö¶à×Ê½ğ: {position_value}")
+        #     # ¶àÍ·²ÖÎ»±£Ö¤½ğ¼ÆËã
         #     margin_size = g.long_margin_ratio * (current_price * contract_multiplier)
         #     log_debug(
-        #         f"  [äº¤æ˜“æ‰§è¡Œ] å¤šå¤´ä»“ä½ä¿è¯é‡‘: {margin_size:.2f}å…ƒ :å¤šå¤´ä»“ä½ä¿è¯é‡‘æ¯”ä¾‹: {g.long_margin_ratio:.2f} ")
-        # else:  # åšç©º
+        #         f"  [½»Ò×Ö´ĞĞ] ¶àÍ·²ÖÎ»±£Ö¤½ğ: {margin_size:.2f}Ôª :¶àÍ·²ÖÎ»±£Ö¤½ğ±ÈÀı: {g.long_margin_ratio:.2f} ")
+        # else:  # ×ö¿Õ
         #     position_value = g.short_capital
-        #     log_info(f"  [äº¤æ˜“æ‰§è¡Œ] åšç©ºèµ„é‡‘: {position_value}")
-        #     # ç©ºå¤´ä»“ä½ä¿è¯é‡‘è®¡ç®—
+        #     log_info(f"  [½»Ò×Ö´ĞĞ] ×ö¿Õ×Ê½ğ: {position_value}")
+        #     # ¿ÕÍ·²ÖÎ»±£Ö¤½ğ¼ÆËã
         #     margin_size = g.short_margin_ratio * (current_price * contract_multiplier)
         #     log_debug(
-        #         f"  [äº¤æ˜“æ‰§è¡Œ] ç©ºå¤´ä»“ä½ä¿è¯é‡‘: {margin_size:.2f}å…ƒ :ç©ºå¤´ä»“ä½ä¿è¯é‡‘æ¯”ä¾‹: {g.short_margin_ratio:.2f} ")
+        #         f"  [½»Ò×Ö´ĞĞ] ¿ÕÍ·²ÖÎ»±£Ö¤½ğ: {margin_size:.2f}Ôª :¿ÕÍ·²ÖÎ»±£Ö¤½ğ±ÈÀı: {g.short_margin_ratio:.2f} ")
         # position_size = int(position_value / margin_size)
-        # log_info(f"  [äº¤æ˜“æ‰§è¡Œ] å¤´å¯¸è§„æ¨¡: {position_size} æ‰‹")
-        # position_size = max(1, position_size)  # è‡³å°‘ä¸º1åˆçº¦ä¹˜æ•°
+        # log_info(f"  [½»Ò×Ö´ĞĞ] Í·´ç¹æÄ£: {position_size} ÊÖ")
+        # position_size = max(1, position_size)  # ÖÁÉÙÎª1ºÏÔ¼³ËÊı
 
         log_info(
-            f"    æœ€ç»ˆæ‰‹æ•°: {g.position_size[g.current_stock_code]} æ‰‹ ,å¤´å¯¸ä»·å€¼: {g.position_size[g.current_stock_code] * current_price * contract_multiplier:.2f}å…ƒ")
+            f"    ×îÖÕÊÖÊı: {g.position_size[g.current_stock_code]} ÊÖ ,Í·´ç¼ÛÖµ: {g.position_size[g.current_stock_code] * current_price * contract_multiplier:.2f}Ôª")
 
-        # å¼€ä»“æ“ä½œ
-        if signal_type > 0:  # å¼€ä»“ä¿¡å·
-            if position_type > 0:  # åšå¤š
-                # æ£€æŸ¥æ˜¯å¦å½“å‰æ²¡æœ‰å¤šå¤´æŒä»“
+        # ¿ª²Ö²Ù×÷
+        if signal_type > 0:  # ¿ª²ÖĞÅºÅ
+            if position_type > 0:  # ×ö¶à
+                # ¼ì²éÊÇ·ñµ±Ç°Ã»ÓĞ¶àÍ·³Ö²Ö
                 if g.long_position[g.current_stock_code] == 0:
-                    # 0	å¼€å¤š  1101: é™ä»·å•  5: å¯¹æ‰‹ä»· -1: å¸‚ä»·  position_size: æ‰‹æ•°
+                    # 0	¿ª¶à  1101: ÏŞ¼Ûµ¥  5: ¶ÔÊÖ¼Û -1: ÊĞ¼Û  position_size: ÊÖÊı
                     log_info(
-                        f"  [äº¤æ˜“æ‰§è¡Œ] æ‰§è¡Œä¹°å…¥å¼€ä»“æ“ä½œ ä¸‹å•å‚æ•°: ä¹°å…¥å¼€ä»“,  å¯¹æ‰‹ä»·, ä»·æ ¼: {current_price:.4f}, {g.position_size[g.current_stock_code]}æ‰‹æ•°")
+                        f"  [½»Ò×Ö´ĞĞ] Ö´ĞĞÂòÈë¿ª²Ö²Ù×÷ ÏÂµ¥²ÎÊı: ÂòÈë¿ª²Ö,  ¶ÔÊÖ¼Û, ¼Û¸ñ: {current_price:.4f}, {g.position_size[g.current_stock_code]}ÊÖÊı")
                     # passorder( opType, orderType, accountid , orderCode, prType, price, volume , strategyName, quickTrade, userOrderId , ContextInfo)
-                    #        #  æ“ä½œå·    ç»„åˆæ–¹å¼     èµ„é‡‘è´¦å·    å“ç§ä»£ç      æŠ¥ä»·ç±»å‹  ä»·æ ¼    ä¸‹å•é‡    ç­–ç•¥åç§°        å¿«é€Ÿä¸‹å•æ ‡è®°  æŠ•èµ„å¤‡æ³¨        ç­–ç•¥ä¸Šä¸‹æ–‡
+                    #        #  ²Ù×÷ºÅ    ×éºÏ·½Ê½     ×Ê½ğÕËºÅ    Æ·ÖÖ´úÂë     ±¨¼ÛÀàĞÍ  ¼Û¸ñ    ÏÂµ¥Á¿    ²ßÂÔÃû³Æ        ¿ìËÙÏÂµ¥±ê¼Ç  Í¶×Ê±¸×¢        ²ßÂÔÉÏÏÂÎÄ
                     order_info = passorder(0, 1101, ContextInfo.account_id, g.current_stock_code, 14, -1,
                                            g.position_size[g.current_stock_code], 1,
                                            ContextInfo)
 
-                    log_info(f"  [äº¤æ˜“æ‰§è¡Œ] ä¸‹å•ç»“æœ: {order_info}")
+                    log_info(f"  [½»Ò×Ö´ĞĞ] ÏÂµ¥½á¹û: {order_info}")
                     g.long_position[g.current_stock_code] = 1
                     g.long_open_date[g.current_stock_code] = g.current_date
 
                     g.position_count = g.position_count + 1
-                    log_info(f"  [äº¤æ˜“æ‰§è¡Œ] æŒä»“è®¡æ•°å™¨: {g.position_count}")
+                    log_info(f"  [½»Ò×Ö´ĞĞ] ³Ö²Ö¼ÆÊıÆ÷: {g.position_count}")
                 else:
-                    log_info("  [äº¤æ˜“æ‰§è¡Œ] å·²æŒæœ‰å¤šå¤´ä»“ä½ï¼Œä¸é‡å¤å¼€ä»“")
+                    log_info("  [½»Ò×Ö´ĞĞ] ÒÑ³ÖÓĞ¶àÍ·²ÖÎ»£¬²»ÖØ¸´¿ª²Ö")
 
-            elif position_type < 0:  # åšç©º
-                # æ£€æŸ¥æ˜¯å¦å½“å‰æ²¡æœ‰ç©ºå¤´æŒä»“
+            elif position_type < 0:  # ×ö¿Õ
+                # ¼ì²éÊÇ·ñµ±Ç°Ã»ÓĞ¿ÕÍ·³Ö²Ö
                 if g.short_position[g.current_stock_code] == 0:
-                    # 3: å¼€ç©º
+                    # 3: ¿ª¿Õ
                     log_info(
-                        f"  [äº¤æ˜“æ‰§è¡Œ] æ‰§è¡Œå–å‡ºå¼€ä»“æ“ä½œä¸‹å•å‚æ•°: å–å‡ºå¼€ä»“, é™ä»·å•, å¯¹æ‰‹ä»·, å¸‚ä»·, {g.position_size[g.current_stock_code]} æ‰‹æ•°ï¼Œä»·æ ¼: {current_price:.4f}")
+                        f"  [½»Ò×Ö´ĞĞ] Ö´ĞĞÂô³ö¿ª²Ö²Ù×÷ÏÂµ¥²ÎÊı: Âô³ö¿ª²Ö, ÏŞ¼Ûµ¥, ¶ÔÊÖ¼Û, ÊĞ¼Û, {g.position_size[g.current_stock_code]} ÊÖÊı£¬¼Û¸ñ: {current_price:.4f}")
                     order_info = passorder(3, 1101, ContextInfo.account_id, g.current_stock_code, 14, -1,
                                            g.position_size[g.current_stock_code], 1,
                                            ContextInfo)
-                    log_info(f"  [äº¤æ˜“æ‰§è¡Œ] ä¸‹å•ç»“æœ: {order_info}")
+                    log_info(f"  [½»Ò×Ö´ĞĞ] ÏÂµ¥½á¹û: {order_info}")
                     g.short_position[g.current_stock_code] = 1
                     g.short_open_date[g.current_stock_code] = g.current_date
 
                     g.position_count = g.position_count + 1
-                    log_info(f"  [äº¤æ˜“æ‰§è¡Œ] æŒä»“è®¡æ•°å™¨: {g.position_count}")
+                    log_info(f"  [½»Ò×Ö´ĞĞ] ³Ö²Ö¼ÆÊıÆ÷: {g.position_count}")
                 else:
-                    log_info("  [äº¤æ˜“æ‰§è¡Œ] å·²æŒæœ‰ç©ºå¤´ä»“ä½ï¼Œä¸é‡å¤å¼€ä»“")
+                    log_info("  [½»Ò×Ö´ĞĞ] ÒÑ³ÖÓĞ¿ÕÍ·²ÖÎ»£¬²»ÖØ¸´¿ª²Ö")
 
-        # å¹³ä»“æ“ä½œ
-        elif signal_type < 0:  # å¹³ä»“ä¿¡å·
-            if position_type > 0 and g.long_position[g.current_stock_code] == 1:  # å¹³å¤šä»“
-                # 7 å¹³å¤š, ä¼˜å…ˆå¹³æ˜¨
-                # ä¿®æ­£ï¼šä½¿ç”¨æ‰‹æ•°è€Œä¸æ˜¯è‚¡æ•°è¿›è¡Œå¹³ä»“
+        # Æ½²Ö²Ù×÷
+        elif signal_type < 0:  # Æ½²ÖĞÅºÅ
+            if position_type > 0 and g.long_position[g.current_stock_code] == 1:  # Æ½¶à²Ö
+                # 7 Æ½¶à, ÓÅÏÈÆ½×ò
+                # ĞŞÕı£ºÊ¹ÓÃÊÖÊı¶ø²»ÊÇ¹ÉÊı½øĞĞÆ½²Ö
 
                 log_info(
-                    f"  [äº¤æ˜“æ‰§è¡Œ] æ‰§è¡Œä¹°å…¥å¹³ä»“æ“ä½œï¼šä¸‹å•å‚æ•°: ä¹°å…¥å¹³ä»“, å¯¹æ‰‹ä»·,  {g.long_volume[g.current_stock_code]} æ‰‹æŒä»“ï¼Œä»·æ ¼: {current_price:.4f} ")
+                    f"  [½»Ò×Ö´ĞĞ] Ö´ĞĞÂòÈëÆ½²Ö²Ù×÷£ºÏÂµ¥²ÎÊı: ÂòÈëÆ½²Ö, ¶ÔÊÖ¼Û,  {g.long_volume[g.current_stock_code]} ÊÖ³Ö²Ö£¬¼Û¸ñ: {current_price:.4f} ")
 
                 order_info = passorder(7, 1101, ContextInfo.account_id, g.current_stock_code, 14, -1,
                                        g.long_volume[g.current_stock_code], 1, ContextInfo)
-                log_info(f"  [äº¤æ˜“æ‰§è¡Œ] ä¸‹å•ç»“æœ: {order_info}")
+                log_info(f"  [½»Ò×Ö´ĞĞ] ÏÂµ¥½á¹û: {order_info}")
                 g.long_position[g.current_stock_code] = 0
                 g.highest_after_entry[g.current_stock_code] = 0
                 g.lowest_after_entry[g.current_stock_code] = 0
                 g.long_open_date[g.current_stock_code] = None
                 g.position_count = g.position_count - 1
-                log_info(f"  [äº¤æ˜“æ‰§è¡Œ] æŒä»“è®¡æ•°å™¨: {g.position_count}")
+                log_info(f"  [½»Ò×Ö´ĞĞ] ³Ö²Ö¼ÆÊıÆ÷: {g.position_count}")
 
-            elif position_type < 0 and g.short_position[g.current_stock_code] == 1:  # å¹³ç©ºä»“
-                # 9 å¹³ç©º, ä¼˜å…ˆå¹³æ˜¨
-                # ä¿®æ­£ï¼šä½¿ç”¨æ‰‹æ•°è€Œä¸æ˜¯è‚¡æ•°è¿›è¡Œå¹³ä»“
+            elif position_type < 0 and g.short_position[g.current_stock_code] == 1:  # Æ½¿Õ²Ö
+                # 9 Æ½¿Õ, ÓÅÏÈÆ½×ò
+                # ĞŞÕı£ºÊ¹ÓÃÊÖÊı¶ø²»ÊÇ¹ÉÊı½øĞĞÆ½²Ö
 
                 log_info(
-                    f"  [äº¤æ˜“æ‰§è¡Œ] æ‰§è¡Œå–å‡ºå¹³ä»“æ“ä½œ:ä¸‹å•å‚æ•°: å–å‡ºå¹³ä»“, å¯¹æ‰‹ä»·,, {g.short_volume[g.current_stock_code]} æ‰‹æŒä»“ ï¼Œä»·æ ¼: {current_price:.4f}")
+                    f"  [½»Ò×Ö´ĞĞ] Ö´ĞĞÂô³öÆ½²Ö²Ù×÷:ÏÂµ¥²ÎÊı: Âô³öÆ½²Ö, ¶ÔÊÖ¼Û,, {g.short_volume[g.current_stock_code]} ÊÖ³Ö²Ö £¬¼Û¸ñ: {current_price:.4f}")
                 order_info = passorder(9, 1101, ContextInfo.account_id, g.current_stock_code, 14, -1,
                                        g.short_volume[g.current_stock_code],
                                        1, ContextInfo)
-                log_info(f"  [äº¤æ˜“æ‰§è¡Œ] ä¸‹å•ç»“æœ: {order_info}")
+                log_info(f"  [½»Ò×Ö´ĞĞ] ÏÂµ¥½á¹û: {order_info}")
                 g.short_position[g.current_stock_code] = 0
                 g.highest_after_entry[g.current_stock_code] = 0
                 g.lowest_after_entry[g.current_stock_code] = 0
                 g.short_open_date[g.current_stock_code] = None
                 g.position_count = g.position_count - 1
-                log_info(f"  [äº¤æ˜“æ‰§è¡Œ] æŒä»“è®¡æ•°å™¨: {g.position_count}")
+                log_info(f"  [½»Ò×Ö´ĞĞ] ³Ö²Ö¼ÆÊıÆ÷: {g.position_count}")
 
     except Exception as e:
-        log_info(f"  [äº¤æ˜“æ‰§è¡Œ] æ‰§è¡Œäº¤æ˜“æ“ä½œæ—¶å‘ç”Ÿé”™è¯¯: {e}")
+        log_info(f"  [½»Ò×Ö´ĞĞ] Ö´ĞĞ½»Ò×²Ù×÷Ê±·¢Éú´íÎó: {e}")
 
 
 def get_log_filename():
     """
-    è·å–å½“å‰æ—¥å¿—æ–‡ä»¶å
+    »ñÈ¡µ±Ç°ÈÕÖ¾ÎÄ¼şÃû
     """
     global log_filename
     if log_filename is None:
@@ -865,18 +839,18 @@ def get_log_filename():
 
 def clear_log_file():
     """
-    æ¸…ç©ºæ—¥å¿—æ–‡ä»¶å†…å®¹ï¼Œé˜²æ­¢ä¹‹å‰çš„è„æ•°æ®å½±å“
+    Çå¿ÕÈÕÖ¾ÎÄ¼şÄÚÈİ£¬·ÀÖ¹Ö®Ç°µÄÔàÊı¾İÓ°Ïì
     """
     try:
-        # æ¸…ç©ºæ–‡ä»¶å†…å®¹
+        # Çå¿ÕÎÄ¼şÄÚÈİ
         open(get_log_filename(), 'w').close()
     except Exception as e:
-        pass  # å¿½ç•¥æ–‡ä»¶æ“ä½œé”™è¯¯
+        pass  # ºöÂÔÎÄ¼ş²Ù×÷´íÎó
 
 
 def log_info(message):
     """
-    ç®€å•çš„æ—¥å¿—è®°å½•å‡½æ•°ï¼Œç”¨äºè®°å½•infoçº§åˆ«æ—¥å¿—
+    ¼òµ¥µÄÈÕÖ¾¼ÇÂ¼º¯Êı£¬ÓÃÓÚ¼ÇÂ¼info¼¶±ğÈÕÖ¾
     """
 
     logging.info(message)
@@ -886,7 +860,7 @@ def log_info(message):
 
 def log_debug(message):
     """
-    ç®€å•çš„æ—¥å¿—è®°å½•å‡½æ•°ï¼Œç”¨äºè®°å½•debugçº§åˆ«æ—¥å¿—
+    ¼òµ¥µÄÈÕÖ¾¼ÇÂ¼º¯Êı£¬ÓÃÓÚ¼ÇÂ¼debug¼¶±ğÈÕÖ¾
     """
     logging.debug(message)
     print(f"{message}")
@@ -894,10 +868,10 @@ def log_debug(message):
 
 def log_section(title):
     """
-    è¾“å‡ºå¸¦æ ‡é¢˜çš„åˆ†éš”åŒºå—
+    Êä³ö´ø±êÌâµÄ·Ö¸ôÇø¿é
 
     Args:
-        title (str): åŒºå—æ ‡é¢˜
+        title (str): Çø¿é±êÌâ
     """
     log_info(60 * "=")
     log_info(title)
@@ -916,12 +890,12 @@ def to_dict(obj):
 
 def log_separator():
     """
-    è¾“å‡ºåˆ†éš”çº¿
+    Êä³ö·Ö¸ôÏß
     """
     log_info(60 * "-")
 
 
-# è‡ªå®šä¹‰ç±» ç”¨æ¥ä¿å­˜çŠ¶æ€
+# ×Ô¶¨ÒåÀà ÓÃÀ´±£´æ×´Ì¬
 class G(): pass
 
 

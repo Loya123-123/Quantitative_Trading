@@ -9,9 +9,8 @@ import pandas as pd
 # 中金所	CFFEX	IF
 # 能源中心	INE	INE
 # 广期所	GFEX	GF
-
+from datetime import datetime
 class G(): pass
-
 
 g = G()
 
@@ -24,6 +23,13 @@ def init(ContextInfo):
         , "CF": {"code": "CF00", "market": "ZF", "size": 3}  # 棉花
         , "sp": {"code": "sp00", "market": "SF", "size": 4}  # 纸浆
     }
+    download_stock_codes(ContextInfo)
+
+
+def download_stock_codes(ContextInfo):
+    if is_trading_time(datetime.now()):
+        print(f"[处理函数] 当前时间在交易时间段内，跳过本次处理")
+        return
     ProductID_list = [stock_code for stock_code, stock_info in g.stock_codes_dict.items()]
 
     print(f"[数据获取] 合约产品ID集合: {ProductID_list}")
@@ -61,6 +67,40 @@ def init(ContextInfo):
         for i in ['1m', '1d']:
             re = download_history_data(code, i, "20250101", "")
             print(f"\n下载完成 : {re} , code : {code}, 周期 ： {i}")
+    return "下载完成"
 
-def handlebar(ContextInfo):
-    pass
+
+def is_trading_time(current_time):
+    """
+    判断当前时间是否为交易时间
+    交易时间段：0:00-2:30，9:00-11:30，13:30-15:00，21:00-24:00
+    """
+    hour = current_time.hour
+    minute = current_time.minute
+
+    # 0:00-2:30
+    if 0 <= hour <= 2:
+        if hour == 2 and minute > 30:
+            return False
+        return True
+
+    # 9:00-11:30
+    if 9 <= hour <= 11:
+        if hour == 11 and minute > 30:
+            return False
+        return True
+
+    # 13:30-15:00
+    if 13 <= hour <= 15:
+        if hour == 13 and minute < 30:
+            return False
+        if hour == 15 and minute > 0:
+            return False
+        return True
+
+    # 21:00-24:00 (即21:00-23:59)
+    if 21 <= hour <= 23:
+        return True
+
+    return False
+
