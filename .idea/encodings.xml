@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding">
-    <file url="file://$PROJECT_DIR$/log/datalog-20251224084635.log" charset="GBK" />
     <file url="file://$PROJECT_DIR$/量化" charset="GBK" />
     <file url="file://$PROJECT_DIR$/量化/国金QMT/log/datalog-20250824125022.log" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/量化/国金QMT/log/datalog-20250824184519.log" charset="GBK" />
@@ -16,10 +15,8 @@
     <file url="file://$PROJECT_DIR$/量化/国金QMT/内置环境/自测/海龟期货0807ZQ.py" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/量化/国金QMT/期货/海龟交易_单品种_主连.py" charset="GBK" />
     <file url="file://$PROJECT_DIR$/量化/国金QMT/期货/海龟交易_多品种_主力.py" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/量化/国金QMT/期货/海龟交易_多品种_主力20251009.py" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/量化/国金QMT/期货/海龟交易_多品种_主力_固定手数.py" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/量化/国金QMT/期货/海龟交易_多品种_主力_固定手数副本.py" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/量化/国金QMT/期货/海龟交易_多品种_主力备份20250923.py" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/量化/国金QMT/期货/自测.py" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/量化/国金QMT/股票/海龟交易_多股票.py" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/量化/聚宽/本地/均线交叉本地测试.py" charset="UTF-8" />
