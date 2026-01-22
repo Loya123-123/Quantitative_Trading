@@ -47,8 +47,8 @@ def init(ContextInfo):
     # clear_log_file()
 
     filename = get_log_filename()
-
-    logging.basicConfig(filename=filename, level=logging.DEBUG,
+    # INFO 简要信息  DEBUG 详细日志
+    logging.basicConfig(filename=filename, level=logging.INFO,
                         format='%(asctime)s - %(levelname)s - %(message)s')
 
     log_section("开始初始化海龟交易策略...")
@@ -68,10 +68,12 @@ def init(ContextInfo):
     # }
 
     ContextInfo.stock_codes_dict = {
-        "FG": {"code": "FG00", "market": "ZF", "size": 6}  # 玻璃 1
-        , "jm": {"code": "jm00", "market": "DF", "size": 2}  # 焦煤 1
-        , "ao": {"code": "ao00", "market": "SF", "size": 2}  # 氧化铝 1
+        "FG": {"code": "FG00", "market": "ZF", "size": 18}  # 玻璃 1
+        , "jm": {"code": "jm00", "market": "DF", "size": 5}  # 焦煤 1
+        , "ao": {"code": "ao00", "market": "SF", "size": 8}  # 氧化铝 1
     }
+
+
 
     ContextInfo.stock_codes = [stock_info["code"] + '.' + stock_info["market"] for stock_code, stock_info in
                                ContextInfo.stock_codes_dict.items()]
@@ -91,17 +93,6 @@ def init(ContextInfo):
     g.position_limit = 5  # 持仓上线
     g.near_expiry_days = 30  # 临近到期日天数上线
     g.capital_rate = 0.1  # 资金比例 资金固定值，参数失效
-
-    current_hour = datetime.now().hour
-    # 21:00-次日2:30，入市通道周期、止盈通道周期、ATR计算周期 参数减1
-    if current_hour >= 20 or current_hour < 3 :
-        g.entry_window -= 1
-        g.exit_window -= 1
-        g.atr_window -= 1
-        log_info(f"[处理函数] 21:00-次日2:30，入市通道周期、止盈通道周期、ATR计算周期 减1")
-        log_info(f"[处理函数] 策略参数设置为:入市通道周期： {g.entry_window},止盈通道周期： {g.exit_window}, ATR计算周期：{g.atr_window} ")
-    else:
-        log_info(f"[处理函数] 非21:00-次日2:30，入市通道周期、止盈通道周期、ATR计算周期 不减1")
 
     # # 资金管理参数
     # g.long_capital = 10000  # 做多资金
@@ -146,7 +137,6 @@ def init(ContextInfo):
     ContextInfo.run_time("run_time_handlebar", "1nSecond", "2025-01-01 09:30:00")
 
 
-
 # def handlebar(ContextInfo):  # 策略处理函数
 
 
@@ -161,17 +151,18 @@ def run_time_handlebar(ContextInfo):  # 定时运行
         return
 
     # 根据当前时间计算如果如果时间不在开盘时间内就直接退出，已知的开盘时间段有：0:00-2:30，9:00-11:30，13:30-15:00，21:00-24:00
+
     if not is_trading_time(datetime.now()):
         log_info(f"[处理函数] 当前时间不在交易时间段内，跳过本次处理")
         return
-
 
     log_section("[处理函数] 开始执行handlebar函数")
 
     # 获取历史数据 获取数据的截止时间
     bar_date = timetag_to_datetime(ContextInfo.get_bar_timetag(ContextInfo.barpos), '%Y%m%d%H%M%S')
-    g.current_date = bar_date
-    log_info(f"  获取截止时间: {g.current_date}")
+    g.current_date_bar = bar_date
+    g.current_date_bar_hour = int(bar_date[8:10])
+    log_info(f"  获取截止时间: {g.current_date_bar}")
 
     # 清空上一次的交易合约列表
     g.current_trading_contracts = []
@@ -219,10 +210,10 @@ def run_time_handlebar(ContextInfo):  # 定时运行
         g.expire_date[g.current_stock_code] = str(stock_contract_info.get('ExpireDate', 0))
         log_info(f"[数据获取] 合约的退市日或者到期日: {g.expire_date[g.current_stock_code]}")
 
-        # 当前合约的到期日(YYYYMMDD) 和 当前日期 g.current_date[:8](YYYYMMDD) 差几天
+        # 当前合约的到期日(YYYYMMDD) 和 当前日期 g.current_date_bar[:8](YYYYMMDD) 差几天
         g.expire_date_diff[g.current_stock_code] = (datetime.strptime(g.expire_date[g.current_stock_code],
                                                                       '%Y%m%d') - datetime.strptime(
-            g.current_date[:8], '%Y%m%d')).days if g.expire_date[g.current_stock_code] else 999
+            g.current_date_bar[:8], '%Y%m%d')).days if g.expire_date[g.current_stock_code] else 999
         log_info(f"[数据获取] 获取合约的到期日和当前日期的差: {g.expire_date_diff[g.current_stock_code]}")
 
         if g.expire_date_diff[g.current_stock_code] < g.near_expiry_days:
@@ -314,7 +305,7 @@ def get_price_data(ContextInfo):
         history_market_data = ContextInfo.get_market_data_ex(
             ['time', 'open', 'high', 'low', 'close'],
             [g.current_stock_code],
-            end_time=g.current_date,
+            end_time=g.current_date_bar,
             period='1d',
             count=required_bars,
             dividend_type=ContextInfo.dividend_type,
@@ -328,14 +319,15 @@ def get_price_data(ContextInfo):
 
         # 将时间戳转换为可读的时间格式
         history_df['time'] = history_df['time'].apply(lambda x: timetag_to_datetime(x, '%Y-%m-%d %H:%M:%S'))
-
+        log_debug(f"\n{history_df}")
         log_debug(f"  [价格数据] 请求参数 - 标的: {g.current_stock_code}, 周期: {ContextInfo.period}, 数量: 1")
 
+        # 当日K线集合
         current_market_data_more = ContextInfo.get_market_data_ex(
             ['time', 'open', 'high', 'low', 'close'],
             [g.current_stock_code],
-            start_time=g.current_date[:8] + '000000',  # 当天00:00:00开始
-            end_time=g.current_date,
+            start_time=get_futures_start_time(g.current_date_bar),  # 根据期货交易时间规则确定开始时间
+            end_time=g.current_date_bar,
             period=ContextInfo.period,  # 使用1分钟周期
             dividend_type=ContextInfo.dividend_type,
             subscribe=True
@@ -367,8 +359,9 @@ def get_price_data(ContextInfo):
 
         # 替换历史数据中的最后一条为当日最新数据
         if len(history_df) > 0 and len(current_df) > 0:
-            # 删除历史数据中的最后一条（当天数据）
-            history_df = history_df[:-1]
+
+            # 日盘和夜盘的0-2点（后半段）删除历史数据中的最后一条（当天数据）。 夜盘21点-24点 最后一条是当天白天的记录不删除
+            history_df = history_df[:-1] if g.current_date_bar_hour < 21 else history_df
             # 将当日最新数据添加到历史数据末尾
             df = pd.concat([history_df, current_df], ignore_index=True)
         else:
@@ -449,12 +442,14 @@ def get_account_info(ContextInfo):
 
         log_info(f"  [账户信息] 账户资金信息: 可用资金={available:.2f}, 总资产={total_value:.2f}")
 
-        # 重置所有合约的持仓状态
+        # 重置主力合约的持仓状态
         for stock_code in g.current_trading_contracts:
             g.long_position[stock_code] = 0  # 重置多头持仓状态
             g.short_position[stock_code] = 0  # 重置空头持仓状态
             g.long_open_date[stock_code] = None  # 重置多头开仓日期
             g.short_open_date[stock_code] = None  # 重置空头开仓日期
+            log_info(f"重置所有主力合约的持仓状态 {stock_code} 仓位状态 重置成功 {g.long_position[stock_code]} ")
+
         g.position_count = 0
 
         # 获取未成交委托信息并撤销未成交委托
@@ -485,15 +480,18 @@ def get_account_info(ContextInfo):
         # 获取持仓信息
         log_debug("  [账户信息] 获取持仓详情...")
         position_details = get_trade_detail_data(ContextInfo.account_id, 'FUTURE', 'POSITION')
+        log_debug(f"  [账户信息] 获取持仓详情成功，共有 {len(position_details)} 条数据")
         PositionInfo_dict = {}
         PositionInfo_dfs = pd.DataFrame()
+
+        aggregated_positions = pd.DataFrame()  # 初始化为空DataFrame
 
         if position_details:
             position_data_list = []
             for pos in position_details:
                 if pos.m_nVolume != 0:  # 忽略持仓量为0的合约
                     # 获取 pos 对象转json信息
-                    # log_info(f"  [账户信息] 获取持仓属性信息: {dir(pos)}")
+                    log_debug(f"  [账户信息] 获取持仓属性信息: {dir(pos)}")
                     symbol = pos.m_strInstrumentID + '.' + pos.m_strExchangeID
 
                     position_type = pos.m_nDirection
@@ -519,35 +517,41 @@ def get_account_info(ContextInfo):
                     '持仓盈亏': 'sum',
                     '开仓日期': 'first'
                 }).reset_index()
+            if not aggregated_positions.empty:
+                # 从聚合后的数据中获取持仓信息
+                for _, row in aggregated_positions.iterrows():
 
-            # 从聚合后的数据中获取持仓信息
-            for _, row in aggregated_positions.iterrows():
-                symbol = row['代码']
-                position_type = row['持仓类型']
-                volume = row['持仓量']
-                entry_price = row['持仓成本']
-                open_date = row['开仓日期']
+                    symbol = row['代码']
+                    position_type = row['持仓类型']
+                    volume = row['持仓量']
+                    entry_price = row['持仓成本']
+                    open_date = row['开仓日期']
+                    log_info(f"  [账户信息] 获取持仓信息: {symbol} ，持仓类型:{position_type}，持仓量: {volume}，持仓成本: {entry_price}，开仓日期: {open_date}")
 
-                # 检查持仓是否属于当前策略的合约
-                if position_type == 48:  # 多头持仓
-                    g.long_position[symbol] = 1  # 多头持仓状态
-                    g.long_open_date[symbol] = open_date  # 多头开仓日期
-                    g.long_volume[symbol] = volume  # 多头持仓量
-                    g.long_entry_price[symbol] = entry_price  # 多头持仓成本
+                    g.long_position[symbol] = 0  # 重置多头持仓状态
+                    g.short_position[symbol] = 0  # 重置空头持仓状态
 
-                elif position_type == 49:  # 空头持仓
-                    g.short_position[symbol] = 1  # 空头持仓状态
-                    g.short_open_date[symbol] = open_date  # 空头开仓日期
-                    g.short_volume[symbol] = volume  # 空头持仓量
-                    g.short_entry_price[symbol] = entry_price  # 空头持仓成本
-            print(f"    [账户信息] 持仓明细:\n {str(PositionInfo_dfs)} ")
-            print(f"    [账户信息] 聚合后持仓:\n {str(aggregated_positions)} ")
+
+                    # 检查持仓是否属于当前策略的合约
+                    if position_type == 48:  # 多头持仓
+                        g.long_position[symbol] = 1  # 多头持仓状态
+                        g.long_open_date[symbol] = open_date  # 多头开仓日期
+                        g.long_volume[symbol] = volume  # 多头持仓量
+                        g.long_entry_price[symbol] = entry_price  # 多头持仓成本
+
+                    elif position_type == 49:  # 空头持仓
+                        g.short_position[symbol] = 1  # 空头持仓状态
+                        g.short_open_date[symbol] = open_date  # 空头开仓日期
+                        g.short_volume[symbol] = volume  # 空头持仓量
+                        g.short_entry_price[symbol] = entry_price  # 空头持仓成本
+            log_debug(f"    [账户信息] 持仓明细:\n {str(PositionInfo_dfs)} ")
+            log_debug(f"    [账户信息] 聚合后持仓:\n {str(aggregated_positions)} ")
 
             # 持仓数量通过PositionInfo_dfs有几行数据来决定
             g.position_count = aggregated_positions.shape[0]
             log_debug(f"  [账户信息] 更新持仓状态，当前持仓合约数: {g.position_count}")
 
-            g.position_code = aggregated_positions['代码'].tolist()
+            g.position_code = aggregated_positions['代码'].tolist() if g.position_count != 0 else []
             log_debug(f"  [账户信息] 持仓合约列表: {g.position_code}")
 
 
@@ -617,7 +621,7 @@ def generate_signal(ContextInfo, price_data):
                 ['time', 'open', 'high', 'low', 'close'],
                 [g.current_stock_code],
                 start_time=g.long_open_date[g.current_stock_code],
-                end_time=g.current_date,
+                end_time=g.current_date_bar,
                 period='1d',
                 dividend_type=ContextInfo.dividend_type,
                 subscribe=True
@@ -637,7 +641,7 @@ def generate_signal(ContextInfo, price_data):
                 ['time', 'open', 'high', 'low', 'close'],
                 [g.current_stock_code],
                 start_time=g.short_open_date[g.current_stock_code],
-                end_time=g.current_date,
+                end_time=g.current_date_bar,
                 period='1d',
                 dividend_type=ContextInfo.dividend_type,
                 subscribe=True
@@ -772,28 +776,7 @@ def execute_trade(ContextInfo, signal, price_data):
         contract_multiplier = ContextInfo.get_contract_multiplier(g.current_stock_code)
         log_info(f"  [交易执行] 合约信息:当前价格: {current_price:.4f},合约乘数: {contract_multiplier}")
 
-        # 计算头寸规模
-        # 根据资金量和合约价值计算手数
-        # if position_type > 0:  # 做多
-        #     position_value = g.long_capital
-        #     log_info(f"  [交易执行] 做多资金: {position_value}")
-        #     # 多头仓位保证金计算
-        #     margin_size = g.long_margin_ratio * (current_price * contract_multiplier)
-        #     log_debug(
-        #         f"  [交易执行] 多头仓位保证金: {margin_size:.2f}元 :多头仓位保证金比例: {g.long_margin_ratio:.2f} ")
-        # else:  # 做空
-        #     position_value = g.short_capital
-        #     log_info(f"  [交易执行] 做空资金: {position_value}")
-        #     # 空头仓位保证金计算
-        #     margin_size = g.short_margin_ratio * (current_price * contract_multiplier)
-        #     log_debug(
-        #         f"  [交易执行] 空头仓位保证金: {margin_size:.2f}元 :空头仓位保证金比例: {g.short_margin_ratio:.2f} ")
-        # position_size = int(position_value / margin_size)
-        # log_info(f"  [交易执行] 头寸规模: {position_size} 手")
-        # position_size = max(1, position_size)  # 至少为1合约乘数
-
-        log_info(
-            f"    最终手数: {g.position_size[g.current_stock_code]} 手 ,头寸价值: {g.position_size[g.current_stock_code] * current_price * contract_multiplier:.2f}元")
+        # log_info( f"    最终手数: {g.position_size[g.current_stock_code]} 手 ,头寸价值: {g.position_size[g.current_stock_code] * current_price * contract_multiplier:.2f}元")
 
         # 开仓操作
         if signal_type > 0:  # 开仓信号
@@ -811,7 +794,7 @@ def execute_trade(ContextInfo, signal, price_data):
 
                     log_info(f"  [交易执行] 下单结果: {order_info}")
                     g.long_position[g.current_stock_code] = 1
-                    g.long_open_date[g.current_stock_code] = g.current_date
+                    g.long_open_date[g.current_stock_code] = g.current_date_bar
 
                     g.position_count = g.position_count + 1
                     log_info(f"  [交易执行] 持仓计数器: {g.position_count}")
@@ -829,7 +812,7 @@ def execute_trade(ContextInfo, signal, price_data):
                                            ContextInfo)
                     log_info(f"  [交易执行] 下单结果: {order_info}")
                     g.short_position[g.current_stock_code] = 1
-                    g.short_open_date[g.current_stock_code] = g.current_date
+                    g.short_open_date[g.current_stock_code] = g.current_date_bar
 
                     g.position_count = g.position_count + 1
                     log_info(f"  [交易执行] 持仓计数器: {g.position_count}")
@@ -985,3 +968,24 @@ class G(): pass
 
 
 g = G()
+
+
+def get_futures_start_time(current_date):
+    """
+    根据当前时间确定期货交易起始时间
+    如果current_date的小时在21点之后，那么期货的交易时间从今天晚上九点开始
+    否则期货交易时间从昨天晚上9点开始
+    """
+
+    current_time = datetime.strptime(current_date, '%Y%m%d%H%M%S')
+    current_hour = current_time.hour
+
+    # 期货交易日从晚上9点开始
+    start_time = current_time.replace(hour=21, minute=0, second=0)
+
+    # 如果当前时间在21点之前，说明是当天的日盘交易，需要从前一晚的夜盘开始
+    if current_hour < 21:
+        # 往前推一天
+        start_time = start_time - pd.Timedelta(days=1)
+
+    return start_time.strftime('%Y%m%d%H%M%S')
