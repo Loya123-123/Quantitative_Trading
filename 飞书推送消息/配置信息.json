@@ -1,0 +1,8 @@
+{
+  "策略通知": {
+    "app_id" : "cli_a5d1873e50fad00b",
+    "app_secret" : "ZNZpmg2LeQtiTWevfpVCOeHFPuFqs3c3",
+    "receive_id_type": "chat_id",
+    "receive_id": "oc_bf6be67fb690bfc6832508e70d360d2f"
+  }
+}
