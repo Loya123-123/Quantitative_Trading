@@ -27,35 +27,16 @@ def load_config():
         return None
 
 
-def get_access_token(app_id, app_secret):
-    """获取访问令牌"""
-    url = "https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal"
-    params = {
-        "app_id": app_id,
-        "app_secret": app_secret
-    }
-    response = requests.post(url, params=params)
-    result = response.json()
-    if result.get("code") == 0:
-        return result.get("tenant_access_token")
-    else:
-        print(f"获取访问令牌失败: {result}")
-        return None
-
-
-def send_feishu_message(access_token, receive_id_type, receive_id, message):
+def send_feishu_message(url, message):
     """发送飞书消息"""
     import json
-    # url = f"https://open.feishu.cn/open-apis/im/v1/messages?receive_id_type={receive_id_type}"
-    url = "https://open.feishu.cn/open-apis/bot/v2/hook/086957a2-ddb4-4406-a720-3caaa7e3930f"
+
     headers = {
-        # "Authorization": f"Bearer {access_token}",
         "Content-Type": "application/json; charset=utf-8"
     }
     # 飞书API要求content字段是JSON字符串，如 '{"text":"test content"}'
     content_str = json.dumps({"text": message}, ensure_ascii=False)
     body = {
-        # "receive_id": receive_id,
         "msg_type": "text",
         "content": content_str  # content字段必须是JSON字符串格式
     }
@@ -84,7 +65,7 @@ def check_log_file_exists(account_id=None):
         pattern = os.path.join(log_dir, f"datalog-{account_id}-*.log")
     else:
         pattern = os.path.join(log_dir, "datalog-*.log")
-    
+
     log_files = glob.glob(pattern)
 
     if not log_files:
@@ -103,7 +84,7 @@ def check_log_file_exists(account_id=None):
                 date_part = time_part[:8]
                 hour_part = int(time_part[8:10])  # 提取小时部分
                 file_date = datetime.strptime(date_part, "%Y%m%d").date()
-                
+
                 if file_date == today:
                     # 根据当前小时和文件小时部分来决定是否添加到today_logs
                     if current_hour < 19:
@@ -252,16 +233,12 @@ def main():
         return
 
     # 获取访问令牌
-    notification_config = config.get("策略通知", {})
-    access_token = get_access_token(notification_config["app_id"], notification_config["app_secret"])
-    if not access_token:
-        print("无法获取访问令牌，退出")
-        return
 
     # 从配置中获取账户ID字典和飞书通知配置
     account_mapping = config.get("account_id", {})
     notification_config = config.get("策略通知", {})
-    
+    # 自定义机器人
+    webhook = notification_config["url"]
     if not account_mapping:
         print("配置文件中未找到账户ID字典，退出")
         return
@@ -269,7 +246,7 @@ def main():
     # 遍历每个账户进行检查
     for account_id, account_name in account_mapping.items():
         print(f"\n开始检查账户 {account_name} (ID: {account_id}) 的日志...")
-        
+
         # 检查日志文件是否存在
         latest_log_file = check_log_file_exists(account_id)
 
@@ -277,7 +254,7 @@ def main():
             # 日志文件不存在，发送预警
             message = f"警告: 账户 {account_name} (ID: {account_id}) 的日志文件不存在！策略可能未运行。时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
             print(message)
-            send_feishu_message(access_token, notification_config["receive_id_type"], notification_config["receive_id"], message)
+            send_feishu_message(webhook, message)
             continue
 
         print(f"找到日志文件: {latest_log_file}")
@@ -289,7 +266,7 @@ def main():
             # 没有找到账户ID，发送预警
             message = f"警告: 在日志中未找到账户ID {account_id}，策略可能运行异常！时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} 日志文件: {os.path.basename(latest_log_file)}"
             print(message)
-            send_feishu_message(access_token, notification_config["receive_id_type"], notification_config["receive_id"], message)
+            send_feishu_message(webhook, message)
             continue
         else:
             print(f"在日志中找到账户ID {account_id}，策略运行正常")
@@ -302,12 +279,12 @@ def main():
             error_text = "\n".join(error_messages[:5])  # 只显示前5条错误
             message = f"警报: 账户 {account_name} (ID: {account_id}) 在策略日志中发现异常！\n时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n日志文件: {os.path.basename(latest_log_file)}\n异常内容:\n{error_text}"
             print(message)
-            send_feishu_message(access_token, notification_config["receive_id_type"], notification_config["receive_id"], message)
+            send_feishu_message(webhook, message)
         else:
             # 没有异常，发送正常通知
             message = f"账户 {account_name} (ID: {account_id}) 策略运行正常 时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} 日志文件: {os.path.basename(latest_log_file)}"
             print(message)
-            send_feishu_message(access_token, notification_config["receive_id_type"], notification_config["receive_id"], message)
+            send_feishu_message(webhook, message)
 
     print("\n所有账户检查完成")
 
