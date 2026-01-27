@@ -1,4 +1,8 @@
 {
+  "account_id" : {
+    "809213023" : "尹",
+    "809212961" : "丁"
+  },
   "策略通知": {
     "app_id" : "cli_a5d1873e50fad00b",
     "app_secret" : "ZNZpmg2LeQtiTWevfpVCOeHFPuFqs3c3",

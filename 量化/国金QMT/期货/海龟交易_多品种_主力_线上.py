@@ -41,12 +41,18 @@ def init(ContextInfo):
     初始化函数
     设置策略参数、交易标的等
     """
+
+    # 账户信息
+    # ContextInfo.account_id = '809213023'  # 期货账户ID
+    ContextInfo.account_id = account  # 期货账户ID
+
+
     # 在初始化时清空日志文件内容
     global log_filename
     log_filename = None  # 重置日志文件名
     # clear_log_file()
 
-    filename = get_log_filename()
+    filename = get_log_filename(ContextInfo.account_id)
     # INFO 简要信息  DEBUG 详细日志
     logging.basicConfig(filename=filename, level=logging.INFO,
                         format='%(asctime)s - %(levelname)s - %(message)s')
@@ -125,11 +131,11 @@ def init(ContextInfo):
     g.position_count = 0  # 当前持仓数量
     g.position_code = []  # 当前持仓的合约
     g.position_size = {}  # 交易合约对应的手数，为每个合约保存
+    g.pending_cancel_contracts = []  # 需要撤销委托的合约列表
+
+
     log_info(f"[初始化] 策略状态变量初始化完成")
 
-    # 账户信息
-    # ContextInfo.account_id = '809213023'  # 期货账户ID
-    ContextInfo.account_id = account  # 期货账户ID
     log_info(f"[初始化] 账户信息设置完成:")
     log_info(f"        期货账户ID: {ContextInfo.account_id}")
 
@@ -193,6 +199,11 @@ def run_time_handlebar(ContextInfo):  # 定时运行
 
     # 需要交易的合约g.current_trading_contracts 和持仓代码 position_code 两个list 合并去重得到要执行的合约代码
     g.current_trading_contracts = list(set(g.current_trading_contracts + g.position_code))
+
+    # 从需要交易的合约中剔除需要撤销委托的合约
+    if hasattr(g, 'pending_cancel_contracts') and g.pending_cancel_contracts:
+        g.current_trading_contracts = [contract for contract in g.current_trading_contracts if contract not in g.pending_cancel_contracts]
+        log_info(f"[初始化] 剔除需要撤销委托的合约后，需要处理的合约: {g.current_trading_contracts}")
     log_info(f"[初始化]  需要处理的合约: {g.current_trading_contracts}")
 
     # 为每个合约执行策略逻辑
@@ -204,6 +215,9 @@ def run_time_handlebar(ContextInfo):  # 定时运行
 
         # 获取合约基础信息
         stock_contract_info = ContextInfo.get_instrument_detail(g.current_stock_code)
+        if stock_contract_info is None:
+            log_info(f"[异常处理] 合约基础信息获取失败: {g.current_stock_code}")
+            continue
         log_debug(f"[数据获取] 合约基础信息: {stock_contract_info}")
 
         # 获合约的退市日或者到期日 ExpireDate
@@ -230,7 +244,7 @@ def run_time_handlebar(ContextInfo):  # 定时运行
         required_data = max(g.entry_window, g.exit_window, g.atr_window)
         log_debug(f"[数据检查] 当前bar位置: {ContextInfo.barpos}, 所需数据: {required_data}")
         if ContextInfo.barpos < required_data:
-            log_info("[数据检查] 数据不足，跳过本次处理")
+            log_info("[异常处理] 数据不足，跳过本次处理")
             log_separator()
             continue
 
@@ -249,7 +263,7 @@ def run_time_handlebar(ContextInfo):  # 定时运行
             price_data = get_price_data(ContextInfo)
             log_debug(f'[数据获取]: \n {str(price_data)}')
             if price_data is None or len(price_data) <= max(g.entry_window, g.atr_window):
-                log_info("[数据获取] 数据不足，跳过本次处理")
+                log_info("[异常处理] 数据不足，跳过本次处理")
                 log_separator()
                 continue
             log_debug(f"[数据获取] 成功获取价格数据，共 {len(price_data)} 条记录")
@@ -259,7 +273,7 @@ def run_time_handlebar(ContextInfo):  # 定时运行
             g.N[stock_code] = calculate_atr(stock_code, price_data, g.atr_window)
 
             if g.N[stock_code] <= 0:
-                log_info("[ATR计算] ATR值计算异常，跳过本次处理")
+                log_info("[异常处理] ATR值计算异常，跳过本次处理")
                 log_separator()
                 continue
             log_debug(f"[ATR计算] 当前ATR(N值): {g.N[stock_code]:.4f}")
@@ -312,7 +326,7 @@ def get_price_data(ContextInfo):
             subscribe=True
         )
         if not history_market_data or g.current_stock_code not in history_market_data:
-            log_info("  [价格数据] 获取历史市场数据为空")
+            log_info("  [异常处理] 获取历史市场数据为空")
             return None
 
         history_df = history_market_data[g.current_stock_code]
@@ -334,7 +348,7 @@ def get_price_data(ContextInfo):
         )
 
         if not current_market_data_more or g.current_stock_code not in current_market_data_more:
-            log_info("  [价格数据] 获取当日市场数据为空")
+            log_info("  [异常处理] 获取当日市场数据为空")
             return None
 
         current_df_more = current_market_data_more[g.current_stock_code]
@@ -370,7 +384,7 @@ def get_price_data(ContextInfo):
         return df
 
     except Exception as e:
-        log_info(f"  [价格数据] 获取价格数据时发生错误: {e}")
+        log_info(f"  [异常处理] 获取价格数据时发生错误: {e}")
         return None
 
 
@@ -414,7 +428,7 @@ def calculate_atr(stock_code, data, window):
         return atr
 
     except Exception as e:
-        log_info(f"  [ATR计算] 计算ATR时发生错误: {e} (合约: {stock_code})")
+        log_info(f"  [异常处理] 计算ATR时发生错误: {e} (合约: {stock_code})")
         return 0
 
 
@@ -430,7 +444,7 @@ def get_account_info(ContextInfo):
         log_debug("  [账户信息] 获取账户资金详情...")
         account_details = get_trade_detail_data(ContextInfo.account_id, 'FUTURE', 'ACCOUNT')
         if not account_details:
-            log_info("  [账户信息] 获取账户详情失败")
+            log_info("  [异常处理] 获取账户详情失败")
             return None
         g.position_code = []  # 仓位代码
         account = account_details[0]
@@ -455,6 +469,8 @@ def get_account_info(ContextInfo):
         # 获取未成交委托信息并撤销未成交委托
         log_debug("  [账户信息] 获取未成交委托详情...")
         order_details = get_trade_detail_data(ContextInfo.account_id, 'FUTURE', 'ORDER')
+        # 清空需要撤销委托的合约列表
+        g.pending_cancel_contracts = []
         if order_details:
             order_len = 0
             for order in order_details:
@@ -467,13 +483,16 @@ def get_account_info(ContextInfo):
                 if 49 <= order_status < 54:
                     log_info(
                         f"  [账户信息] 发现未成交委托，合约: {symbol}, 状态: {order_status}, 委托编号: {order.m_strOrderSysID}")
+                    # 将需要撤销委托的合约添加到列表中
+                    if symbol not in g.pending_cancel_contracts:
+                        g.pending_cancel_contracts.append(symbol)
                     # 撤销未成交委托
                     cancel_result = cancel(order.m_strOrderSysID, ContextInfo.account_id, 'FUTURE', ContextInfo)
                     log_info(f"  [账户信息] 撤销委托结果: {cancel_result}")
                     order_len += 1
                 else:
-                    log_debug(f"  [账户信息] 合约: {symbol} ,委托状态为: {order_status}，无需撤销")
-            log_info(f"  [账户信息] 处理  {order_len} 条委托记录")
+                    log_info(f"  [账户信息] 合约: {symbol} ,委托状态为: {order_status}，无需撤销")
+            log_info(f"  [账户信息] 处理  {order_len} 条委托记录，需要撤销委托的合约: {g.pending_cancel_contracts}")
         else:
             log_info("  [账户信息] 无委托记录")
 
@@ -566,7 +585,7 @@ def get_account_info(ContextInfo):
         }
 
     except Exception as e:
-        log_info(f"  [账户信息] 获取账户信息时发生错误: {e}")
+        log_info(f"  [异常处理] 获取账户信息时发生错误: {e}")
         return None
 
 
@@ -747,7 +766,7 @@ def generate_signal(ContextInfo, price_data):
         return (0, 0)  # 无交易信号
 
     except Exception as e:
-        log_info(f"  [信号生成] 生成交易信号时发生错误: {e}")
+        log_info(f"  [异常处理] 生成交易信号时发生错误: {e}")
         return (0, 0)
 
 
@@ -856,7 +875,7 @@ def execute_trade(ContextInfo, signal, price_data):
                 log_info(f"  [交易执行] 持仓计数器: {g.position_count}")
 
     except Exception as e:
-        log_info(f"  [交易执行] 执行交易操作时发生错误: {e}")
+        log_info(f"  [异常处理] 执行交易操作时发生错误: {e}")
 
 
 def is_trading_time(current_time):
@@ -894,14 +913,17 @@ def is_trading_time(current_time):
     return False
 
 
-def get_log_filename():
+def get_log_filename(account_id=None):
     """
     获取当前日志文件名
     """
     global log_filename
     if log_filename is None:
         timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
-        log_filename = f"C:\\datalog\\datalog-{timestamp}.log"
+        if account_id:
+            log_filename = f"C:\\datalog\\datalog-{account_id}-{timestamp}.log"
+        else:
+            log_filename = f"C:\\datalog\\datalog-{timestamp}.log"
     return log_filename
 
 
