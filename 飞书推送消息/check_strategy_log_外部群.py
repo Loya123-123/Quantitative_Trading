@@ -1,3 +1,4 @@
+# coding:gbk
 import os
 import re
 import json
@@ -5,62 +6,63 @@ import requests
 from datetime import datetime, timedelta
 import glob
 
-# é£ä¹¦æœºå™¨äººé…ç½®
-# CONFIG_FILE = "/Users/jianzhong/ProjectCode/Quantitative_Trading/é£ä¹¦æ¨é€æ¶ˆæ¯/é…ç½®ä¿¡æ¯.json"
+# ·ÉÊé»úÆ÷ÈËÅäÖÃ
+# CONFIG_FILE = "/Users/jianzhong/ProjectCode/Quantitative_Trading/·ÉÊéÍÆËÍÏûÏ¢/ÅäÖÃĞÅÏ¢.json"
 # log_dir = "/Users/jianzhong/ProjectCode/Quantitative_Trading/log"
 
-CONFIG_FILE = "./é…ç½®ä¿¡æ¯.json"
-log_dir = "../log"
+# win»·¾³
+CONFIG_FILE = r"C:\Users\loya\PycharmProjects\Quantitative_Trading\·ÉÊéÍÆËÍÏûÏ¢\ÅäÖÃĞÅÏ¢_Íâ²¿Èº.json"
+log_dir = r"C:\datalog"
 
 
 def load_config():
-    """åŠ è½½é£ä¹¦æœºå™¨äººé…ç½®"""
+    """¼ÓÔØ·ÉÊé»úÆ÷ÈËÅäÖÃ"""
     try:
         with open(CONFIG_FILE, 'r', encoding='utf-8') as f:
             config = json.load(f)
         return config
     except FileNotFoundError:
-        print("é…ç½®æ–‡ä»¶æœªæ‰¾åˆ°")
+        print("ÅäÖÃÎÄ¼şÎ´ÕÒµ½")
         return None
     except Exception as e:
-        print(f"è¯»å–é…ç½®æ–‡ä»¶æ—¶å‡ºé”™: {e}")
+        print(f"¶ÁÈ¡ÅäÖÃÎÄ¼şÊ±³ö´í: {e}")
         return None
 
 
 def send_feishu_message(url, message):
-    """å‘é€é£ä¹¦æ¶ˆæ¯"""
+    """·¢ËÍ·ÉÊéÏûÏ¢"""
     import json
 
     headers = {
         "Content-Type": "application/json; charset=utf-8"
     }
-    # é£ä¹¦APIè¦æ±‚contentå­—æ®µæ˜¯JSONå­—ç¬¦ä¸²ï¼Œå¦‚ '{"text":"test content"}'
+    # ·ÉÊéAPIÒªÇócontent×Ö¶ÎÊÇJSON×Ö·û´®£¬Èç '{"text":"test content"}'
     content_str = json.dumps({"text": message}, ensure_ascii=False)
     body = {
         "msg_type": "text",
-        "content": content_str  # contentå­—æ®µå¿…é¡»æ˜¯JSONå­—ç¬¦ä¸²æ ¼å¼
+        "content": content_str  # content×Ö¶Î±ØĞëÊÇJSON×Ö·û´®¸ñÊ½
     }
     try:
-        response = requests.post(url=url, headers=headers, json=body)  # ä½¿ç”¨jsonå‚æ•°è‡ªåŠ¨å¤„ç†åºåˆ—åŒ–
+        response = requests.post(url=url, headers=headers, json=body)  # Ê¹ÓÃjson²ÎÊı×Ô¶¯´¦ÀíĞòÁĞ»¯
         response_json = response.json()
         if response_json.get("code") == 0:
-            print("æ¶ˆæ¯å‘é€æˆåŠŸ")
+            print("ÏûÏ¢·¢ËÍ³É¹¦")
             return True
         else:
-            print(f"æ¶ˆæ¯å‘é€å¤±è´¥: {response_json}")
+            print(f"ÏûÏ¢·¢ËÍÊ§°Ü: {response_json}")
             return False
     except Exception as e:
-        print(f"å‘é€æ¶ˆæ¯æ—¶å‡ºé”™: {e}")
+        print(f"·¢ËÍÏûÏ¢Ê±³ö´í: {e}")
         return False
 
 
 def check_log_file_exists(account_id=None):
-    """æ£€æŸ¥æ—¥å¿—æ–‡ä»¶æ˜¯å¦å­˜åœ¨ï¼ˆåªæ£€æŸ¥ä»Šå¤©çš„æ—¥å¿—ï¼‰"""
+    """¼ì²éÈÕÖ¾ÎÄ¼şÊÇ·ñ´æÔÚ£¨Ö»¼ì²é½ñÌìµÄÈÕÖ¾£©"""
 
     today = datetime.now().date()
     current_hour = datetime.now().hour
     # current_hour = 19
-    # å¦‚æœæŒ‡å®šäº†è´¦æˆ·IDï¼Œåˆ™æŸ¥æ‰¾ç‰¹å®šè´¦æˆ·çš„æ—¥å¿—æ–‡ä»¶
+    # Èç¹ûÖ¸¶¨ÁËÕË»§ID£¬Ôò²éÕÒÌØ¶¨ÕË»§µÄÈÕÖ¾ÎÄ¼ş
     if account_id:
         pattern = os.path.join(log_dir, f"datalog-{account_id}-*.log")
     else:
@@ -71,28 +73,28 @@ def check_log_file_exists(account_id=None):
     if not log_files:
         return None
 
-    # è¿‡æ»¤å‡ºä»Šå¤©çš„æ—¥å¿—æ–‡ä»¶
+    # ¹ıÂË³ö½ñÌìµÄÈÕÖ¾ÎÄ¼ş
     today_logs = []
     for log_file in log_files:
         basename = os.path.basename(log_file)
-        # æå–æ—¶é—´éƒ¨åˆ†ï¼šdatalog-<account_id>-YYYYMMDDHH.log
+        # ÌáÈ¡Ê±¼ä²¿·Ö£ºdatalog-<account_id>-YYYYMMDDHH.log
         parts = basename.split('-')
-        if len(parts) >= 3:  # æ–°æ ¼å¼
-            time_part = parts[2].split('.')[0]  # æå–æ—¶é—´éƒ¨åˆ† YYYYMMDDHH
+        if len(parts) >= 3:  # ĞÂ¸ñÊ½
+            time_part = parts[2].split('.')[0]  # ÌáÈ¡Ê±¼ä²¿·Ö YYYYMMDDHH
             try:
-                # ä»æ—¶é—´å­—ç¬¦ä¸²ä¸­æå–å¹´æœˆæ—¥éƒ¨åˆ† (YYYYMMDD) å’Œå°æ—¶éƒ¨åˆ† (HH)
+                # ´ÓÊ±¼ä×Ö·û´®ÖĞÌáÈ¡ÄêÔÂÈÕ²¿·Ö (YYYYMMDD) ºÍĞ¡Ê±²¿·Ö (HH)
                 date_part = time_part[:8]
-                hour_part = int(time_part[8:10])  # æå–å°æ—¶éƒ¨åˆ†
+                hour_part = int(time_part[8:10])  # ÌáÈ¡Ğ¡Ê±²¿·Ö
                 file_date = datetime.strptime(date_part, "%Y%m%d").date()
 
                 if file_date == today:
-                    # æ ¹æ®å½“å‰å°æ—¶å’Œæ–‡ä»¶å°æ—¶éƒ¨åˆ†æ¥å†³å®šæ˜¯å¦æ·»åŠ åˆ°today_logs
+                    # ¸ù¾İµ±Ç°Ğ¡Ê±ºÍÎÄ¼şĞ¡Ê±²¿·ÖÀ´¾ö¶¨ÊÇ·ñÌí¼Óµ½today_logs
                     if current_hour < 19:
-                        # å¦‚æœå½“å‰æ—¶é—´å°äº19ç‚¹ï¼Œé€‰æ‹©å°æ—¶éƒ¨åˆ†å°äº19çš„æ–‡ä»¶
+                        # Èç¹ûµ±Ç°Ê±¼äĞ¡ÓÚ19µã£¬Ñ¡ÔñĞ¡Ê±²¿·ÖĞ¡ÓÚ19µÄÎÄ¼ş
                         if hour_part < 19:
                             today_logs.append(log_file)
                     else:
-                        # å¦‚æœå½“å‰æ—¶é—´å¤§äºç­‰äº19ç‚¹ï¼Œé€‰æ‹©å°æ—¶éƒ¨åˆ†å¤§äºç­‰äº19çš„æ–‡ä»¶
+                        # Èç¹ûµ±Ç°Ê±¼ä´óÓÚµÈÓÚ19µã£¬Ñ¡ÔñĞ¡Ê±²¿·Ö´óÓÚµÈÓÚ19µÄÎÄ¼ş
                         if hour_part >= 19:
                             today_logs.append(log_file)
             except ValueError:
@@ -101,15 +103,15 @@ def check_log_file_exists(account_id=None):
     if not today_logs:
         return None
 
-    # è¿”å›æŒ‰ä¿®æ”¹æ—¶é—´æœ€æ–°çš„æ—¥å¿—æ–‡ä»¶
+    # ·µ»Ø°´ĞŞ¸ÄÊ±¼ä×îĞÂµÄÈÕÖ¾ÎÄ¼ş
     latest_log = max(today_logs, key=os.path.getmtime)
     return latest_log
 
 
 def check_first_lines_for_account(log_file, expected_account_id):
-    """æ£€æŸ¥æ—¥å¿—æ–‡ä»¶å‰15è¡Œæ˜¯å¦åŒ…å«æŒ‡å®šçš„è´¦æˆ·ID"""
+    """¼ì²éÈÕÖ¾ÎÄ¼şÇ°15ĞĞÊÇ·ñ°üº¬Ö¸¶¨µÄÕË»§ID"""
     try:
-        # å°è¯•ä¸åŒçš„ç¼–ç æ–¹å¼æ‰“å¼€æ–‡ä»¶
+        # ³¢ÊÔ²»Í¬µÄ±àÂë·½Ê½´ò¿ªÎÄ¼ş
         encodings = ['utf-8', 'gbk', 'gb2312', 'latin-1']
         lines = []
 
@@ -119,30 +121,30 @@ def check_first_lines_for_account(log_file, expected_account_id):
                     lines = []
                     for i, line in enumerate(f):
                         lines.append(line)
-                        if i >= 14:  # è¯»å–å‰15è¡Œ
+                        if i >= 14:  # ¶ÁÈ¡Ç°15ĞĞ
                             break
-                break  # æˆåŠŸè¯»å–ï¼Œè·³å‡ºå¾ªç¯
+                break  # ³É¹¦¶ÁÈ¡£¬Ìø³öÑ­»·
             except UnicodeDecodeError:
                 continue
 
-        if not lines:  # å¦‚æœæ‰€æœ‰ç¼–ç éƒ½å¤±è´¥
-            print(f"æ— æ³•ä½¿ç”¨å¸¸è§ç¼–ç è¯»å–æ–‡ä»¶ {log_file}")
+        if not lines:  # Èç¹ûËùÓĞ±àÂë¶¼Ê§°Ü
+            print(f"ÎŞ·¨Ê¹ÓÃ³£¼û±àÂë¶ÁÈ¡ÎÄ¼ş {log_file}")
             return False
 
-        # æ£€æŸ¥æ˜¯å¦åŒ…å«æŒ‡å®šçš„è´¦æˆ·ID
+        # ¼ì²éÊÇ·ñ°üº¬Ö¸¶¨µÄÕË»§ID
         for line in lines:
             if expected_account_id in line:
                 return True
         return False
     except Exception as e:
-        print(f"è¯»å–æ—¥å¿—æ–‡ä»¶å‰15è¡Œæ—¶å‡ºé”™: {e}")
+        print(f"¶ÁÈ¡ÈÕÖ¾ÎÄ¼şÇ°15ĞĞÊ±³ö´í: {e}")
         return False
 
 
 def check_last_lines_for_errors(log_file):
-    """æ£€æŸ¥æ—¥å¿—æ–‡ä»¶æœ€å200è¡Œçš„æ‰§è¡Œæƒ…å†µå’Œå¼‚å¸¸"""
+    """¼ì²éÈÕÖ¾ÎÄ¼ş×îºó200ĞĞµÄÖ´ĞĞÇé¿öºÍÒì³£"""
     try:
-        # å°è¯•ä¸åŒçš„ç¼–ç æ–¹å¼æ‰“å¼€æ–‡ä»¶
+        # ³¢ÊÔ²»Í¬µÄ±àÂë·½Ê½´ò¿ªÎÄ¼ş
         encodings = ['utf-8', 'gbk', 'gb2312', 'latin-1']
         lines = []
 
@@ -150,33 +152,33 @@ def check_last_lines_for_errors(log_file):
             try:
                 with open(log_file, 'r', encoding=encoding) as f:
                     lines = f.readlines()
-                break  # æˆåŠŸè¯»å–ï¼Œè·³å‡ºå¾ªç¯
+                break  # ³É¹¦¶ÁÈ¡£¬Ìø³öÑ­»·
             except UnicodeDecodeError:
                 continue
 
-        if not lines:  # å¦‚æœæ‰€æœ‰ç¼–ç éƒ½å¤±è´¥
-            print(f"æ— æ³•ä½¿ç”¨å¸¸è§ç¼–ç è¯»å–æ–‡ä»¶ {log_file}")
-            return False, [f"æ— æ³•ä½¿ç”¨å¸¸è§ç¼–ç è¯»å–æ–‡ä»¶ {log_file}"]
+        if not lines:  # Èç¹ûËùÓĞ±àÂë¶¼Ê§°Ü
+            print(f"ÎŞ·¨Ê¹ÓÃ³£¼û±àÂë¶ÁÈ¡ÎÄ¼ş {log_file}")
+            return False, [f"ÎŞ·¨Ê¹ÓÃ³£¼û±àÂë¶ÁÈ¡ÎÄ¼ş {log_file}"]
 
-        # è·å–æœ€å200è¡Œ
+        # »ñÈ¡×îºó200ĞĞ
         last_lines = lines[-200:] if len(lines) > 200 else lines
 
-        # å¯»æ‰¾æœ€è¿‘ä¸€æ¬¡å®Œæ•´æ‰§è¡Œè¿‡ç¨‹
+        # Ñ°ÕÒ×î½üÒ»´ÎÍêÕûÖ´ĞĞ¹ı³Ì
         start_indices = []
         end_indices = []
 
         for i, line in enumerate(last_lines):
-            if "[å¤„ç†å‡½æ•°] å¼€å§‹æ‰§è¡Œhandlebarå‡½æ•°" in line:
+            if "[´¦Àíº¯Êı] ¿ªÊ¼Ö´ĞĞhandlebarº¯Êı" in line:
                 start_indices.append(i)
-            elif "[å¤„ç†å‡½æ•°] handlebarå‡½æ•°æ‰§è¡Œå®Œæˆ" in line:
+            elif "[´¦Àíº¯Êı] handlebarº¯ÊıÖ´ĞĞÍê³É" in line:
                 end_indices.append(i)
 
-        # æ‰¾åˆ°æœ€è¿‘ä¸€æ¬¡å®Œæ•´çš„æ‰§è¡Œè¿‡ç¨‹
+        # ÕÒµ½×î½üÒ»´ÎÍêÕûµÄÖ´ĞĞ¹ı³Ì
         latest_execution_start = -1
         latest_execution_end = -1
 
         for start_idx in reversed(start_indices):
-            # æ‰¾åˆ°è¿™ä¸ªå¼€å§‹ä¹‹åçš„ç¬¬ä¸€æ¬¡ç»“æŸ
+            # ÕÒµ½Õâ¸ö¿ªÊ¼Ö®ºóµÄµÚÒ»´Î½áÊø
             for end_idx in end_indices:
                 if end_idx > start_idx:
                     latest_execution_start = start_idx
@@ -186,31 +188,31 @@ def check_last_lines_for_errors(log_file):
                 break
 
         if latest_execution_start == -1 or latest_execution_end == -1:
-            # æ²¡æœ‰æ‰¾åˆ°å®Œæ•´çš„æ‰§è¡Œè¿‡ç¨‹ï¼Œç›´æ¥åœ¨æ•´ä¸ªæ£€æŸ¥èŒƒå›´å†…æŸ¥æ‰¾å¼‚å¸¸
+            # Ã»ÓĞÕÒµ½ÍêÕûµÄÖ´ĞĞ¹ı³Ì£¬Ö±½ÓÔÚÕû¸ö¼ì²é·¶Î§ÄÚ²éÕÒÒì³£
             error_lines = []
             for line in last_lines:
-                if "å¼‚å¸¸å¤„ç†" in line:
+                if "Òì³£´¦Àí" in line:
                     error_lines.append(line.strip())
 
             if error_lines:
                 return True, error_lines
             else:
-                return False, ["æœªæ‰¾åˆ°å®Œæ•´çš„æ‰§è¡Œè¿‡ç¨‹ï¼Œä½†ä¹Ÿæ²¡æœ‰å‘ç°å¼‚å¸¸"]
+                return False, ["Î´ÕÒµ½ÍêÕûµÄÖ´ĞĞ¹ı³Ì£¬µ«Ò²Ã»ÓĞ·¢ÏÖÒì³£"]
 
-        # æå–å®Œæ•´æ‰§è¡Œè¿‡ç¨‹ä¸­çš„å†…å®¹
+        # ÌáÈ¡ÍêÕûÖ´ĞĞ¹ı³ÌÖĞµÄÄÚÈİ
         execution_lines = last_lines[latest_execution_start:latest_execution_end + 1]
 
-        # æ£€æŸ¥è¿™æ®µæ‰§è¡Œè¿‡ç¨‹ä¸­æ˜¯å¦æœ‰å¼‚å¸¸
+        # ¼ì²éÕâ¶ÎÖ´ĞĞ¹ı³ÌÖĞÊÇ·ñÓĞÒì³£
         error_lines = []
         for line in execution_lines:
-            if "å¼‚å¸¸å¤„ç†" in line:
+            if "Òì³£´¦Àí" in line:
                 error_lines.append(line.strip())
 
-        # å¦‚æœæ²¡æœ‰åœ¨å®Œæ•´æ‰§è¡Œè¿‡ç¨‹ä¸­æ‰¾åˆ°å¼‚å¸¸ï¼Œä¹Ÿæ£€æŸ¥æ•´ä¸ªæœ€å200è¡Œæ˜¯å¦æœ‰å¼‚å¸¸
+        # Èç¹ûÃ»ÓĞÔÚÍêÕûÖ´ĞĞ¹ı³ÌÖĞÕÒµ½Òì³££¬Ò²¼ì²éÕû¸ö×îºó200ĞĞÊÇ·ñÓĞÒì³£
         if not error_lines:
             for line in last_lines:
-                if "å¼‚å¸¸å¤„ç†" in line and line.strip() not in [el.strip() for el in error_lines]:
-                    # ç¡®ä¿ä¸é‡å¤æ·»åŠ 
+                if "Òì³£´¦Àí" in line and line.strip() not in [el.strip() for el in error_lines]:
+                    # È·±£²»ÖØ¸´Ìí¼Ó
                     line_stripped = line.strip()
                     if line_stripped not in [el.strip() for el in error_lines]:
                         error_lines.append(line_stripped)
@@ -218,75 +220,75 @@ def check_last_lines_for_errors(log_file):
         return len(error_lines) > 0, error_lines
 
     except Exception as e:
-        print(f"è¯»å–æ—¥å¿—æ–‡ä»¶æœ€å200è¡Œæ—¶å‡ºé”™: {e}")
-        return False, [f"è¯»å–æ—¥å¿—æ–‡ä»¶æ—¶å‡ºé”™: {e}"]
+        print(f"¶ÁÈ¡ÈÕÖ¾ÎÄ¼ş×îºó200ĞĞÊ±³ö´í: {e}")
+        return False, [f"¶ÁÈ¡ÈÕÖ¾ÎÄ¼şÊ±³ö´í: {e}"]
 
 
 def main():
-    """ä¸»å‡½æ•°"""
-    print("å¼€å§‹æ£€æŸ¥ç­–ç•¥æ—¥å¿—...")
+    """Ö÷º¯Êı"""
+    print("¿ªÊ¼¼ì²é²ßÂÔÈÕÖ¾...")
 
-    # åŠ è½½é…ç½®
+    # ¼ÓÔØÅäÖÃ
     config = load_config()
     if not config:
-        print("æ— æ³•åŠ è½½é…ç½®æ–‡ä»¶ï¼Œé€€å‡º")
+        print("ÎŞ·¨¼ÓÔØÅäÖÃÎÄ¼ş£¬ÍË³ö")
         return
 
-    # è·å–è®¿é—®ä»¤ç‰Œ
+    # »ñÈ¡·ÃÎÊÁîÅÆ
 
-    # ä»é…ç½®ä¸­è·å–è´¦æˆ·IDå­—å…¸å’Œé£ä¹¦é€šçŸ¥é…ç½®
+    # ´ÓÅäÖÃÖĞ»ñÈ¡ÕË»§ID×ÖµäºÍ·ÉÊéÍ¨ÖªÅäÖÃ
     account_mapping = config.get("account_id", {})
-    notification_config = config.get("ç­–ç•¥é€šçŸ¥", {})
-    # è‡ªå®šä¹‰æœºå™¨äºº
+    notification_config = config.get("²ßÂÔÍ¨Öª", {})
+    # ×Ô¶¨Òå»úÆ÷ÈË
     webhook = notification_config["url"]
     if not account_mapping:
-        print("é…ç½®æ–‡ä»¶ä¸­æœªæ‰¾åˆ°è´¦æˆ·IDå­—å…¸ï¼Œé€€å‡º")
+        print("ÅäÖÃÎÄ¼şÖĞÎ´ÕÒµ½ÕË»§ID×Öµä£¬ÍË³ö")
         return
 
-    # éå†æ¯ä¸ªè´¦æˆ·è¿›è¡Œæ£€æŸ¥
+    # ±éÀúÃ¿¸öÕË»§½øĞĞ¼ì²é
     for account_id, account_name in account_mapping.items():
-        print(f"\nå¼€å§‹æ£€æŸ¥è´¦æˆ· {account_name} (ID: {account_id}) çš„æ—¥å¿—...")
+        print(f"\n¿ªÊ¼¼ì²éÕË»§ {account_name} (ID: {account_id}) µÄÈÕÖ¾...")
 
-        # æ£€æŸ¥æ—¥å¿—æ–‡ä»¶æ˜¯å¦å­˜åœ¨
+        # ¼ì²éÈÕÖ¾ÎÄ¼şÊÇ·ñ´æÔÚ
         latest_log_file = check_log_file_exists(account_id)
 
         if not latest_log_file:
-            # æ—¥å¿—æ–‡ä»¶ä¸å­˜åœ¨ï¼Œå‘é€é¢„è­¦
-            message = f"è­¦å‘Š: è´¦æˆ· {account_name} (ID: {account_id}) çš„æ—¥å¿—æ–‡ä»¶ä¸å­˜åœ¨ï¼ç­–ç•¥å¯èƒ½æœªè¿è¡Œã€‚æ—¶é—´: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+            # ÈÕÖ¾ÎÄ¼ş²»´æÔÚ£¬·¢ËÍÔ¤¾¯
+            message = f"¾¯¸æ: ÕË»§ {account_name} (ID: {account_id}) µÄÈÕÖ¾ÎÄ¼ş²»´æÔÚ£¡²ßÂÔ¿ÉÄÜÎ´ÔËĞĞ¡£Ê±¼ä: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
             print(message)
             send_feishu_message(webhook, message)
             continue
 
-        print(f"æ‰¾åˆ°æ—¥å¿—æ–‡ä»¶: {latest_log_file}")
+        print(f"ÕÒµ½ÈÕÖ¾ÎÄ¼ş: {latest_log_file}")
 
-        # æ£€æŸ¥å‰15è¡Œæ˜¯å¦åŒ…å«è´¦æˆ·ID
+        # ¼ì²éÇ°15ĞĞÊÇ·ñ°üº¬ÕË»§ID
         has_account = check_first_lines_for_account(latest_log_file, account_id)
 
         if not has_account:
-            # æ²¡æœ‰æ‰¾åˆ°è´¦æˆ·IDï¼Œå‘é€é¢„è­¦
-            message = f"è­¦å‘Š: åœ¨æ—¥å¿—ä¸­æœªæ‰¾åˆ°è´¦æˆ·ID {account_id}ï¼Œç­–ç•¥å¯èƒ½è¿è¡Œå¼‚å¸¸ï¼æ—¶é—´: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} æ—¥å¿—æ–‡ä»¶: {os.path.basename(latest_log_file)}"
+            # Ã»ÓĞÕÒµ½ÕË»§ID£¬·¢ËÍÔ¤¾¯
+            message = f"¾¯¸æ: ÔÚÈÕÖ¾ÖĞÎ´ÕÒµ½ÕË»§ID {account_id}£¬²ßÂÔ¿ÉÄÜÔËĞĞÒì³££¡Ê±¼ä: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} ÈÕÖ¾ÎÄ¼ş: {os.path.basename(latest_log_file)}"
             print(message)
             send_feishu_message(webhook, message)
             continue
         else:
-            print(f"åœ¨æ—¥å¿—ä¸­æ‰¾åˆ°è´¦æˆ·ID {account_id}ï¼Œç­–ç•¥è¿è¡Œæ­£å¸¸")
+            print(f"ÔÚÈÕÖ¾ÖĞÕÒµ½ÕË»§ID {account_id}£¬²ßÂÔÔËĞĞÕı³£")
 
-        # æ£€æŸ¥æœ€å200è¡Œæ˜¯å¦æœ‰å¼‚å¸¸
+        # ¼ì²é×îºó200ĞĞÊÇ·ñÓĞÒì³£
         has_error, error_messages = check_last_lines_for_errors(latest_log_file)
 
         if has_error:
-            # å‘ç°å¼‚å¸¸ï¼Œå‘é€é¢„è­¦
-            error_text = "\n".join(error_messages[:5])  # åªæ˜¾ç¤ºå‰5æ¡é”™è¯¯
-            message = f"è­¦æŠ¥: è´¦æˆ· {account_name} (ID: {account_id}) åœ¨ç­–ç•¥æ—¥å¿—ä¸­å‘ç°å¼‚å¸¸ï¼\næ—¶é—´: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\næ—¥å¿—æ–‡ä»¶: {os.path.basename(latest_log_file)}\nå¼‚å¸¸å†…å®¹:\n{error_text}"
+            # ·¢ÏÖÒì³££¬·¢ËÍÔ¤¾¯
+            error_text = "\n".join(error_messages[:5])  # Ö»ÏÔÊ¾Ç°5Ìõ´íÎó
+            message = f"¾¯±¨: ÕË»§ {account_name} (ID: {account_id}) ÔÚ²ßÂÔÈÕÖ¾ÖĞ·¢ÏÖÒì³££¡\nÊ±¼ä: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\nÈÕÖ¾ÎÄ¼ş: {os.path.basename(latest_log_file)}\nÒì³£ÄÚÈİ:\n{error_text}"
             print(message)
             send_feishu_message(webhook, message)
         else:
-            # æ²¡æœ‰å¼‚å¸¸ï¼Œå‘é€æ­£å¸¸é€šçŸ¥
-            message = f"è´¦æˆ· {account_name} (ID: {account_id}) ç­–ç•¥è¿è¡Œæ­£å¸¸ æ—¶é—´: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} æ—¥å¿—æ–‡ä»¶: {os.path.basename(latest_log_file)}"
+            # Ã»ÓĞÒì³££¬·¢ËÍÕı³£Í¨Öª
+            message = f"ÕË»§ {account_name} (ID: {account_id}) ²ßÂÔÔËĞĞÕı³£ Ê±¼ä: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} ÈÕÖ¾ÎÄ¼ş: {os.path.basename(latest_log_file)}"
             print(message)
             send_feishu_message(webhook, message)
 
-    print("\næ‰€æœ‰è´¦æˆ·æ£€æŸ¥å®Œæˆ")
+    print("\nËùÓĞÕË»§¼ì²éÍê³É")
 
 
 if __name__ == "__main__":
