@@ -28,9 +28,10 @@
 
 import logging
 from datetime import datetime
-
+import json
 import numpy as np
 import pandas as pd
+import requests
 
 # 全局变量用于存储日志文件名
 log_filename = None
@@ -45,8 +46,7 @@ def init(ContextInfo):
     # 账户信息
     # ContextInfo.account_id = '809213023'  # 期货账户ID
     ContextInfo.account_id = account  # 期货账户ID
-
-
+    g.account = ContextInfo.account_id
     # 在初始化时清空日志文件内容
     global log_filename
     log_filename = None  # 重置日志文件名
@@ -74,12 +74,10 @@ def init(ContextInfo):
     # }
 
     ContextInfo.stock_codes_dict = {
-        "FG": {"code": "FG00", "market": "ZF", "size": 18}  # 玻璃 1
-        , "jm": {"code": "jm00", "market": "DF", "size": 5}  # 焦煤 1
-        , "ao": {"code": "ao00", "market": "SF", "size": 8}  # 氧化铝 1
+        "FG": {"code": "FG00", "market": "ZF", "size": 15}  # 玻璃 1
+        , "jm": {"code": "jm00", "market": "DF", "size": 4}  # 焦煤 1
+        , "ao": {"code": "ao00", "market": "SF", "size": 7}  # 氧化铝 1
     }
-
-
 
     ContextInfo.stock_codes = [stock_info["code"] + '.' + stock_info["market"] for stock_code, stock_info in
                                ContextInfo.stock_codes_dict.items()]
@@ -133,14 +131,13 @@ def init(ContextInfo):
     g.position_size = {}  # 交易合约对应的手数，为每个合约保存
     g.pending_cancel_contracts = []  # 需要撤销委托的合约列表
 
-
     log_info(f"[初始化] 策略状态变量初始化完成")
 
     log_info(f"[初始化] 账户信息设置完成:")
     log_info(f"        期货账户ID: {ContextInfo.account_id}")
 
     log_section("海龟交易策略初始化完成")
-    ContextInfo.run_time("run_time_handlebar", "1nSecond", "2025-01-01 09:30:00")
+    ContextInfo.run_time("run_time_handlebar", "3nSecond", "2025-01-01 09:30:00")
 
 
 # def handlebar(ContextInfo):  # 策略处理函数
@@ -202,7 +199,8 @@ def run_time_handlebar(ContextInfo):  # 定时运行
 
     # 从需要交易的合约中剔除需要撤销委托的合约
     if hasattr(g, 'pending_cancel_contracts') and g.pending_cancel_contracts:
-        g.current_trading_contracts = [contract for contract in g.current_trading_contracts if contract not in g.pending_cancel_contracts]
+        g.current_trading_contracts = [contract for contract in g.current_trading_contracts if
+                                       contract not in g.pending_cancel_contracts]
         log_info(f"[初始化] 剔除需要撤销委托的合约后，需要处理的合约: {g.current_trading_contracts}")
     log_info(f"[初始化]  需要处理的合约: {g.current_trading_contracts}")
 
@@ -216,7 +214,10 @@ def run_time_handlebar(ContextInfo):  # 定时运行
         # 获取合约基础信息
         stock_contract_info = ContextInfo.get_instrument_detail(g.current_stock_code)
         if stock_contract_info is None:
-            log_info(f"[异常处理] 合约基础信息获取失败: {g.current_stock_code}")
+            message = f"[异常处理] 合约基础信息获取失败: {g.current_stock_code}"
+            log_info(message)
+            send_feishu_message(message)
+
             continue
         log_debug(f"[数据获取] 合约基础信息: {stock_contract_info}")
 
@@ -244,7 +245,9 @@ def run_time_handlebar(ContextInfo):  # 定时运行
         required_data = max(g.entry_window, g.exit_window, g.atr_window)
         log_debug(f"[数据检查] 当前bar位置: {ContextInfo.barpos}, 所需数据: {required_data}")
         if ContextInfo.barpos < required_data:
-            log_info("[异常处理] 数据不足，跳过本次处理")
+            message = "[异常处理] 数据不足，跳过本次处理"
+            log_info(message)
+            send_feishu_message(message)
             log_separator()
             continue
 
@@ -263,7 +266,9 @@ def run_time_handlebar(ContextInfo):  # 定时运行
             price_data = get_price_data(ContextInfo)
             log_debug(f'[数据获取]: \n {str(price_data)}')
             if price_data is None or len(price_data) <= max(g.entry_window, g.atr_window):
-                log_info("[异常处理] 数据不足，跳过本次处理")
+                message = "[异常处理] 数据不足，跳过本次处理"
+                log_info(message)
+                send_feishu_message(message)
                 log_separator()
                 continue
             log_debug(f"[数据获取] 成功获取价格数据，共 {len(price_data)} 条记录")
@@ -274,6 +279,7 @@ def run_time_handlebar(ContextInfo):  # 定时运行
 
             if g.N[stock_code] <= 0:
                 log_info("[异常处理] ATR值计算异常，跳过本次处理")
+
                 log_separator()
                 continue
             log_debug(f"[ATR计算] 当前ATR(N值): {g.N[stock_code]:.4f}")
@@ -297,6 +303,7 @@ def run_time_handlebar(ContextInfo):  # 定时运行
 
         except Exception as e:
             log_info(f"[异常处理] 处理过程中发生错误: {e}")
+
             log_separator()
             continue
 
@@ -326,7 +333,9 @@ def get_price_data(ContextInfo):
             subscribe=True
         )
         if not history_market_data or g.current_stock_code not in history_market_data:
-            log_info("  [异常处理] 获取历史市场数据为空")
+            message = "  [异常处理] 获取历史市场数据为空"
+            log_info(message)
+            send_feishu_message(message)
             return None
 
         history_df = history_market_data[g.current_stock_code]
@@ -348,7 +357,9 @@ def get_price_data(ContextInfo):
         )
 
         if not current_market_data_more or g.current_stock_code not in current_market_data_more:
-            log_info("  [异常处理] 获取当日市场数据为空")
+            message = "  [异常处理] 获取当日市场数据为空"
+            log_info(message)
+            send_feishu_message(message)
             return None
 
         current_df_more = current_market_data_more[g.current_stock_code]
@@ -384,7 +395,9 @@ def get_price_data(ContextInfo):
         return df
 
     except Exception as e:
-        log_info(f"  [异常处理] 获取价格数据时发生错误: {e}")
+        message = f"  [异常处理] 获取价格数据时发生错误: {e}"
+        log_info(message)
+        send_feishu_message(message)
         return None
 
 
@@ -428,7 +441,9 @@ def calculate_atr(stock_code, data, window):
         return atr
 
     except Exception as e:
-        log_info(f"  [异常处理] 计算ATR时发生错误: {e} (合约: {stock_code})")
+        message = f"  [异常处理] 计算ATR时发生错误: {e} (合约: {stock_code})"
+        log_info(message)
+        send_feishu_message(message)
         return 0
 
 
@@ -444,7 +459,9 @@ def get_account_info(ContextInfo):
         log_debug("  [账户信息] 获取账户资金详情...")
         account_details = get_trade_detail_data(ContextInfo.account_id, 'FUTURE', 'ACCOUNT')
         if not account_details:
-            log_info("  [异常处理] 获取账户详情失败")
+            message = "  [异常处理] 获取账户详情失败"
+            log_info(message)
+            send_feishu_message(message)
             return None
         g.position_code = []  # 仓位代码
         account = account_details[0]
@@ -475,24 +492,30 @@ def get_account_info(ContextInfo):
             order_len = 0
             for order in order_details:
                 # log_info(f"  [账户信息] 获取到委托记录：\n {to_dict(order)}")
-                # 获取委托状态，50-54表示未成交状态
+                # 获取委托状态
                 order_status = order.m_nOrderStatus
                 symbol = order.m_strInstrumentID + '.' + order.m_strExchangeID
+                log_info(f"  [账户信息] 获取委托记录: {symbol} 委托状态为： {order_status}")
 
-                # 检查是否为未成交状态(状态码49-53)
-                if 49 <= order_status < 54:
+                # 检查是否为未成交状态 53 部撤 54 已撤、 56 已成、57 废单
+                if order_status not in (53, 54, 56, 57):
                     log_info(
-                        f"  [账户信息] 发现未成交委托，合约: {symbol}, 状态: {order_status}, 委托编号: {order.m_strOrderSysID}")
+                        f"  [账户信息] 发现未完成委托，合约: {symbol}, 状态: {order_status}, 委托编号: {order.m_strOrderSysID}")
                     # 将需要撤销委托的合约添加到列表中
                     if symbol not in g.pending_cancel_contracts:
                         g.pending_cancel_contracts.append(symbol)
+                        message = f"  [账户信息] 将需要撤销的合约添加到列表中: {symbol}"
+                        log_info(message)
+                        send_feishu_message(message)
                     # 撤销未成交委托
                     cancel_result = cancel(order.m_strOrderSysID, ContextInfo.account_id, 'FUTURE', ContextInfo)
                     log_info(f"  [账户信息] 撤销委托结果: {cancel_result}")
                     order_len += 1
                 else:
                     log_info(f"  [账户信息] 合约: {symbol} ,委托状态为: {order_status}，无需撤销")
-            log_info(f"  [账户信息] 处理  {order_len} 条委托记录，需要撤销委托的合约: {g.pending_cancel_contracts}")
+            message = f"  [账户信息] 处理  {order_len} 条委托记录，需要撤销委托的合约: {g.pending_cancel_contracts}"
+            log_info(message)
+
         else:
             log_info("  [账户信息] 无委托记录")
 
@@ -545,11 +568,11 @@ def get_account_info(ContextInfo):
                     volume = row['持仓量']
                     entry_price = row['持仓成本']
                     open_date = row['开仓日期']
-                    log_info(f"  [账户信息] 获取持仓信息: {symbol} ，持仓类型:{position_type}，持仓量: {volume}，持仓成本: {entry_price}，开仓日期: {open_date}")
+                    log_info(
+                        f"  [账户信息] 获取持仓信息: {symbol} ，持仓类型:{position_type}，持仓量: {volume}，持仓成本: {entry_price}，开仓日期: {open_date}")
 
                     g.long_position[symbol] = 0  # 重置多头持仓状态
                     g.short_position[symbol] = 0  # 重置空头持仓状态
-
 
                     # 检查持仓是否属于当前策略的合约
                     if position_type == 48:  # 多头持仓
@@ -585,7 +608,9 @@ def get_account_info(ContextInfo):
         }
 
     except Exception as e:
-        log_info(f"  [异常处理] 获取账户信息时发生错误: {e}")
+        message = f"  [异常处理] 获取账户信息时发生错误: {e}"
+        log_info(message)
+        send_feishu_message(message)
         return None
 
 
@@ -766,7 +791,9 @@ def generate_signal(ContextInfo, price_data):
         return (0, 0)  # 无交易信号
 
     except Exception as e:
-        log_info(f"  [异常处理] 生成交易信号时发生错误: {e}")
+        message = f"  [异常处理] 生成交易信号时发生错误: {e}"
+        log_info(message)
+        send_feishu_message(message)
         return (0, 0)
 
 
@@ -803,8 +830,9 @@ def execute_trade(ContextInfo, signal, price_data):
                 # 检查是否当前没有多头持仓
                 if g.long_position[g.current_stock_code] == 0:
                     # 0	开多  1101: 限价单  5: 对手价 -1: 市价  position_size: 手数
-                    log_info(
-                        f"  [交易执行] 执行买入开仓操作 下单参数: 买入开仓,  对手价, 价格: {current_price:.4f}, {g.position_size[g.current_stock_code]}手数")
+                    message = f"  [交易执行] 执行买入开仓操作 下单参数: 合约代码： {g.current_stock_code},买入开仓,  对手价, 价格: {current_price:.4f}, {g.position_size[g.current_stock_code]}手数"
+                    log_info(message)
+                    send_feishu_message(message)
                     # passorder( opType, orderType, accountid , orderCode, prType, price, volume , strategyName, quickTrade, userOrderId , ContextInfo)
                     #        #  操作号    组合方式     资金账号    品种代码     报价类型  价格    下单量    策略名称        快速下单标记  投资备注        策略上下文
                     order_info = passorder(0, 1101, ContextInfo.account_id, g.current_stock_code, 14, -1,
@@ -824,8 +852,9 @@ def execute_trade(ContextInfo, signal, price_data):
                 # 检查是否当前没有空头持仓
                 if g.short_position[g.current_stock_code] == 0:
                     # 3: 开空
-                    log_info(
-                        f"  [交易执行] 执行卖出开仓操作下单参数: 卖出开仓, 限价单, 对手价, 市价, {g.position_size[g.current_stock_code]} 手数，价格: {current_price:.4f}")
+                    message = f"  [交易执行] 执行卖出开仓操作下单参数: 合约代码： {g.current_stock_code},卖出开仓, 限价单, 对手价, 市价, {g.position_size[g.current_stock_code]} 手数，价格: {current_price:.4f}"
+                    log_info(message)
+                    send_feishu_message(message)
                     order_info = passorder(3, 1101, ContextInfo.account_id, g.current_stock_code, 14, -1,
                                            g.position_size[g.current_stock_code], 1,
                                            ContextInfo)
@@ -843,10 +872,9 @@ def execute_trade(ContextInfo, signal, price_data):
             if position_type > 0 and g.long_position[g.current_stock_code] == 1:  # 平多仓
                 # 7 平多, 优先平昨
                 # 修正：使用手数而不是股数进行平仓
-
-                log_info(
-                    f"  [交易执行] 执行买入平仓操作：下单参数: 买入平仓, 对手价,  {g.long_volume[g.current_stock_code]} 手持仓，价格: {current_price:.4f} ")
-
+                message = f"  [交易执行] 执行买入平仓操作：下单参数: 合约代码： {g.current_stock_code},买入平仓, 对手价,  {g.long_volume[g.current_stock_code]} 手持仓，价格: {current_price:.4f} "
+                log_info(message)
+                send_feishu_message(message)
                 order_info = passorder(7, 1101, ContextInfo.account_id, g.current_stock_code, 14, -1,
                                        g.long_volume[g.current_stock_code], 1, ContextInfo)
                 log_info(f"  [交易执行] 下单结果: {order_info}")
@@ -860,9 +888,9 @@ def execute_trade(ContextInfo, signal, price_data):
             elif position_type < 0 and g.short_position[g.current_stock_code] == 1:  # 平空仓
                 # 9 平空, 优先平昨
                 # 修正：使用手数而不是股数进行平仓
-
-                log_info(
-                    f"  [交易执行] 执行卖出平仓操作:下单参数: 卖出平仓, 对手价,, {g.short_volume[g.current_stock_code]} 手持仓 ，价格: {current_price:.4f}")
+                message = f"  [交易执行] 执行卖出平仓操作:下单参数: 合约代码： {g.current_stock_code},卖出平仓, 对手价, {g.short_volume[g.current_stock_code]} 手持仓 ，价格: {current_price:.4f}"
+                log_info(message)
+                send_feishu_message(message)
                 order_info = passorder(9, 1101, ContextInfo.account_id, g.current_stock_code, 14, -1,
                                        g.short_volume[g.current_stock_code],
                                        1, ContextInfo)
@@ -875,7 +903,9 @@ def execute_trade(ContextInfo, signal, price_data):
                 log_info(f"  [交易执行] 持仓计数器: {g.position_count}")
 
     except Exception as e:
-        log_info(f"  [异常处理] 执行交易操作时发生错误: {e}")
+        message = f"  [异常处理] 执行交易操作时发生错误: {e}"
+        log_info(message)
+        send_feishu_message(message)
 
 
 def is_trading_time(current_time):
@@ -1011,3 +1041,31 @@ def get_futures_start_time(current_date):
         start_time = start_time - pd.Timedelta(days=1)
 
     return start_time.strftime('%Y%m%d%H%M%S')
+
+
+def send_feishu_message(message):
+    """发送飞书消息"""
+    url = "https://open.feishu.cn/open-apis/bot/v2/hook/086957a2-ddb4-4406-a720-3caaa7e3930f"
+
+    headers = {
+        "Content-Type": "application/json; charset=utf-8"
+    }
+    message = g.account + " : " + message
+    # 飞书API要求content字段是JSON字符串，如 '{"text":"test content"}'
+    content_str = json.dumps({"text": message}, ensure_ascii=False)
+    body = {
+        "msg_type": "text",
+        "content": content_str  # content字段必须是JSON字符串格式
+    }
+    try:
+        response = requests.post(url=url, headers=headers, json=body)  # 使用json参数自动处理序列化
+        response_json = response.json()
+        if response_json.get("code") == 0:
+            print("消息发送成功")
+            return True
+        else:
+            print(f"消息发送失败: {response_json}")
+            return False
+    except Exception as e:
+        print(f"发送消息时出错: {e}")
+        return False

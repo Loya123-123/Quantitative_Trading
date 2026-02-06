@@ -10,12 +10,15 @@ import glob
 # CONFIG_FILE = "/Users/jianzhong/ProjectCode/Quantitative_Trading/飞书推送消息/配置信息.json"
 # log_dir = "/Users/jianzhong/ProjectCode/Quantitative_Trading/log"
 
+
 # CONFIG_FILE = "./配置信息.json"
 # log_dir = "../log"
 
 
+
+
 # win环境
-CONFIG_FILE = r"C:\Users\loya\PycharmProjects\Quantitative_Trading\飞书推送消息\配置信息_外部群.json"
+CONFIG_FILE = r"C:\策略检查\配置信息_外部群.json"
 log_dir = r"C:\datalog"
 
 
