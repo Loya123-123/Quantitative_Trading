@@ -74,9 +74,9 @@ def init(ContextInfo):
     # }
 
     ContextInfo.stock_codes_dict = {
-        "FG": {"code": "FG00", "market": "ZF", "size": 15}  # 玻璃 1
-        , "jm": {"code": "jm00", "market": "DF", "size": 4}  # 焦煤 1
-        , "ao": {"code": "ao00", "market": "SF", "size": 7}  # 氧化铝 1
+        "FG": {"code": "FG00", "market": "ZF", "size": 12}  # 玻璃 1
+        , "jm": {"code": "jm00", "market": "DF", "size": 3}  # 焦煤 1
+        , "ao": {"code": "ao00", "market": "SF", "size": 5}  # 氧化铝 1
     }
 
     ContextInfo.stock_codes = [stock_info["code"] + '.' + stock_info["market"] for stock_code, stock_info in
@@ -216,7 +216,7 @@ def run_time_handlebar(ContextInfo):  # 定时运行
         if stock_contract_info is None:
             message = f"[异常处理] 合约基础信息获取失败: {g.current_stock_code}"
             log_info(message)
-            send_feishu_message(message)
+            # send_feishu_message(message)
 
             continue
         log_debug(f"[数据获取] 合约基础信息: {stock_contract_info}")
@@ -247,7 +247,7 @@ def run_time_handlebar(ContextInfo):  # 定时运行
         if ContextInfo.barpos < required_data:
             message = "[异常处理] 数据不足，跳过本次处理"
             log_info(message)
-            send_feishu_message(message)
+            # send_feishu_message(message)
             log_separator()
             continue
 
@@ -268,7 +268,7 @@ def run_time_handlebar(ContextInfo):  # 定时运行
             if price_data is None or len(price_data) <= max(g.entry_window, g.atr_window):
                 message = "[异常处理] 数据不足，跳过本次处理"
                 log_info(message)
-                send_feishu_message(message)
+                # send_feishu_message(message)
                 log_separator()
                 continue
             log_debug(f"[数据获取] 成功获取价格数据，共 {len(price_data)} 条记录")
@@ -335,7 +335,7 @@ def get_price_data(ContextInfo):
         if not history_market_data or g.current_stock_code not in history_market_data:
             message = "  [异常处理] 获取历史市场数据为空"
             log_info(message)
-            send_feishu_message(message)
+            # send_feishu_message(message)
             return None
 
         history_df = history_market_data[g.current_stock_code]
@@ -359,7 +359,7 @@ def get_price_data(ContextInfo):
         if not current_market_data_more or g.current_stock_code not in current_market_data_more:
             message = "  [异常处理] 获取当日市场数据为空"
             log_info(message)
-            send_feishu_message(message)
+            # send_feishu_message(message)
             return None
 
         current_df_more = current_market_data_more[g.current_stock_code]
@@ -397,7 +397,7 @@ def get_price_data(ContextInfo):
     except Exception as e:
         message = f"  [异常处理] 获取价格数据时发生错误: {e}"
         log_info(message)
-        send_feishu_message(message)
+        # send_feishu_message(message)
         return None
 
 
@@ -443,7 +443,7 @@ def calculate_atr(stock_code, data, window):
     except Exception as e:
         message = f"  [异常处理] 计算ATR时发生错误: {e} (合约: {stock_code})"
         log_info(message)
-        send_feishu_message(message)
+        # send_feishu_message(message)
         return 0
 
 
@@ -461,7 +461,7 @@ def get_account_info(ContextInfo):
         if not account_details:
             message = "  [异常处理] 获取账户详情失败"
             log_info(message)
-            send_feishu_message(message)
+            # send_feishu_message(message)
             return None
         g.position_code = []  # 仓位代码
         account = account_details[0]
@@ -610,7 +610,7 @@ def get_account_info(ContextInfo):
     except Exception as e:
         message = f"  [异常处理] 获取账户信息时发生错误: {e}"
         log_info(message)
-        send_feishu_message(message)
+        # send_feishu_message(message)
         return None
 
 
@@ -793,7 +793,7 @@ def generate_signal(ContextInfo, price_data):
     except Exception as e:
         message = f"  [异常处理] 生成交易信号时发生错误: {e}"
         log_info(message)
-        send_feishu_message(message)
+        # send_feishu_message(message)
         return (0, 0)
 
 
@@ -830,9 +830,6 @@ def execute_trade(ContextInfo, signal, price_data):
                 # 检查是否当前没有多头持仓
                 if g.long_position[g.current_stock_code] == 0:
                     # 0	开多  1101: 限价单  5: 对手价 -1: 市价  position_size: 手数
-                    message = f"  [交易执行] 执行买入开仓操作 下单参数: 合约代码： {g.current_stock_code},买入开仓,  对手价, 价格: {current_price:.4f}, {g.position_size[g.current_stock_code]}手数"
-                    log_info(message)
-                    send_feishu_message(message)
                     # passorder( opType, orderType, accountid , orderCode, prType, price, volume , strategyName, quickTrade, userOrderId , ContextInfo)
                     #        #  操作号    组合方式     资金账号    品种代码     报价类型  价格    下单量    策略名称        快速下单标记  投资备注        策略上下文
                     order_info = passorder(0, 1101, ContextInfo.account_id, g.current_stock_code, 14, -1,
@@ -840,6 +837,14 @@ def execute_trade(ContextInfo, signal, price_data):
                                            ContextInfo)
 
                     log_info(f"  [交易执行] 下单结果: {order_info}")
+                    if order_info == '0':
+                        message = f"  [交易执行] 执行买入开仓操作 下单参数: 合约代码： {g.current_stock_code},买入开仓,  对手价, 价格: {current_price:.4f}, {g.position_size[g.current_stock_code]}手数"
+                        log_info(message)
+                        send_feishu_message(message)
+                    else:
+                        message = f"  [交易执行] 合约代码： {g.current_stock_code} 执行买入开仓操作 下单失败: {order_info}"
+                        log_info(message)
+                        send_feishu_message(message)
                     g.long_position[g.current_stock_code] = 1
                     g.long_open_date[g.current_stock_code] = g.current_date_bar
 
@@ -852,13 +857,19 @@ def execute_trade(ContextInfo, signal, price_data):
                 # 检查是否当前没有空头持仓
                 if g.short_position[g.current_stock_code] == 0:
                     # 3: 开空
-                    message = f"  [交易执行] 执行卖出开仓操作下单参数: 合约代码： {g.current_stock_code},卖出开仓, 限价单, 对手价, 市价, {g.position_size[g.current_stock_code]} 手数，价格: {current_price:.4f}"
-                    log_info(message)
-                    send_feishu_message(message)
+
                     order_info = passorder(3, 1101, ContextInfo.account_id, g.current_stock_code, 14, -1,
                                            g.position_size[g.current_stock_code], 1,
                                            ContextInfo)
                     log_info(f"  [交易执行] 下单结果: {order_info}")
+                    if order_info == '0':
+                        message = f"  [交易执行] 执行卖出开仓操作下单参数: 合约代码： {g.current_stock_code},卖出开仓, 限价单, 对手价, 市价, {g.position_size[g.current_stock_code]} 手数，价格: {current_price:.4f}"
+                        log_info(message)
+                        send_feishu_message(message)
+                    else:
+                        message = f"  [交易执行] 合约代码： {g.current_stock_code} 执行卖出开仓操作下单失败: 错误信息: {order_info}"
+                        log_info(message)
+                        send_feishu_message(message)
                     g.short_position[g.current_stock_code] = 1
                     g.short_open_date[g.current_stock_code] = g.current_date_bar
 
@@ -872,12 +883,20 @@ def execute_trade(ContextInfo, signal, price_data):
             if position_type > 0 and g.long_position[g.current_stock_code] == 1:  # 平多仓
                 # 7 平多, 优先平昨
                 # 修正：使用手数而不是股数进行平仓
-                message = f"  [交易执行] 执行买入平仓操作：下单参数: 合约代码： {g.current_stock_code},买入平仓, 对手价,  {g.long_volume[g.current_stock_code]} 手持仓，价格: {current_price:.4f} "
-                log_info(message)
-                send_feishu_message(message)
+
                 order_info = passorder(7, 1101, ContextInfo.account_id, g.current_stock_code, 14, -1,
                                        g.long_volume[g.current_stock_code], 1, ContextInfo)
                 log_info(f"  [交易执行] 下单结果: {order_info}")
+                if order_info == '0':
+                    message = f"  [交易执行] 执行买入平仓操作：下单参数: 合约代码： {g.current_stock_code},买入平仓, 对手价,  {g.long_volume[g.current_stock_code]} 手持仓，价格: {current_price:.4f} "
+                    log_info(message)
+                    send_feishu_message(message)
+
+                else:
+                    message = "  [交易执行]  合约代码： {g.current_stock_code} ,平多仓失败"
+                    log_info(message)
+                    send_feishu_message(message)
+
                 g.long_position[g.current_stock_code] = 0
                 g.highest_after_entry[g.current_stock_code] = 0
                 g.lowest_after_entry[g.current_stock_code] = 0
@@ -888,13 +907,19 @@ def execute_trade(ContextInfo, signal, price_data):
             elif position_type < 0 and g.short_position[g.current_stock_code] == 1:  # 平空仓
                 # 9 平空, 优先平昨
                 # 修正：使用手数而不是股数进行平仓
-                message = f"  [交易执行] 执行卖出平仓操作:下单参数: 合约代码： {g.current_stock_code},卖出平仓, 对手价, {g.short_volume[g.current_stock_code]} 手持仓 ，价格: {current_price:.4f}"
-                log_info(message)
-                send_feishu_message(message)
+
                 order_info = passorder(9, 1101, ContextInfo.account_id, g.current_stock_code, 14, -1,
                                        g.short_volume[g.current_stock_code],
                                        1, ContextInfo)
                 log_info(f"  [交易执行] 下单结果: {order_info}")
+                if order_info == '0':
+                    message = f"  [交易执行] 执行卖出平仓操作:下单参数: 合约代码： {g.current_stock_code},卖出平仓, 对手价, {g.short_volume[g.current_stock_code]} 手持仓 ，价格: {current_price:.4f}"
+                    log_info(message)
+                    send_feishu_message(message)
+                else :
+                    message = f"  [交易执行] 合约代码： {g.current_stock_code} ,平空仓失败"
+                    log_info(message)
+                    send_feishu_message(message)
                 g.short_position[g.current_stock_code] = 0
                 g.highest_after_entry[g.current_stock_code] = 0
                 g.lowest_after_entry[g.current_stock_code] = 0
@@ -905,7 +930,7 @@ def execute_trade(ContextInfo, signal, price_data):
     except Exception as e:
         message = f"  [异常处理] 执行交易操作时发生错误: {e}"
         log_info(message)
-        send_feishu_message(message)
+        # send_feishu_message(message)
 
 
 def is_trading_time(current_time):
