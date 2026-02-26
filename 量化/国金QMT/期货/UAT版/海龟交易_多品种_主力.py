@@ -50,7 +50,6 @@ def init(ContextInfo):
     # 在初始化时清空日志文件内容
     global log_filename
     log_filename = None  # 重置日志文件名
-    # clear_log_file()
 
     filename = get_log_filename(ContextInfo.account_id)
     # INFO 简要信息  DEBUG 详细日志
@@ -236,11 +235,6 @@ def run_time_handlebar(ContextInfo):  # 定时运行
         else:
             log_info(f"[数据获取] {g.current_stock_code} 的到期日大于{g.near_expiry_days}天，可以执行新的开仓操作")
 
-        # LongMarginRatio	float	多头保证金率
-        # ShortMarginRatio	float	空头保证金率
-        g.long_margin_ratio = stock_contract_info.get('LongMarginRatio', 0.0)
-        g.short_margin_ratio = stock_contract_info.get('ShortMarginRatio', 0.0)
-
         # 检查数据是否足够
         required_data = max(g.entry_window, g.exit_window, g.atr_window)
         log_debug(f"[数据检查] 当前bar位置: {ContextInfo.barpos}, 所需数据: {required_data}")
@@ -268,7 +262,7 @@ def run_time_handlebar(ContextInfo):  # 定时运行
             if price_data is None or len(price_data) <= max(g.entry_window, g.atr_window):
                 message = "[异常处理] 数据不足，跳过本次处理"
                 log_info(message)
-                # send_feishu_message(message)
+                send_feishu_message(message)
                 log_separator()
                 continue
             log_debug(f"[数据获取] 成功获取价格数据，共 {len(price_data)} 条记录")
@@ -397,7 +391,7 @@ def get_price_data(ContextInfo):
     except Exception as e:
         message = f"  [异常处理] 获取价格数据时发生错误: {e}"
         log_info(message)
-        # send_feishu_message(message)
+        send_feishu_message(message)
         return None
 
 
@@ -461,15 +455,12 @@ def get_account_info(ContextInfo):
         if not account_details:
             message = "  [异常处理] 获取账户详情失败"
             log_info(message)
-            # send_feishu_message(message)
+            send_feishu_message(message)
             return None
         g.position_code = []  # 仓位代码
         account = account_details[0]
         available = account.m_dAvailable  # 可用资金
         total_value = account.m_dBalance  # 总权益
-        # 回撤参数获取保证金比例 系统配置参数
-        # margin_rate = account.m_dMaxMarginRate  # 保证金
-        # ContextInfo.margin_rate = margin_rate  # 保证金
 
         log_info(f"  [账户信息] 账户资金信息: 可用资金={available:.2f}, 总资产={total_value:.2f}")
 
@@ -819,10 +810,7 @@ def execute_trade(ContextInfo, signal, price_data):
         log_info(f"  [交易执行] 交易信号: 信号类型={signal_type}, 仓位类型={position_type}")
 
         current_price = price_data['close'].iloc[-1]
-        contract_multiplier = ContextInfo.get_contract_multiplier(g.current_stock_code)
-        log_info(f"  [交易执行] 合约信息:当前价格: {current_price:.4f},合约乘数: {contract_multiplier}")
-
-        # log_info( f"    最终手数: {g.position_size[g.current_stock_code]} 手 ,头寸价值: {g.position_size[g.current_stock_code] * current_price * contract_multiplier:.2f}元")
+        log_info(f"  [交易执行] 合约信息:当前价格: {current_price:.4f}")
 
         # 开仓操作
         if signal_type > 0:  # 开仓信号
@@ -981,18 +969,6 @@ def get_log_filename(account_id=None):
             log_filename = f"C:\\datalog\\datalog-{timestamp}.log"
     return log_filename
 
-
-def clear_log_file():
-    """
-    清空日志文件内容，防止之前的脏数据影响
-    """
-    try:
-        # 清空文件内容
-        open(get_log_filename(), 'w').close()
-    except Exception as e:
-        pass  # 忽略文件操作错误
-
-
 def log_info(message):
     """
     简单的日志记录函数，用于记录info级别日志
@@ -1094,3 +1070,4 @@ def send_feishu_message(message):
     except Exception as e:
         print(f"发送消息时出错: {e}")
         return False
+
