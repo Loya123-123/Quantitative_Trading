@@ -982,17 +982,6 @@ def get_log_filename(account_id=None):
     return log_filename
 
 
-def clear_log_file():
-    """
-    清空日志文件内容，防止之前的脏数据影响
-    """
-    try:
-        # 清空文件内容
-        open(get_log_filename(), 'w').close()
-    except Exception as e:
-        pass  # 忽略文件操作错误
-
-
 def log_info(message):
     """
     简单的日志记录函数，用于记录info级别日志

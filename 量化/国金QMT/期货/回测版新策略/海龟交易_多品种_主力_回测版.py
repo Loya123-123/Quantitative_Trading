@@ -130,36 +130,28 @@ def init(ContextInfo):
     g.position_size = {}  # 交易合约对应的手数，为每个合约保存
     g.pending_cancel_contracts = []  # 需要撤销委托的合约列表
 
+
+    g.is_backtest = True # 获取是否为回测模式
+
     log_info(f"[初始化] 策略状态变量初始化完成")
 
     log_info(f"[初始化] 账户信息设置完成:")
     log_info(f"        期货账户ID: {ContextInfo.account_id}")
 
     log_section("海龟交易策略初始化完成")
-    ContextInfo.run_time("run_time_handlebar", "3nSecond", "2025-01-01 09:30:00")
+
+    # ContextInfo.run_time("run_time_handlebar", "3nSecond", "2025-01-01 09:30:00")
 
 
-# def handlebar(ContextInfo):  # 策略处理函数
+def handlebar(ContextInfo):  # 策略处理函数
 
-def run_time_handlebar(ContextInfo):  # 定时运行
+# def run_time_handlebar(ContextInfo):  # 定时运行
     """
     主要处理函数
     在每个K线周期都会被调用
     """
-
-    if not ContextInfo.is_last_bar():
-        log_info("[处理函数] 当前不是最后一个K线周期，跳过本次处理")
-        return
-
-    # 判断当前是否为周末
-    if is_weekend():
-        return
-
-    # 根据当前时间计算如果如果时间不在开盘时间内就直接退出，已知的开盘时间段有：0:00-2:30，9:00-11:30，13:30-15:00，21:00-24:00
-
-    if not is_trading_time(datetime.now()):
-        log_info(f"[处理函数] 当前时间不在交易时间段内，跳过本次处理")
-        return
+    # 获取是否为回测模式
+    is_backtest(ContextInfo)
 
     log_section("[处理函数] 开始执行handlebar函数")
 
@@ -1059,6 +1051,27 @@ def get_futures_start_time(current_date):
 
     return start_time.strftime('%Y%m%d%H%M%S')
 
+
+
+
+def is_backtest(ContextInfo):
+    # 是否为回测任务
+    if g.is_backtest == True:
+        log_info("[处理函数] 当前为回测任务，跳过本次处理")
+    else:
+        if not ContextInfo.is_last_bar():
+            log_info("[处理函数] 当前不是最后一个K线周期，跳过本次处理")
+            return
+
+        # 判断当前是否为周末
+        if is_weekend():
+            return
+
+        # 根据当前时间计算如果如果时间不在开盘时间内就直接退出，已知的开盘时间段有：0:00-2:30，9:00-11:30，13:30-15:00，21:00-24:00
+
+        if not is_trading_time(datetime.now()):
+            log_info(f"[处理函数] 当前时间不在交易时间段内，跳过本次处理")
+            return
 
 def send_feishu_message(message):
     """发送飞书消息"""
