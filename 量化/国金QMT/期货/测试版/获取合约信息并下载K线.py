@@ -1,14 +1,14 @@
-# coding:gbk
+
 import pandas as pd
 
-
-# ÊĞ³¡	ÊĞ³¡´úÂë	Ñ¸Í¶ÊĞ³¡´úÂë
-# ÉÏÆÚËù	SHFE	SF
-# ´óÉÌËù	DCE	DF
-# Ö£ÉÌËù	CZCE	ZF
-# ÖĞ½ğËù	CFFEX	IF
-# ÄÜÔ´ÖĞĞÄ	INE	INE
-# ¹ãÆÚËù	GFEX	GF
+# coding:gbk
+# å¸‚åœº	å¸‚åœºä»£ç 	è¿…æŠ•å¸‚åœºä»£ç 
+# ä¸ŠæœŸæ‰€	SHFE	SF
+# å¤§å•†æ‰€	DCE	DF
+# éƒ‘å•†æ‰€	CZCE	ZF
+# ä¸­é‡‘æ‰€	CFFEX	IF
+# èƒ½æºä¸­å¿ƒ	INE	INE
+# å¹¿æœŸæ‰€	GFEX	GF
 
 class G(): pass
 
@@ -18,27 +18,27 @@ g = G()
 
 def init(ContextInfo):
     stock_codes_dict = {
-        "FG": {"code": "FG00", "market": "ZF", "size": 6}  # ²£Á§ 1
-        , "jm": {"code": "jm00", "market": "DF", "size": 2}  # ½¹Ãº 1
-        , "ao": {"code": "ao00", "market": "SF", "size": 2}  # Ñõ»¯ÂÁ 1
-        , "CF": {"code": "CF00", "market": "ZF", "size": 3}  # ÃŞ»¨
-        , "sp": {"code": "sp00", "market": "SF", "size": 4}  # Ö½½¬
+        "FG": {"code": "FG00", "market": "ZF", "size": 6}  # ç»ç’ƒ 1
+        , "jm": {"code": "jm00", "market": "DF", "size": 2}  # ç„¦ç…¤ 1
+        , "ao": {"code": "ao00", "market": "SF", "size": 2}  # æ°§åŒ–é“ 1
+        , "CF": {"code": "CF00", "market": "ZF", "size": 3}  # æ£‰èŠ±
+        , "sp": {"code": "sp00", "market": "SF", "size": 4}  # çº¸æµ†
     }
     ProductID_list = [stock_code for stock_code, stock_info in stock_codes_dict.items()]
 
-    print(f"[Êı¾İ»ñÈ¡] ºÏÔ¼²úÆ·ID¼¯ºÏ: {ProductID_list}")
+    print(f"[æ•°æ®è·å–] åˆçº¦äº§å“IDé›†åˆ: {ProductID_list}")
 
     market_list = [stock_info["market"] for stock_code, stock_info in stock_codes_dict.items()]
 
     stock_codes_list = []
-    # ¸ù¾İ ÊĞ³¡±àÂë»ñÈ¡ËùÓĞºÏÔ¼
+    # æ ¹æ® å¸‚åœºç¼–ç è·å–æ‰€æœ‰åˆçº¦
     for market in market_list:
         stock_list = ContextInfo.get_stock_list_in_sector(market)
-        # ´´½¨Ò»¸öÁĞ±íÓÃÓÚ´æ´¢ËùÓĞºÏÔ¼ĞÅÏ¢
+        # åˆ›å»ºä¸€ä¸ªåˆ—è¡¨ç”¨äºå­˜å‚¨æ‰€æœ‰åˆçº¦ä¿¡æ¯
 
         for stock_code in stock_list:
             # print(stock_code)
-            # »ñÈ¡ºÏÔ¼»ù´¡ĞÅÏ¢
+            # è·å–åˆçº¦åŸºç¡€ä¿¡æ¯
 
             g.stock_contract_info = ContextInfo.get_instrument_detail(stock_code)
 
@@ -48,19 +48,19 @@ def init(ContextInfo):
                 continue
 
             ExchangeCode = g.stock_contract_info.get("ExchangeCode")
-            print(f"[Êı¾İ»ñÈ¡] ºÏÔ¼²úÆ·ID: {ProductID}")
-            print(f"[Êı¾İ»ñÈ¡] Ö÷ºÏÔ¼»ù´¡ĞÅÏ¢: {g.stock_contract_info}")
+            print(f"[æ•°æ®è·å–] åˆçº¦äº§å“ID: {ProductID}")
+            print(f"[æ•°æ®è·å–] ä¸»åˆçº¦åŸºç¡€ä¿¡æ¯: {g.stock_contract_info}")
             stock_codes = ExchangeCode + '.' + market
-            # ½«×ÖµäÊı¾İÌí¼Óµ½ÁĞ±íÖĞ
+            # å°†å­—å…¸æ•°æ®æ·»åŠ åˆ°åˆ—è¡¨ä¸­
             stock_codes_list.append(stock_codes)
 
     stock_codes_list = list(set(stock_codes_list))
-    print(f"È¥ÖØ{stock_codes_list}")
+    print(f"å»é‡{stock_codes_list}")
 
     for code in stock_codes_list:
         for i in ['1m', '1d']:
             re = download_history_data(code, i, "20250101", "")
-            print(f"\nÏÂÔØÍê³É : {re} , code : {code}, ÖÜÆÚ £º {i}")
+            print(f"\nä¸‹è½½å®Œæˆ : {re} , code : {code}, å‘¨æœŸ ï¼š {i}")
 
 def handlebar(ContextInfo):
     pass
