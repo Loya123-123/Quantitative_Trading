@@ -1,26 +1,26 @@
-
+# coding:gbk
 
 """
-æœŸè´§é€‰å“ç­–ç•¥
-åŸºäºå›½é‡‘QMTå¹³å°çš„æœŸè´§å“ç§é€‰æ‹©ç­–ç•¥
+ÆÚ»õÑ¡Æ·²ßÂÔ
+»ùÓÚ¹ú½ğQMTÆ½Ì¨µÄÆÚ»õÆ·ÖÖÑ¡Ôñ²ßÂÔ
 
-ç­–ç•¥ç›®æ ‡ï¼š
-æ¯å¤©æ—¥ç›˜å¼€å§‹æ—¶ï¼ˆ09:00ï¼‰å’Œå¤œç›˜å¼€å§‹æ—¶ï¼ˆ21:00ï¼‰ï¼Œä»å“ç§æ± ä¸­ç­›é€‰å‡ºï¼š
-1. 10æ—¥è¶‹åŠ¿TOP3çš„æœŸè´§åˆçº¦
-2. è¶‹åŠ¿æ•ˆç‡TOP3çš„æœŸè´§åˆçº¦
+²ßÂÔÄ¿±ê£º
+Ã¿ÌìÈÕÅÌ¿ªÊ¼Ê±£¨09:00£©ºÍÒ¹ÅÌ¿ªÊ¼Ê±£¨21:00£©£¬´ÓÆ·ÖÖ³ØÖĞÉ¸Ñ¡³ö£º
+1. 10ÈÕÇ÷ÊÆTOP3µÄÆÚ»õºÏÔ¼
+2. Ç÷ÊÆĞ§ÂÊTOP3µÄÆÚ»õºÏÔ¼
 
-æŒ‡æ ‡è®¡ç®—ï¼š
-1. 10æ—¥è¶‹åŠ¿ = |æ˜¨æ—¥æ”¶ç›˜ä»· - 11æ—¥å‰æ”¶ç›˜ä»·| / 11æ—¥å‰æ”¶ç›˜ä»·
-2. 10æ—¥è¶‹åŠ¿å¹…åº¦ = |æ˜¨æ—¥æ”¶ç›˜ä»· - 11æ—¥å‰æ”¶ç›˜ä»·|
-3. 10æ—¥æ³¢åŠ¨ = Î£(|æœ€é«˜ä»· - æœ€ä½ä»·|)ï¼Œè¿‘10å¤©
-4. è¶‹åŠ¿æ•ˆç‡ = 10æ—¥è¶‹åŠ¿å¹…åº¦ / 10æ—¥æ³¢åŠ¨
+Ö¸±ê¼ÆËã£º
+1. 10ÈÕÇ÷ÊÆ = |×òÈÕÊÕÅÌ¼Û - 11ÈÕÇ°ÊÕÅÌ¼Û| / 11ÈÕÇ°ÊÕÅÌ¼Û
+2. 10ÈÕÇ÷ÊÆ·ù¶È = |×òÈÕÊÕÅÌ¼Û - 11ÈÕÇ°ÊÕÅÌ¼Û|
+3. 10ÈÕ²¨¶¯ = ¦²(|×î¸ß¼Û - ×îµÍ¼Û|)£¬½ü10Ìì
+4. Ç÷ÊÆĞ§ÂÊ = 10ÈÕÇ÷ÊÆ·ù¶È / 10ÈÕ²¨¶¯
 
-è¾“å‡ºï¼š
-- è¿ç»­åˆçº¦ä»£ç ï¼ˆç”¨äºå›æµ‹ï¼‰
-- ä¸»åŠ›åˆçº¦ä»£ç ï¼ˆç”¨äºå®ç›˜ï¼‰
-- äº¤æ˜“æ‰€ä»£ç 
-- næ‰‹ï¼ˆå–æ•´ï¼‰
-- å¯¹åº”çš„æŒ‡æ ‡å€¼
+Êä³ö£º
+- Á¬ĞøºÏÔ¼´úÂë£¨ÓÃÓÚ»Ø²â£©
+- Ö÷Á¦ºÏÔ¼´úÂë£¨ÓÃÓÚÊµÅÌ£©
+- ½»Ò×Ëù´úÂë
+- nÊÖ£¨È¡Õû£©
+- ¶ÔÓ¦µÄÖ¸±êÖµ
 """
 # coding:gbk
 import logging
@@ -29,303 +29,308 @@ import json
 import numpy as np
 import pandas as pd
 
-# å…¨å±€å˜é‡ç”¨äºå­˜å‚¨æ—¥å¿—æ–‡ä»¶å
+# È«¾Ö±äÁ¿ÓÃÓÚ´æ´¢ÈÕÖ¾ÎÄ¼şÃû
 log_filename = None
 
-# work_dir = '/Users/exiaozhong/CodeProjects/Quantitative_Trading/é‡åŒ–/å›½é‡‘QMT/æœŸè´§/æœŸè´§é€‰å“ç­–ç•¥/'
-work_dir = 'C:\\åˆçº¦é€‰å“\\'
+# work_dir = '/Users/exiaozhong/CodeProjects/Quantitative_Trading/Á¿»¯/¹ú½ğQMT/ÆÚ»õ/ÆÚ»õÑ¡Æ·²ßÂÔ/'
+work_dir = 'C:\\ºÏÔ¼Ñ¡Æ·\\'
 
 def init(ContextInfo):
     """
-    åˆå§‹åŒ–å‡½æ•°
-    è®¾ç½®ç­–ç•¥å‚æ•°ã€äº¤æ˜“æ ‡çš„ç­‰
+    ³õÊ¼»¯º¯Êı
+    ÉèÖÃ²ßÂÔ²ÎÊı¡¢½»Ò×±êµÄµÈ
     """
-    # è´¦æˆ·ä¿¡æ¯
-    ContextInfo.account_id = '809213023'  # æœŸè´§è´¦æˆ·ID
+    # ÕË»§ĞÅÏ¢
+    ContextInfo.account_id = '809213023'  # ÆÚ»õÕË»§ID
     g.account = ContextInfo.account_id
 
-    # åˆå§‹åŒ–æ—¥å¿—æ–‡ä»¶
+    # ³õÊ¼»¯ÈÕÖ¾ÎÄ¼ş
     global log_filename
     log_filename = None
 
     filename = get_log_filename(ContextInfo.account_id)
-    # INFO ç®€è¦ä¿¡æ¯  DEBUG è¯¦ç»†æ—¥å¿—
+    # INFO ¼òÒªĞÅÏ¢  DEBUG ÏêÏ¸ÈÕÖ¾
     logging.basicConfig(filename=filename, level=logging.INFO,
                         format='%(asctime)s - %(levelname)s - %(message)s')
 
-    log_section("å¼€å§‹åˆå§‹åŒ–æœŸè´§é€‰å“ç­–ç•¥...")
+    log_section("¿ªÊ¼³õÊ¼»¯ÆÚ»õÑ¡Æ·²ßÂÔ...")
 
-    # å“ç§æ± æ–‡ä»¶è·¯å¾„
-    g.excel_file = 'æœŸè´§å“ç§æ± .xlsx'
+    # Æ·ÖÖ³ØÎÄ¼şÂ·¾¶
+    g.excel_file = 'ÆÚ»õÆ·ÖÖ³Ø.xlsx'
 
-    g.excel_path = f'{work_dir}æœŸè´§å“ç§æ± .xlsx'
+    g.excel_path = f'{work_dir}ÆÚ»õÆ·ÖÖ³Ø.xlsx'
 
-    log_info(f"[åˆå§‹åŒ–] å“ç§æ± æ–‡ä»¶è·¯å¾„: {g.excel_path}")
+    log_info(f"[³õÊ¼»¯] Æ·ÖÖ³ØÎÄ¼şÂ·¾¶: {g.excel_path}")
 
-    # è¯»å–å“ç§æ± æ•°æ®
+    # ¶ÁÈ¡Æ·ÖÖ³ØÊı¾İ
     try:
         g.pools_df = pd.read_excel(g.excel_path)
-        log_info(f"[åˆå§‹åŒ–] å“ç§æ± è¯»å–æˆåŠŸï¼Œå…± {len(g.pools_df)} ä¸ªå“ç§")
-        log_info(f"[åˆå§‹åŒ–] å“ç§æ± å­—æ®µ: {g.pools_df.columns.tolist()}")
+        log_info(f"[³õÊ¼»¯] Æ·ÖÖ³Ø¶ÁÈ¡³É¹¦£¬¹² {len(g.pools_df)} ¸öÆ·ÖÖ")
+        log_info(f"[³õÊ¼»¯] Æ·ÖÖ³Ø×Ö¶Î: {g.pools_df.columns.tolist()}")
     except Exception as e:
-        log_info(f"[åˆå§‹åŒ–] å“ç§æ± è¯»å–å¤±è´¥: {str(e)}")
+        log_info(f"[³õÊ¼»¯] Æ·ÖÖ³Ø¶ÁÈ¡Ê§°Ü: {str(e)}")
         g.pools_df = pd.DataFrame()
 
-    # æ˜¾ç¤ºå“ç§æ± å†…å®¹ï¼ˆç”¨äºè°ƒè¯•ï¼‰
-    log_info(f"[åˆå§‹åŒ–] å“ç§æ± å†…å®¹é¢„è§ˆ:")
-    log_info(f"{g.pools_df[['ä»£ç ', 'äº¤æ˜“æ‰€ä»£ç ', 'næ‰‹ï¼ˆå–æ•´ï¼‰']].to_string()}")
+    # ÏÔÊ¾Æ·ÖÖ³ØÄÚÈİ£¨ÓÃÓÚµ÷ÊÔ£©
+    log_info(f"[³õÊ¼»¯] Æ·ÖÖ³ØÄÚÈİÔ¤ÀÀ:")
+    log_info(f"{g.pools_df[['´úÂë', '½»Ò×Ëù´úÂë', 'nÊÖ£¨È¡Õû£©']].to_string()}")
 
-    g.is_backtest = True  # è·å–æ˜¯å¦ä¸ºå›æµ‹æ¨¡å¼
+    g.is_backtest = True  # »ñÈ¡ÊÇ·ñÎª»Ø²âÄ£Ê½
 
-    # è®¾ç½®å®šæ—¶ä»»åŠ¡ï¼šæ—¥ç›˜09:00å’Œå¤œç›˜21:00æ‰§è¡Œ
-    # æ³¨æ„ï¼šQMTçš„å®šæ—¶ä»»åŠ¡æ ¼å¼éœ€è¦æ ¹æ®å®é™…æƒ…å†µè°ƒæ•´
-    # è¿™é‡Œè®¾ç½®ä¸ºæ¯åˆ†é’Ÿæ£€æŸ¥ä¸€æ¬¡ï¼Œåœ¨handlebarä¸­åˆ¤æ–­æ—¶é—´æ˜¯å¦åˆ°è¾¾
-    log_info("[åˆå§‹åŒ–] è®¾ç½®å®šæ—¶ä»»åŠ¡æ£€æŸ¥æœºåˆ¶")
+    # ÉèÖÃ¶¨Ê±ÈÎÎñ£ºÈÕÅÌ09:00ºÍÒ¹ÅÌ21:00Ö´ĞĞ
+    # ×¢Òâ£ºQMTµÄ¶¨Ê±ÈÎÎñ¸ñÊ½ĞèÒª¸ù¾İÊµ¼ÊÇé¿öµ÷Õû
+    # ÕâÀïÉèÖÃÎªÃ¿·ÖÖÓ¼ì²éÒ»´Î£¬ÔÚhandlebarÖĞÅĞ¶ÏÊ±¼äÊÇ·ñµ½´ï
+    log_info("[³õÊ¼»¯] ÉèÖÃ¶¨Ê±ÈÎÎñ¼ì²é»úÖÆ")
 
-    # è®°å½•ä¸Šæ¬¡æ‰§è¡Œæ—¶é—´ï¼Œé¿å…é‡å¤æ‰§è¡Œ
+    # ¼ÇÂ¼ÉÏ´ÎÖ´ĞĞÊ±¼ä£¬±ÜÃâÖØ¸´Ö´ĞĞ
     g.last_execute_date = None
 
-    log_section("æœŸè´§é€‰å“ç­–ç•¥åˆå§‹åŒ–å®Œæˆ")
+    log_section("ÆÚ»õÑ¡Æ·²ßÂÔ³õÊ¼»¯Íê³É")
 
 
 def handlebar(ContextInfo):
     """
-    ä¸»è¦å¤„ç†å‡½æ•°
-    åœ¨æ¯ä¸ªKçº¿å‘¨æœŸéƒ½ä¼šè¢«è°ƒç”¨
+    Ö÷Òª´¦Àíº¯Êı
+    ÔÚÃ¿¸öKÏßÖÜÆÚ¶¼»á±»µ÷ÓÃ
     """
 
 
-    # ========== è·å–å½“å‰æ—¶é—´ ==========
-    # ä½¿ç”¨timetag_to_datetimeè·å–å½“å‰æ—¶é—´
+    # ========== »ñÈ¡µ±Ç°Ê±¼ä ==========
+    # Ê¹ÓÃtimetag_to_datetime»ñÈ¡µ±Ç°Ê±¼ä
     bar_date = timetag_to_datetime(ContextInfo.get_bar_timetag(ContextInfo.barpos), '%Y%m%d%H%M%S')
-    log_info(f"[å¤„ç†å‡½æ•°] è·å–å½“å‰æ—¶é—´: {bar_date}")
+    log_info(f"[´¦Àíº¯Êı] »ñÈ¡µ±Ç°Ê±¼ä: {bar_date}")
     # bar_timetag = ContextInfo.get_bar_timetag(ContextInfo.barpos)
     # current_time_str = timetag_to_datetime(bar_timetag, '%Y-%m-%d %H:%M:%S')
-    current_date = int(bar_date[:8])  # æ—¥æœŸéƒ¨åˆ† 20250228
-    current_hour = int(bar_date[8:10])  # å°æ—¶åˆ†é’Ÿ
+    current_date = int(bar_date[:8])  # ÈÕÆÚ²¿·Ö 20250228
+    current_hour = int(bar_date[8:10])  # Ğ¡Ê±·ÖÖÓ
 
-    log_info(f"[å¤„ç†å‡½æ•°] å½“å‰æ—¶é—´: {bar_date}")
-    log_info(f"[å¤„ç†å‡½æ•°] å½“å‰æ—¥æœŸ: {current_date}, å½“å‰å°æ—¶: {current_hour}")
+    log_info(f"[´¦Àíº¯Êı] µ±Ç°Ê±¼ä: {bar_date}")
+    log_info(f"[´¦Àíº¯Êı] µ±Ç°ÈÕÆÚ: {current_date}, µ±Ç°Ğ¡Ê±: {current_hour}")
 
-    # ========== åˆ¤æ–­æ˜¯å¦æ‰§è¡Œé€‰å“é€»è¾‘ ==========
-    # æ—¥ç›˜å¼€å§‹æ—¶é—´ï¼š09:00
-    # å¤œç›˜å¼€å§‹æ—¶é—´ï¼š21:00
-    # åªæœ‰åœ¨09:00æˆ–21:00æ—¶æ‰æ‰§è¡Œï¼Œä¸”æ¯å¤©æ¯ä¸ªæ—¶æ®µåªæ‰§è¡Œä¸€æ¬¡
+    # ========== ÅĞ¶ÏÊÇ·ñÖ´ĞĞÑ¡Æ·Âß¼­ ==========
+    # ÈÕÅÌ¿ªÊ¼Ê±¼ä£º09:00
+    # Ò¹ÅÌ¿ªÊ¼Ê±¼ä£º21:00
+    # Ö»ÓĞÔÚ09:00»ò21:00Ê±²ÅÖ´ĞĞ£¬ÇÒÃ¿ÌìÃ¿¸öÊ±¶ÎÖ»Ö´ĞĞÒ»´Î
 
-    # æ„é€ æ‰§è¡Œæ ‡è®°ï¼šæ—¥æœŸ_æ—¶æ®µï¼ˆ1=æ—¥ç›˜ï¼Œ2=å¤œç›˜ï¼‰
-    session = 1 if current_hour == 9 else (2 if current_hour == 21 else 0)
+    # ¹¹ÔìÖ´ĞĞ±ê¼Ç£ºÈÕÆÚ_Ê±¶Î£¨1=ÈÕÅÌ£¬2=Ò¹ÅÌ£©
+    session = 1 if current_hour in (9,0) else (2 if current_hour == 21 else 0)
     execute_key = f"{current_date}_{session}"
 
     if session == 0:
-        log_info("[å¤„ç†å‡½æ•°] å½“å‰ä¸æ˜¯æ—¥ç›˜æˆ–å¤œç›˜å¼€å§‹æ—¶é—´ï¼Œè·³è¿‡")
+        log_info("[´¦Àíº¯Êı] µ±Ç°²»ÊÇÈÕÅÌ»òÒ¹ÅÌ¿ªÊ¼Ê±¼ä£¬Ìø¹ı")
         return
 
     if g.last_execute_date == execute_key:
-        log_info(f"[å¤„ç†å‡½æ•°] æœ¬æ—¶æ®µå·²ç»æ‰§è¡Œè¿‡é€‰å“ï¼Œè·³è¿‡ (execute_key={execute_key})")
+        log_info(f"[´¦Àíº¯Êı] ±¾Ê±¶ÎÒÑ¾­Ö´ĞĞ¹ıÑ¡Æ·£¬Ìø¹ı (execute_key={execute_key})")
         return
 
-    # æ›´æ–°æ‰§è¡Œæ ‡è®°
+    # ¸üĞÂÖ´ĞĞ±ê¼Ç
     g.last_execute_date = execute_key
-    log_info(f"[å¤„ç†å‡½æ•°] å¼€å§‹æ‰§è¡Œé€‰å“é€»è¾‘ï¼Œæ‰§è¡Œæ—¶æ®µ: {'æ—¥ç›˜' if session == 1 else 'å¤œç›˜'}")
+    log_info(f"[´¦Àíº¯Êı] ¿ªÊ¼Ö´ĞĞÑ¡Æ·Âß¼­£¬Ö´ĞĞÊ±¶Î: {'ÈÕÅÌ' if session == 1 else 'Ò¹ÅÌ'}")
 
-    # ========== æ‰§è¡Œé€‰å“é€»è¾‘ ==========
+    # ========== Ö´ĞĞÑ¡Æ·Âß¼­ ==========
     try:
-        # æ­¥éª¤1ï¼šè¯»å–å“ç§æ± 
-        log_section("æ­¥éª¤1ï¼šè¯»å–å“ç§æ± ")
+        # ²½Öè1£º¶ÁÈ¡Æ·ÖÖ³Ø
+        log_section("²½Öè1£º¶ÁÈ¡Æ·ÖÖ³Ø")
         pools_df = g.pools_df
         if pools_df.empty:
-            log_info("[å¤„ç†å‡½æ•°] å“ç§æ± ä¸ºç©ºï¼Œæ— æ³•æ‰§è¡Œé€‰å“")
+            log_info("[´¦Àíº¯Êı] Æ·ÖÖ³ØÎª¿Õ£¬ÎŞ·¨Ö´ĞĞÑ¡Æ·")
             return
 
-        log_info(f"[å¤„ç†å‡½æ•°] å“ç§æ± å…± {len(pools_df)} ä¸ªå“ç§")
+        log_info(f"[´¦Àíº¯Êı] Æ·ÖÖ³Ø¹² {len(pools_df)} ¸öÆ·ÖÖ")
 
-        # æ­¥éª¤2ï¼šéå†å“ç§æ± ï¼Œè·å–ä¸»åŠ›åˆçº¦å’Œè®¡ç®—æŒ‡æ ‡
-        log_section("æ­¥éª¤2ï¼šè·å–ä¸»åŠ›åˆçº¦å’Œè®¡ç®—æŒ‡æ ‡")
+        # ²½Öè2£º±éÀúÆ·ÖÖ³Ø£¬»ñÈ¡Ö÷Á¦ºÏÔ¼ºÍ¼ÆËãÖ¸±ê
+        log_section("²½Öè2£º»ñÈ¡Ö÷Á¦ºÏÔ¼ºÍ¼ÆËãÖ¸±ê")
 
-        results = []  # å­˜å‚¨æ‰€æœ‰å“ç§çš„è®¡ç®—ç»“æœ
+        results = []  # ´æ´¢ËùÓĞÆ·ÖÖµÄ¼ÆËã½á¹û
 
         for idx, row in pools_df.iterrows():
-            # è·å–å“ç§ä¿¡æ¯
-            code = row['ä»£ç ']  # å“ç§ä»£ç ï¼Œå¦‚ rb
-            exchange_code = row['äº¤æ˜“æ‰€ä»£ç ']  # äº¤æ˜“æ‰€ä»£ç ï¼Œå¦‚ SF
-            n_lots = row['næ‰‹ï¼ˆå–æ•´ï¼‰']  # næ‰‹ï¼ˆå–æ•´ï¼‰
+            # »ñÈ¡Æ·ÖÖĞÅÏ¢
+            code = row['´úÂë']  # Æ·ÖÖ´úÂë£¬Èç rb
+            exchange_code = row['½»Ò×Ëù´úÂë']  # ½»Ò×Ëù´úÂë£¬Èç SF
+            n_lots = row['nÊÖ£¨È¡Õû£©']  # nÊÖ£¨È¡Õû£©
 
             log_info(f"\n{'='*60}")
-            log_info(f"[å¤„ç†å‡½æ•°] æ­£åœ¨å¤„ç†å“ç§: {code}, äº¤æ˜“æ‰€: {exchange_code}, næ‰‹: {n_lots}")
+            log_info(f"[´¦Àíº¯Êı] ÕıÔÚ´¦ÀíÆ·ÖÖ: {code}, ½»Ò×Ëù: {exchange_code}, nÊÖ: {n_lots}")
 
-            # æ­¥éª¤2.1ï¼šæ„é€ è¿ç»­åˆçº¦ä»£ç 
-            # è¿ç»­åˆçº¦ = å“ç§ä»£ç  + "00" + "." + äº¤æ˜“æ‰€ä»£ç 
-            # ä¾‹å¦‚ï¼šrb + "00" + "." + "SF" = "rb00.SF"
+            # ²½Öè2.1£º¹¹ÔìÁ¬ĞøºÏÔ¼´úÂë
+            # Á¬ĞøºÏÔ¼ = Æ·ÖÖ´úÂë + "00" + "." + ½»Ò×Ëù´úÂë
+            # ÀıÈç£ºrb + "00" + "." + "SF" = "rb00.SF"
             continuous_contract = code + "00" + "." + exchange_code
-            log_info(f"[å¤„ç†å‡½æ•°] è¿ç»­åˆçº¦ä»£ç : {continuous_contract}")
+            log_info(f"[´¦Àíº¯Êı] Á¬ĞøºÏÔ¼´úÂë: {continuous_contract}")
 
-            # æ­¥éª¤2.2ï¼šè·å–ä¸»åŠ›åˆçº¦ä»£ç 
-            # ä½¿ç”¨ ContextInfo.get_main_contract() è·å–ä¸»åŠ›åˆçº¦
+            # ²½Öè2.2£º»ñÈ¡Ö÷Á¦ºÏÔ¼´úÂë
+            # Ê¹ÓÃ ContextInfo.get_main_contract() »ñÈ¡Ö÷Á¦ºÏÔ¼
             try:
                 main_contract_code = ContextInfo.get_main_contract(continuous_contract)
                 if not main_contract_code:
-                    log_info(f"[å¤„ç†å‡½æ•°] æ— æ³•è·å– {continuous_contract} çš„ä¸»åŠ›åˆçº¦ï¼Œè·³è¿‡")
+                    log_info(f"[´¦Àíº¯Êı] ÎŞ·¨»ñÈ¡ {continuous_contract} µÄÖ÷Á¦ºÏÔ¼£¬Ìø¹ı")
                     continue
 
-                # ä¸»åŠ›åˆçº¦ = ä¸»åŠ›åˆçº¦ä»£ç  + "." + äº¤æ˜“æ‰€ä»£ç 
-                # ä¾‹å¦‚ï¼šRB2405 + "." + "SF" = "RB2405.SF"
+                # Ö÷Á¦ºÏÔ¼ = Ö÷Á¦ºÏÔ¼´úÂë + "." + ½»Ò×Ëù´úÂë
+                # ÀıÈç£ºRB2405 + "." + "SF" = "RB2405.SF"
                 main_contract = main_contract_code + "." + exchange_code
-                log_info(f"[å¤„ç†å‡½æ•°] ä¸»åŠ›åˆçº¦ä»£ç : {main_contract}")
+                log_info(f"[´¦Àíº¯Êı] Ö÷Á¦ºÏÔ¼´úÂë: {main_contract}")
             except Exception as e:
-                log_info(f"[å¤„ç†å‡½æ•°] è·å–ä¸»åŠ›åˆçº¦å¤±è´¥: {str(e)}ï¼Œè·³è¿‡")
+                log_info(f"[´¦Àíº¯Êı] »ñÈ¡Ö÷Á¦ºÏÔ¼Ê§°Ü: {str(e)}£¬Ìø¹ı")
                 continue
 
-            # æ­¥éª¤2.3ï¼šè·å–è¿‘10æ—¥å†å²Kçº¿æ•°æ®
-            current_contract = continuous_contract if g.is_backtest else main_contract  # å›æµ‹ç”¨continuous_contractï¼Œå®ç›˜ä½¿ç”¨main_contract
+            # ²½Öè2.3£º»ñÈ¡½ü10ÈÕÀúÊ·KÏßÊı¾İ
+            current_contract = continuous_contract if g.is_backtest else main_contract  # »Ø²âÓÃcontinuous_contract£¬ÊµÅÌÊ¹ÓÃmain_contract
 
-            # éœ€è¦è·å–15æ¡æ•°æ®ï¼ˆå–11å¤©å‰çš„æ•°æ®ç”¨äºè®¡ç®—10æ—¥è¶‹åŠ¿ï¼‰
+            # ĞèÒª»ñÈ¡15ÌõÊı¾İ£¨È¡11ÌìÇ°µÄÊı¾İÓÃÓÚ¼ÆËã10ÈÕÇ÷ÊÆ£©
             try:
-                log_info(f"[å¤„ç†å‡½æ•°] æ­£åœ¨è·å– {current_contract} çš„å†å²Kçº¿æ•°æ®...")
+                log_info(f"[´¦Àíº¯Êı] ÕıÔÚ»ñÈ¡ {current_contract} µÄÀúÊ·KÏßÊı¾İ...")
 
                 history_data = ContextInfo.get_market_data_ex(
                     ['time', 'open', 'high', 'low', 'close'],
                     [current_contract],
                     end_time=bar_date,
                     period='1d',
-                    count=15,  # éœ€è¦11å¤©å‰çš„æ•°æ®
+                    count=13,  # ĞèÒª11ÌìÇ°µÄÊı¾İ
                     dividend_type=ContextInfo.dividend_type,
                     subscribe=True
                 )
 
                 if not history_data or current_contract not in history_data:
-                    log_info(f"[å¤„ç†å‡½æ•°] æ— æ³•è·å– {current_contract} çš„å†å²æ•°æ®ï¼Œè·³è¿‡")
+                    log_info(f"[´¦Àíº¯Êı] ÎŞ·¨»ñÈ¡ {current_contract} µÄÀúÊ·Êı¾İ£¬Ìø¹ı")
                     continue
 
                 history_df = history_data[current_contract]
-                log_info(f"[å¤„ç†å‡½æ•°] è·å–åˆ° {len(history_df)} æ¡å†å²æ•°æ®")
+                log_info(f"[´¦Àíº¯Êı] »ñÈ¡µ½ {len(history_df)} ÌõÀúÊ·Êı¾İ")
 
-                # è½¬æ¢æ—¶é—´æˆ³ä¸ºå¯è¯»æ ¼å¼
+                # ×ª»»Ê±¼ä´ÁÎª¿É¶Á¸ñÊ½
                 history_df['time'] = history_df['time'].apply(lambda x: timetag_to_datetime(x, '%Y-%m-%d %H:%M:%S'))
-                # æ—¥ç›˜å’Œå¤œç›˜çš„0-2ç‚¹ï¼ˆååŠæ®µï¼‰åˆ é™¤å†å²æ•°æ®ä¸­çš„æœ€åä¸€æ¡ï¼ˆå½“å¤©æ•°æ®ï¼‰ã€‚ å¤œç›˜21ç‚¹-24ç‚¹ æœ€åä¸€æ¡æ˜¯å½“å¤©ç™½å¤©çš„è®°å½•ä¸åˆ é™¤
+
+                # ÈÕÅÌºÍÒ¹ÅÌµÄ0-2µã£¨ºó°ë¶Î£©É¾³ıÀúÊ·Êı¾İÖĞµÄ×îºóÒ»Ìõ£¨µ±ÌìÊı¾İ£©¡£ Ò¹ÅÌ21µã-24µã ×îºóÒ»ÌõÊÇµ±Ìì°×ÌìµÄ¼ÇÂ¼²»É¾³ı
                 history_df = history_df[:-1] if current_hour < 21 else history_df
-                log_info(f"[å¤„ç†å‡½æ•°] å†å²æ•°æ®:\n{history_df.tail(12).to_string()}")
+
+                # ¸ù¾İÊ±¼äµ¹ĞòÅÅÁĞ
+                history_df = history_df.sort_values(by='time', ascending=False).reset_index(drop=True)
+                log_info(f"[´¦Àíº¯Êı] ÀúÊ·Êı¾İ:\n{history_df.to_string()}")
 
             except Exception as e:
-                log_info(f"[å¤„ç†å‡½æ•°] è·å–å†å²æ•°æ®å¤±è´¥: {str(e)}ï¼Œè·³è¿‡")
+                log_info(f"[´¦Àíº¯Êı] »ñÈ¡ÀúÊ·Êı¾İÊ§°Ü: {str(e)}£¬Ìø¹ı")
                 continue
 
-            # æ­¥éª¤2.4ï¼šè®¡ç®—æŒ‡æ ‡
-            # éœ€è¦è‡³å°‘12æ¡æ•°æ®ï¼ˆç¬¬0æ¡åˆ°ç¬¬11æ¡ï¼‰
+            # ²½Öè2.4£º¼ÆËãÖ¸±ê
+            # ĞèÒªÖÁÉÙ12ÌõÊı¾İ£¨µÚ0Ìõµ½µÚ11Ìõ£©
             if len(history_df) < 12:
-                log_info(f"[å¤„ç†å‡½æ•°] æ•°æ®ä¸è¶³12æ¡ï¼Œæ— æ³•è®¡ç®—æŒ‡æ ‡ï¼Œè·³è¿‡ï¼ˆå½“å‰{len(history_df)}æ¡ï¼‰")
+                log_info(f"[´¦Àíº¯Êı] Êı¾İ²»×ã12Ìõ£¬ÎŞ·¨¼ÆËãÖ¸±ê£¬Ìø¹ı£¨µ±Ç°{len(history_df)}Ìõ£©")
                 continue
 
             try:
-                # 10æ—¥è¶‹åŠ¿ = |æ˜¨æ—¥æ”¶ç›˜ä»· - 11æ—¥å‰æ”¶ç›˜ä»·| / 11æ—¥å‰æ”¶ç›˜ä»·
-                # æ˜¨æ—¥æ”¶ç›˜ä»· = history_df['close'].iloc[0]ï¼ˆæœ€è¿‘ä¸€å¤©ï¼‰
-                # 11æ—¥å‰æ”¶ç›˜ä»· = history_df['close'].iloc[11]ï¼ˆç¬¬11å¤©å‰ï¼‰
-                close_yesterday = history_df['close'].iloc[0]  # æ˜¨æ—¥æ”¶ç›˜ä»·ï¼ˆç¬¬0æ ¹Kçº¿ï¼‰
-                close_11days_ago = history_df['close'].iloc[11]  # 11æ—¥å‰æ”¶ç›˜ä»·ï¼ˆç¬¬11æ ¹Kçº¿ï¼‰
+                # 10ÈÕÇ÷ÊÆ = |×òÈÕÊÕÅÌ¼Û - 11ÈÕÇ°ÊÕÅÌ¼Û| / 11ÈÕÇ°ÊÕÅÌ¼Û
 
-                # è®¡ç®—10æ—¥è¶‹åŠ¿çš„å¹…åº¦ï¼ˆç»å¯¹å€¼ï¼‰
+                # ×òÌìÊÕÅÌ¼Û = history_df['close'].iloc[0]
+                # 11ÌìÇ°ÊÕÅÌ¼Û = history_df['close'].iloc[9]
+                close_yesterday = history_df['close'].iloc[0]  # ×òÌìÊÕÅÌ¼Û
+                close_11days_ago = history_df['close'].iloc[9]  # 11ÌìÇ°ÊÕÅÌ¼Û
+
+                # ¼ÆËã10ÈÕÇ÷ÊÆµÄ·ù¶È£¨¾ø¶ÔÖµ£©
                 trend_amplitude = abs(close_yesterday - close_11days_ago)
 
-                # è®¡ç®—10æ—¥è¶‹åŠ¿ï¼ˆç™¾åˆ†æ¯”ï¼‰
+                # ¼ÆËã10ÈÕÇ÷ÊÆ£¨°Ù·Ö±È£©
                 if close_11days_ago != 0:
                     ten_day_trend = trend_amplitude / close_11days_ago
                 else:
                     ten_day_trend = 0
 
-                log_info(f"[å¤„ç†å‡½æ•°] æ˜¨æ—¥æ”¶ç›˜ä»·: {close_yesterday}, 11æ—¥å‰æ”¶ç›˜ä»·: {close_11days_ago}")
-                log_info(f"[å¤„ç†å‡½æ•°] 10æ—¥è¶‹åŠ¿å¹…åº¦: {trend_amplitude}, 10æ—¥è¶‹åŠ¿: {ten_day_trend:.4%}")
+                log_info(f"[´¦Àíº¯Êı] ×òÈÕÊÕÅÌ¼Û: {close_yesterday}, 11ÈÕÇ°ÊÕÅÌ¼Û: {close_11days_ago}")
+                log_info(f"[´¦Àíº¯Êı] 10ÈÕÇ÷ÊÆ·ù¶È: {trend_amplitude}, 10ÈÕÇ÷ÊÆ: {ten_day_trend:.4%}")
 
-                # 10æ—¥æ³¢åŠ¨ = Î£(|æœ€é«˜ä»· - æœ€ä½ä»·|)ï¼Œè¿‘10å¤©
-                # å³ï¼šÎ£(ç¬¬1æ ¹åˆ°ç¬¬10æ ¹Kçº¿çš„ |high - low|)
+                # 10ÈÕ²¨¶¯ = ¦²(|×î¸ß¼Û - ×îµÍ¼Û|)£¬½ü10Ìì
+                # ¼´£º¦²(µÚ1¸ùµ½µÚ10¸ùKÏßµÄ |high - low|)
                 volatility_sum = 0
-                for i in range(1, 11):  # ç¬¬1æ ¹åˆ°ç¬¬10æ ¹Kçº¿
+                for i in range(0, 9):  # µÚ1¸ùµ½µÚ10¸ùKÏß
                     high = history_df['high'].iloc[i]
                     low = history_df['low'].iloc[i]
                     daily_range = abs(high - low)
                     volatility_sum += daily_range
 
-                log_info(f"[å¤„ç†å‡½æ•°] 10æ—¥æ³¢åŠ¨: {volatility_sum}")
+                log_info(f"[´¦Àíº¯Êı] 10ÈÕ²¨¶¯: {volatility_sum}")
 
-                # è¶‹åŠ¿æ•ˆç‡ = 10æ—¥è¶‹åŠ¿å¹…åº¦ / 10æ—¥æ³¢åŠ¨
-                # è¶‹åŠ¿æ•ˆç‡è¶Šé«˜ï¼Œè¯´æ˜æ³¢åŠ¨è¶Šæœ‰æ–¹å‘
+                # Ç÷ÊÆĞ§ÂÊ = 10ÈÕÇ÷ÊÆ·ù¶È / 10ÈÕ²¨¶¯
+                # Ç÷ÊÆĞ§ÂÊÔ½¸ß£¬ËµÃ÷²¨¶¯Ô½ÓĞ·½Ïò
                 if volatility_sum != 0:
                     trend_efficiency = trend_amplitude / volatility_sum
                 else:
-                    trend_efficiency = 0  # é¿å…é™¤é›¶
+                    trend_efficiency = 0  # ±ÜÃâ³ıÁã
 
-                log_info(f"[å¤„ç†å‡½æ•°] è¶‹åŠ¿æ•ˆç‡: {trend_efficiency:.4f}")
+                log_info(f"[´¦Àíº¯Êı] Ç÷ÊÆĞ§ÂÊ: {trend_efficiency:.4f}")
 
-                # ä¿å­˜ç»“æœ
+                # ±£´æ½á¹û
                 result = {
-                    'è¿ç»­åˆçº¦': continuous_contract,
-                    'ä¸»åŠ›åˆçº¦': main_contract,
-                    'ä»£ç ': code,
-                    'äº¤æ˜“æ‰€ä»£ç ': exchange_code,
-                    'næ‰‹ï¼ˆå–æ•´ï¼‰': n_lots,
-                    '10æ—¥è¶‹åŠ¿': ten_day_trend,
-                    '10æ—¥è¶‹åŠ¿å¹…åº¦': trend_amplitude,
-                    '10æ—¥æ³¢åŠ¨': volatility_sum,
-                    'è¶‹åŠ¿æ•ˆç‡': trend_efficiency
+                    'Á¬ĞøºÏÔ¼': continuous_contract,
+                    'Ö÷Á¦ºÏÔ¼': main_contract,
+                    '´úÂë': code,
+                    '½»Ò×Ëù´úÂë': exchange_code,
+                    'nÊÖ£¨È¡Õû£©': n_lots,
+                    '10ÈÕÇ÷ÊÆ': ten_day_trend,
+                    '10ÈÕÇ÷ÊÆ·ù¶È': trend_amplitude,
+                    '10ÈÕ²¨¶¯': volatility_sum,
+                    'Ç÷ÊÆĞ§ÂÊ': trend_efficiency
                 }
                 results.append(result)
 
-                log_info(f"[å¤„ç†å‡½æ•°] å“ç§ {code} è®¡ç®—å®Œæˆï¼Œ10æ—¥è¶‹åŠ¿={ten_day_trend:.4%}, è¶‹åŠ¿æ•ˆç‡={trend_efficiency:.4f}")
+                log_info(f"[´¦Àíº¯Êı] Æ·ÖÖ {code} ¼ÆËãÍê³É£¬10ÈÕÇ÷ÊÆ={ten_day_trend:.4%}, Ç÷ÊÆĞ§ÂÊ={trend_efficiency:.4f}")
 
             except Exception as e:
-                log_info(f"[å¤„ç†å‡½æ•°] è®¡ç®—æŒ‡æ ‡å¤±è´¥: {str(e)}ï¼Œè·³è¿‡")
+                log_info(f"[´¦Àíº¯Êı] ¼ÆËãÖ¸±êÊ§°Ü: {str(e)}£¬Ìø¹ı")
                 continue
 
-        # æ­¥éª¤3ï¼šæ’åºå¹¶è¾“å‡ºTOP3
-        log_section("æ­¥éª¤3ï¼šæ’åºå¹¶è¾“å‡ºTOP3")
+        # ²½Öè3£ºÅÅĞò²¢Êä³öTOP3
+        log_section("²½Öè3£ºÅÅĞò²¢Êä³öTOP3")
 
         if not results:
-            log_info("[å¤„ç†å‡½æ•°] æ²¡æœ‰æœ‰æ•ˆçš„è®¡ç®—ç»“æœ")
+            log_info("[´¦Àíº¯Êı] Ã»ÓĞÓĞĞ§µÄ¼ÆËã½á¹û")
             return
 
-        # è½¬æ¢ä¸ºDataFrameä¾¿äºæ’åº
+        # ×ª»»ÎªDataFrame±ãÓÚÅÅĞò
         results_df = pd.DataFrame(results)
-        log_info(f"[å¤„ç†å‡½æ•°] æœ‰æ•ˆå“ç§æ•°é‡: {len(results_df)}")
+        log_info(f"[´¦Àíº¯Êı] ÓĞĞ§Æ·ÖÖÊıÁ¿: {len(results_df)}")
 
-        # 3.1 10æ—¥è¶‹åŠ¿TOP3ï¼ˆæŒ‰10æ—¥è¶‹åŠ¿é™åºæ’åˆ—ï¼‰
-        log_section("10æ—¥è¶‹åŠ¿TOP3")
-        top3_trend = results_df.nlargest(3, '10æ—¥è¶‹åŠ¿')
-        log_info(f"\n{top3_trend[['è¿ç»­åˆçº¦', 'ä¸»åŠ›åˆçº¦', 'ä»£ç ', 'äº¤æ˜“æ‰€ä»£ç ', 'næ‰‹ï¼ˆå–æ•´ï¼‰', '10æ—¥è¶‹åŠ¿']].to_string()}")
+        # 3.1 10ÈÕÇ÷ÊÆTOP3£¨°´10ÈÕÇ÷ÊÆ½µĞòÅÅÁĞ£©
+        log_section("10ÈÕÇ÷ÊÆTOP3")
+        top3_trend = results_df.nlargest(3, '10ÈÕÇ÷ÊÆ')
+        log_info(f"\n{top3_trend[['Á¬ĞøºÏÔ¼', 'Ö÷Á¦ºÏÔ¼', '´úÂë', '½»Ò×Ëù´úÂë', 'nÊÖ£¨È¡Õû£©', '10ÈÕÇ÷ÊÆ']].to_string()}")
 
-        # 3.2 è¶‹åŠ¿æ•ˆç‡TOP3ï¼ˆæŒ‰è¶‹åŠ¿æ•ˆç‡é™åºæ’åˆ—ï¼‰
-        log_section("è¶‹åŠ¿æ•ˆç‡TOP3")
-        top3_efficiency = results_df.nlargest(3, 'è¶‹åŠ¿æ•ˆç‡')
-        log_info(f"\n{top3_efficiency[['è¿ç»­åˆçº¦', 'ä¸»åŠ›åˆçº¦', 'ä»£ç ', 'äº¤æ˜“æ‰€ä»£ç ', 'næ‰‹ï¼ˆå–æ•´ï¼‰', 'è¶‹åŠ¿æ•ˆç‡']].to_string()}")
+        # 3.2 Ç÷ÊÆĞ§ÂÊTOP3£¨°´Ç÷ÊÆĞ§ÂÊ½µĞòÅÅÁĞ£©
+        log_section("Ç÷ÊÆĞ§ÂÊTOP3")
+        top3_efficiency = results_df.nlargest(3, 'Ç÷ÊÆĞ§ÂÊ')
+        log_info(f"\n{top3_efficiency[['Á¬ĞøºÏÔ¼', 'Ö÷Á¦ºÏÔ¼', '´úÂë', '½»Ò×Ëù´úÂë', 'nÊÖ£¨È¡Õû£©', 'Ç÷ÊÆĞ§ÂÊ']].to_string()}")
 
-        # æ­¥éª¤4ï¼šè¾“å‡ºå®Œæ•´ç»“æœï¼ˆå¯ç”¨äºåç»­åˆçº¦äº¤æ˜“æ‰€ï¼‰
-        log_section("å®Œæ•´è®¡ç®—ç»“æœï¼ˆç”¨äºåç»­äº¤æ˜“æ‰€ï¼‰")
+        # ²½Öè4£ºÊä³öÍêÕû½á¹û£¨¿ÉÓÃÓÚºóĞøºÏÔ¼½»Ò×Ëù£©
+        log_section("ÍêÕû¼ÆËã½á¹û£¨ÓÃÓÚºóĞø½»Ò×Ëù£©")
         log_info(f"\n{results_df.to_string()}")
 
-        # æ­¥éª¤5ï¼šå°è£…æˆstock_codes_dictæ ¼å¼ï¼Œä¾›æµ·é¾Ÿäº¤æ˜“ç­–ç•¥ä½¿ç”¨
-        log_section("æ­¥éª¤5ï¼šå°è£…stock_codes_dictæ ¼å¼")
+        # ²½Öè5£º·â×°³Éstock_codes_dict¸ñÊ½£¬¹©º£¹ê½»Ò×²ßÂÔÊ¹ÓÃ
+        log_section("²½Öè5£º·â×°stock_codes_dict¸ñÊ½")
         g.stock_codes_dict_top3_trend = convert_to_stock_codes_dict(top3_trend)
         g.stock_codes_dict_top3_efficiency = convert_to_stock_codes_dict(top3_efficiency)
 
-        log_info(f"[å¤„ç†å‡½æ•°] 10æ—¥è¶‹åŠ¿TOP3 stock_codes_dict: {g.stock_codes_dict_top3_trend}")
-        log_info(f"[å¤„ç†å‡½æ•°] è¶‹åŠ¿æ•ˆç‡TOP3 stock_codes_dict: {g.stock_codes_dict_top3_efficiency}")
+        log_info(f"[´¦Àíº¯Êı] 10ÈÕÇ÷ÊÆTOP3 stock_codes_dict: {g.stock_codes_dict_top3_trend}")
+        log_info(f"[´¦Àíº¯Êı] Ç÷ÊÆĞ§ÂÊTOP3 stock_codes_dict: {g.stock_codes_dict_top3_efficiency}")
 
-        # ä¿å­˜ç»“æœåˆ°å…¨å±€å˜é‡ï¼Œä¾›åç»­ä½¿ç”¨
+        # ±£´æ½á¹ûµ½È«¾Ö±äÁ¿£¬¹©ºóĞøÊ¹ÓÃ
         g.top3_trend = top3_trend
         g.top3_efficiency = top3_efficiency
         g.all_results = results_df
 
-        log_info("[å¤„ç†å‡½æ•°] é€‰å“ç­–ç•¥æ‰§è¡Œå®Œæˆ")
+        log_info("[´¦Àíº¯Êı] Ñ¡Æ·²ßÂÔÖ´ĞĞÍê³É")
 
     except Exception as e:
-        log_info(f"[å¤„ç†å‡½æ•°] æ‰§è¡Œé€‰å“é€»è¾‘å¼‚å¸¸: {str(e)}")
+        log_info(f"[´¦Àíº¯Êı] Ö´ĞĞÑ¡Æ·Âß¼­Òì³£: {str(e)}")
         import traceback
         log_info(traceback.format_exc())
 
 
-# ==================== è¾…åŠ©å‡½æ•° ====================
+# ==================== ¸¨Öúº¯Êı ====================
 
 def log_info(message):
     """
-    æ—¥å¿—è®°å½•å‡½æ•°
-    è®°å½•infoçº§åˆ«æ—¥å¿—ï¼ŒåŒæ—¶æ‰“å°åˆ°æ§åˆ¶å°
+    ÈÕÖ¾¼ÇÂ¼º¯Êı
+    ¼ÇÂ¼info¼¶±ğÈÕÖ¾£¬Í¬Ê±´òÓ¡µ½¿ØÖÆÌ¨
     """
     logging.info(message)
     print(f"[{datetime.now().strftime('%Y%m%d%H%M%S')}] {message}")
@@ -333,8 +338,8 @@ def log_info(message):
 
 def log_section(title):
     """
-    è¾“å‡ºå¸¦æ ‡é¢˜çš„åˆ†éš”åŒºå—
-    ç”¨äºæ—¥å¿—ä¸­åŒºåˆ†ä¸åŒé˜¶æ®µ
+    Êä³ö´ø±êÌâµÄ·Ö¸ôÇø¿é
+    ÓÃÓÚÈÕÖ¾ÖĞÇø·Ö²»Í¬½×¶Î
     """
     log_info(60 * "=")
     log_info(title)
@@ -343,41 +348,41 @@ def log_section(title):
 
 def convert_to_stock_codes_dict(df):
     """
-    å°†é€‰å“ç»“æœDataFrameè½¬æ¢ä¸ºstock_codes_dictæ ¼å¼
+    ½«Ñ¡Æ·½á¹ûDataFrame×ª»»Îªstock_codes_dict¸ñÊ½
 
-    ç›®æ ‡æ ¼å¼ï¼ˆä¸æµ·é¾Ÿäº¤æ˜“ç­–ç•¥ä¸€è‡´ï¼‰ï¼š
+    Ä¿±ê¸ñÊ½£¨Óëº£¹ê½»Ò×²ßÂÔÒ»ÖÂ£©£º
     {
-        "å“ç§ä»£ç ": {"code": "è¿ç»­åˆçº¦ä»£ç ", "market": "äº¤æ˜“æ‰€ä»£ç ", "size": næ‰‹}
+        "Æ·ÖÖ´úÂë": {"code": "Á¬ĞøºÏÔ¼´úÂë", "market": "½»Ò×Ëù´úÂë", "size": nÊÖ}
     }
 
-    ä¾‹å¦‚ï¼š
+    ÀıÈç£º
     {
         "RB": {"code": "rb00", "market": "SF", "size": 10},
         "JM": {"code": "jm00", "market": "DF", "size": 4}
     }
 
     Args:
-        df: é€‰å“ç»“æœDataFrameï¼Œéœ€åŒ…å« 'ä»£ç ', 'è¿ç»­åˆçº¦', 'äº¤æ˜“æ‰€ä»£ç ', 'næ‰‹ï¼ˆå–æ•´ï¼‰' å­—æ®µ
+        df: Ñ¡Æ·½á¹ûDataFrame£¬Ğè°üº¬ '´úÂë', 'Á¬ĞøºÏÔ¼', '½»Ò×Ëù´úÂë', 'nÊÖ£¨È¡Õû£©' ×Ö¶Î
 
     Returns:
-        dict: stock_codes_dictæ ¼å¼çš„å­—å…¸
+        dict: stock_codes_dict¸ñÊ½µÄ×Öµä
     """
     stock_codes_dict = {}
 
     for idx, row in df.iterrows():
-        code = row['ä»£ç ']  # å“ç§ä»£ç ï¼Œå¦‚ rb
-        continuous_contract = row['è¿ç»­åˆçº¦']  # è¿ç»­åˆçº¦ï¼Œå¦‚ rb00.SF
-        exchange_code = row['äº¤æ˜“æ‰€ä»£ç ']  # äº¤æ˜“æ‰€ä»£ç ï¼Œå¦‚ SF
-        n_lots = row['næ‰‹ï¼ˆå–æ•´ï¼‰']  # næ‰‹
+        code = row['´úÂë']  # Æ·ÖÖ´úÂë£¬Èç rb
+        continuous_contract = row['Á¬ĞøºÏÔ¼']  # Á¬ĞøºÏÔ¼£¬Èç rb00.SF
+        exchange_code = row['½»Ò×Ëù´úÂë']  # ½»Ò×Ëù´úÂë£¬Èç SF
+        n_lots = row['nÊÖ£¨È¡Õû£©']  # nÊÖ
 
-        # æå–è¿ç»­åˆçº¦ä»£ç éƒ¨åˆ†ï¼ˆå»æ‰.SFç­‰åç¼€ï¼‰
-        # å¦‚ rb00.SF -> rb00
+        # ÌáÈ¡Á¬ĞøºÏÔ¼´úÂë²¿·Ö£¨È¥µô.SFµÈºó×º£©
+        # Èç rb00.SF -> rb00
         contract_code = continuous_contract.split('.')[0] if '.' in continuous_contract else continuous_contract
 
         stock_codes_dict[code.upper()] = {
-            "code": contract_code,  # è¿ç»­åˆçº¦ä»£ç ï¼Œå¦‚ rb00
-            "market": exchange_code,  # äº¤æ˜“æ‰€ä»£ç ï¼Œå¦‚ SF
-            "size": int(n_lots)  # næ‰‹ï¼ˆå–æ•´ï¼‰
+            "code": contract_code,  # Á¬ĞøºÏÔ¼´úÂë£¬Èç rb00
+            "market": exchange_code,  # ½»Ò×Ëù´úÂë£¬Èç SF
+            "size": int(n_lots)  # nÊÖ£¨È¡Õû£©
         }
 
     return stock_codes_dict
@@ -386,27 +391,27 @@ def convert_to_stock_codes_dict(df):
 
 def get_log_filename(account_id=None):
     """
-    è·å–æ—¥å¿—æ–‡ä»¶å
+    »ñÈ¡ÈÕÖ¾ÎÄ¼şÃû
 
     Args:
-        account_id: è´¦æˆ·ID
+        account_id: ÕË»§ID
 
     Returns:
-        æ—¥å¿—æ–‡ä»¶è·¯å¾„
+        ÈÕÖ¾ÎÄ¼şÂ·¾¶
     """
     global log_filename
     if log_filename is None:
-        # æ—¥å¿—æ–‡ä»¶ä¿å­˜åœ¨ç­–ç•¥åŒç›®å½•ä¸‹
+        # ÈÕÖ¾ÎÄ¼ş±£´æÔÚ²ßÂÔÍ¬Ä¿Â¼ÏÂ
         import os
         
         if not os.path.exists(work_dir):
             os.makedirs(work_dir)
-        log_filename = os.path.join(work_dir, 'é€‰å“ç­–ç•¥æ—¥å¿—.log')
+        log_filename = os.path.join(work_dir, 'Ñ¡Æ·²ßÂÔÈÕÖ¾.log')
 
     return log_filename
 
 
-# è‡ªå®šä¹‰ç±» ç”¨æ¥ä¿å­˜å…¨å±€çŠ¶æ€
+# ×Ô¶¨ÒåÀà ÓÃÀ´±£´æÈ«¾Ö×´Ì¬
 class G():
     pass
 
