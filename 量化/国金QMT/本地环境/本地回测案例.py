@@ -1,4 +1,7 @@
-
+# coding:gbk
+import os
+from xtquant.qmttools.functions import passorder, get_trade_detail_data
+from xtquant.xtdata import timetag_to_datetime
 
 # 根据情况指定xtquant的路径
 import numpy as np
@@ -28,7 +31,7 @@ def init(C):
     g.his_st = {}
 
     # g.s = C.get_stock_list_in_sector("沪深A股")  # 获取沪深A股股票列表
-    g.s = C.get_stock_list_in_sector("沪深300")  # 获取沪深300股票列表
+    # g.s = C.get_stock_list_in_sector("沪深300")  # 获取沪深300股票列表
     # g.s = ['000001.SZ']
     g.day = 0
     g.holdings = {i: 0 for i in g.s}
@@ -311,8 +314,8 @@ if __name__ == '__main__':
         'quote_mode': 'history',
         # handlebar模式，'realtime':仅实时行情（不调用历史行情的handlebar）,'history':仅历史行情, 'all'：所有，即history+realtime
     }
-    # user_script = os.path.basename(__file__)  # 当前脚本路径，相对路径，绝对路径均可,此处为相对路径的方法
-    user_script = sys.argv[0]  # 当前脚本路径，相对路径，绝对路径均可，此处为绝对路径的方法
+    user_script = os.path.basename(__file__)  # 当前脚本路径，相对路径，绝对路径均可,此处为相对路径的方法
+    # user_script = sys.argv[0]  # 当前脚本路径，相对路径，绝对路径均可，此处为绝对路径的方法
 
     print(user_script)
     result = run_strategy_file(user_script, param=param)

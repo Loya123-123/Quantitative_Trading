@@ -24,8 +24,13 @@
 """
 # coding:gbk
 import logging
+import os
 from datetime import datetime
 import json
+from xtquant import xtdata
+from xtquant.qmttools.contextinfo import ContextInfo
+from xtquant.xtdata import timetag_to_datetime
+
 import numpy as np
 import pandas as pd
 
@@ -34,7 +39,6 @@ log_filename = None
 
 # work_dir = '/Users/exiaozhong/CodeProjects/Quantitative_Trading/量化/国金QMT/期货/期货选品策略/'
 work_dir = 'C:\\合约选品\\'
-
 
 def init(ContextInfo):
     """
@@ -95,6 +99,7 @@ def handlebar(ContextInfo):
     在每个K线周期都会被调用
     """
 
+
     # ========== 获取当前时间 ==========
     # 使用timetag_to_datetime获取当前时间
     bar_date = timetag_to_datetime(ContextInfo.get_bar_timetag(ContextInfo.barpos), '%Y%m%d%H%M%S')
@@ -113,7 +118,7 @@ def handlebar(ContextInfo):
     # 只有在09:00或21:00时才执行，且每天每个时段只执行一次
 
     # 构造执行标记：日期_时段（1=日盘，2=夜盘）
-    session = 1 if current_hour in (9, 0) else (2 if current_hour == 21 else 0)
+    session = 1 if current_hour in (9,0) else (2 if current_hour == 21 else 0)
     execute_key = f"{current_date}_{session}"
 
     if session == 0:
@@ -150,7 +155,7 @@ def handlebar(ContextInfo):
             exchange_code = row['交易所代码']  # 交易所代码，如 SF
             n_lots = row['n手（取整）']  # n手（取整）
 
-            log_info(f"\n{'=' * 60}")
+            log_info(f"\n{'='*60}")
             log_info(f"[处理函数] 正在处理品种: {code}, 交易所: {exchange_code}, n手: {n_lots}")
 
             # 步骤2.1：构造连续合约代码
@@ -223,7 +228,7 @@ def handlebar(ContextInfo):
                 # 10日趋势 = |昨日收盘价 - 11日前收盘价| / 11日前收盘价
 
                 # 昨天收盘价 = history_df['close'].iloc[0]
-                # 11天前收盘价 = history_df['close'].iloc[11]
+                # 11天前收盘价 = history_df['close'].iloc[9]
                 close_yesterday = history_df['close'].iloc[0]  # 昨天收盘价
                 close_11days_ago = history_df['close'].iloc[9]  # 11天前收盘价
 
@@ -242,7 +247,7 @@ def handlebar(ContextInfo):
                 # 10日波动 = Σ(|最高价 - 最低价|)，近10天
                 # 即：Σ(第1根到第10根K线的 |high - low|)
                 volatility_sum = 0
-                for i in range(0, 10):  # 第1根到第10根K线
+                for i in range(0, 9):  # 第1根到第10根K线
                     high = history_df['high'].iloc[i]
                     low = history_df['low'].iloc[i]
                     daily_range = abs(high - low)
@@ -273,8 +278,7 @@ def handlebar(ContextInfo):
                 }
                 results.append(result)
 
-                log_info(
-                    f"[处理函数] 品种 {code} 计算完成，10日趋势={ten_day_trend:.4%}, 趋势效率={trend_efficiency:.4f}")
+                log_info(f"[处理函数] 品种 {code} 计算完成，10日趋势={ten_day_trend:.4%}, 趋势效率={trend_efficiency:.4f}")
 
             except Exception as e:
                 log_info(f"[处理函数] 计算指标失败: {str(e)}，跳过")
@@ -299,8 +303,7 @@ def handlebar(ContextInfo):
         # 3.2 趋势效率TOP3（按趋势效率降序排列）
         log_section("趋势效率TOP3")
         top3_efficiency = results_df.nlargest(3, '趋势效率')
-        log_info(
-            f"\n{top3_efficiency[['连续合约', '主力合约', '代码', '交易所代码', 'n手（取整）', '趋势效率']].to_string()}")
+        log_info(f"\n{top3_efficiency[['连续合约', '主力合约', '代码', '交易所代码', 'n手（取整）', '趋势效率']].to_string()}")
 
         # 步骤4：输出完整结果（可用于后续合约交易所）
         log_section("完整计算结果（用于后续交易所）")
@@ -390,6 +393,7 @@ def convert_to_stock_codes_dict(df):
     return stock_codes_dict
 
 
+
 def get_log_filename(account_id=None):
     """
     获取日志文件名
@@ -404,7 +408,7 @@ def get_log_filename(account_id=None):
     if log_filename is None:
         # 日志文件保存在策略同目录下
         import os
-
+        
         if not os.path.exists(work_dir):
             os.makedirs(work_dir)
         log_filename = os.path.join(work_dir, '选品策略日志.log')
@@ -418,3 +422,30 @@ class G():
 
 
 g = G()
+
+
+
+if __name__ == '__main__':
+    import sys
+    from xtquant.qmttools import run_strategy_file
+
+    # 参数定义方法一，如果使用方法二定义参数，run_strategy_file的param参数可不传
+    param = {
+        'stock_code': '000300.SH',  # 驱动handlebar的代码,
+        'period': '1d',  # 策略执行周期 即主图周期
+        'start_time': '2022-01-01 00:00:00',  # 注意格式，不要写错
+        'end_time': '2024-03-01 00:00:00',  # 注意格式，不要写错
+        'trade_mode': 'backtest',  # 'backtest':回测
+        'quote_mode': 'history',
+        # handlebar模式，'realtime':仅实时行情（不调用历史行情的handlebar）,'history':仅历史行情, 'all'：所有，即history+realtime
+    }
+    # user_script = os.path.basename(__file__)  # 当前脚本路径，相对路径，绝对路径均可,此处为相对路径的方法
+    # user_script = sys.argv[0]  # 当前脚本路径，相对路径，绝对路径均可，此处为绝对路径的方法
+    user_script = "C:\\Users\\loya\\PycharmProjects\\Quantitative_Trading\\量化\\国金QMT\\期货\\期货选品策略\\期货选品策略.py"
+    print(user_script)
+    result = run_strategy_file(user_script, param=param)
+    if result:
+        print(result.get_backtest_index())
+        print(result.get_group_result())
+
+    xtdata.run()
