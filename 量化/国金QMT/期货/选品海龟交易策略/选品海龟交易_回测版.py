@@ -1,4 +1,5 @@
 # coding:gbk
+
 """
 海龟交易策略期货版
 基于国金QMT平台实现的海龟交易策略
@@ -81,14 +82,8 @@ def init(ContextInfo):
         log_info("[处理函数] 品种池为空，无法执行选品")
         return
 
-    # 记录上次选品执行时间，避免重复执行
-    g.last_execute_date = None
-
+    g.last_execute_date = None  # 记录上次选品执行时间，避免重复执行
     ContextInfo.stock_codes_dict = None
-
-    # ContextInfo.stock_codes = [stock_info["code"] + '.' + stock_info["market"] for stock_code, stock_info in
-    #                            ContextInfo.stock_codes_dict.items()]
-    #
     # ContextInfo.set_universe(ContextInfo.stock_codes)
     # log_info(f"[初始化] 设置交易标的: {ContextInfo.stock_codes}")
 
@@ -101,10 +96,11 @@ def init(ContextInfo):
     g.atr_window = 10  # ATR计算周期
     g.stop_profit_ratio = 0.2  # 止盈比例
     g.stop_loss_multiplier = 1  # 止损ATR倍数
-    g.position_limit = 5  # 持仓上线
+    g.position_limit = 3  # 持仓上线
     g.near_expiry_days = 30  # 临近到期日天数上线
     g.capital_rate = 0.1  # 资金比例 资金固定值，参数失效
-    g.is_trend_or_efficiency = 1  # 1：趋势幅度； 2:效率策略
+    g.is_trend_or_efficiency = 2  # 1：趋势幅度； 2:效率策略
+    g.trend_days = 60  # 选品参数 趋势天数
 
     # # 资金管理参数
     # g.long_capital = 10000  # 做多资金
@@ -117,6 +113,7 @@ def init(ContextInfo):
     log_info(f"        止盈比例: {g.stop_profit_ratio}")
     log_info(f"        止损ATR倍数: {g.stop_loss_multiplier}")
     log_info(f"        资金比例: {g.capital_rate}")
+    log_info(f"        趋势天数: {g.trend_days}")
 
     # 策略状态变量
     g.N = {}  # 波动幅度(N值/ATR)，为每个合约保存
@@ -220,19 +217,19 @@ def select_pools(ContextInfo):
             except Exception as e:
                 log_info(f"[处理函数] 获取主力合约失败: {str(e)}，跳过")
                 continue
-
+            max_trend_days = g.trend_days + 3
             # 步骤2.3：获取近10日历史K线数据
             current_contract = continuous_contract if g.is_backtest else main_contract  # 回测用continuous_contract，实盘使用main_contract
 
             # 需要获取15条数据（取11天前的数据用于计算10日趋势）
             try:
-                log_info(f"[处理函数] 正在获取 {current_contract} 的历史K线数据...")
+                log_debug(f"[处理函数] 正在获取 {current_contract} 的历史K线数据...")
                 history_data = ContextInfo.get_market_data_ex(
                     ['time', 'open', 'high', 'low', 'close'],
                     [current_contract],
                     end_time=bar_date,
                     period='1d',
-                    count=13,  # 需要11天前的数据
+                    count=max_trend_days,  # 需要max_trend_days天前的数据
                     dividend_type=ContextInfo.dividend_type,
                     subscribe=True
                 )
@@ -247,56 +244,53 @@ def select_pools(ContextInfo):
                 history_df = history_df[:-1] if current_hour < 21 else history_df
                 # 根据时间倒序排列
                 history_df = history_df.sort_values(by='time', ascending=False).reset_index(drop=True)
-                log_info(f"[处理函数] 历史数据:\n{history_df.to_string()}")
+                log_debug(f"[处理函数] 历史数据:\n{history_df.to_string()}")
             except Exception as e:
                 log_info(f"[处理函数] 获取历史数据失败: {str(e)}，跳过")
                 continue
 
             # 步骤2.4：计算指标
             # 需要至少12条数据（第0条到第11条）
-            if len(history_df) < 12:
-                log_info(f"[处理函数] 数据不足12条，无法计算指标，跳过（当前{len(history_df)}条）")
+            if len(history_df) <= g.trend_days:
+                log_info(f"[处理函数] 数据不足{g.trend_days}条，无法计算指标，跳过（当前{len(history_df)}条）")
                 continue
 
             try:
                 # 10日趋势 = |昨日收盘价 - 11日前收盘价| / 11日前收盘价
 
-                # 昨天收盘价 = history_df['close'].iloc[0]
-                # 11天前收盘价 = history_df['close'].iloc[11]
                 close_yesterday = history_df['close'].iloc[0]  # 昨天收盘价
-                close_11days_ago = history_df['close'].iloc[9]  # 11天前收盘价
+                close_N_days_ago = history_df['close'].iloc[g.trend_days - 1]  # N天前收盘价
 
-                # 计算10日趋势的幅度（绝对值）
-                trend_amplitude = abs(close_yesterday - close_11days_ago)
+                # 计算N日趋势的幅度（绝对值）
+                trend_amplitude = abs(close_yesterday - close_N_days_ago)
 
-                # 计算10日趋势（百分比）
-                if close_11days_ago != 0:
-                    ten_day_trend = trend_amplitude / close_11days_ago
+                # 计算N日趋势（百分比）
+                if close_N_days_ago != 0:
+                    trend_rate = trend_amplitude / close_N_days_ago
                 else:
-                    ten_day_trend = 0
+                    trend_rate = 0
 
-                log_info(f"[处理函数] 昨日收盘价: {close_yesterday}, 11日前收盘价: {close_11days_ago}")
-                log_info(f"[处理函数] 10日趋势幅度: {trend_amplitude}, 10日趋势: {ten_day_trend:.4%}")
+                log_debug(f"[处理函数] 昨日收盘价: {close_yesterday}, {g.trend_days}日前收盘价: {close_N_days_ago}")
+                log_debug(f"[处理函数] {g.trend_days}日趋势幅度: {trend_amplitude}, {g.trend_days}日趋势: {trend_rate:.4%}")
 
-                # 10日波动 = Σ(|最高价 - 最低价|)，近10天
-                # 即：Σ(第1根到第10根K线的 |high - low|)
+                # N日波动 = Σ(|最高价 - 最低价|)，近N天
                 volatility_sum = 0
-                for i in range(0, 10):  # 第1根到第10根K线
+                for i in range(0, g.trend_days):  # 第1根到第N根K线
                     high = history_df['high'].iloc[i]
                     low = history_df['low'].iloc[i]
                     daily_range = abs(high - low)
                     volatility_sum += daily_range
 
-                log_info(f"[处理函数] 10日波动: {volatility_sum}")
+                log_debug(f"[处理函数] {g.trend_days}日波动: {volatility_sum}")
 
-                # 趋势效率 = 10日趋势幅度 / 10日波动
+                # 趋势效率 = N日趋势幅度 / N日波动
                 # 趋势效率越高，说明波动越有方向
                 if volatility_sum != 0:
                     trend_efficiency = trend_amplitude / volatility_sum
                 else:
                     trend_efficiency = 0  # 避免除零
 
-                log_info(f"[处理函数] 趋势效率: {trend_efficiency:.4f}")
+                log_debug(f"[处理函数] 趋势效率: {trend_efficiency:.4f}")
 
                 # 保存结果
                 result = {
@@ -305,22 +299,19 @@ def select_pools(ContextInfo):
                     '代码': code,
                     '交易所代码': exchange_code,
                     'n手（取整）': n_lots,
-                    '10日趋势': ten_day_trend,
-                    '10日趋势幅度': trend_amplitude,
-                    '10日波动': volatility_sum,
+                    f'{g.trend_days}日趋势': trend_rate,
+                    f'{g.trend_days}日趋势幅度': trend_amplitude,
+                    f'{g.trend_days}日波动': volatility_sum,
                     '趋势效率': trend_efficiency
                 }
                 results.append(result)
 
                 log_info(
-                    f"[处理函数] 品种 {code} 计算完成，10日趋势={ten_day_trend:.4%}, 趋势效率={trend_efficiency:.4f}")
+                    f"[处理函数] 品种 {code} 计算完成，{g.trend_days}日趋势={trend_rate:.4%}, 趋势效率={trend_efficiency:.4f}")
 
             except Exception as e:
                 log_info(f"[处理函数] 计算指标失败: {str(e)}，跳过")
                 continue
-
-        # 步骤3：排序并输出TOP3
-        log_section("步骤3：排序并输出TOP3")
 
         if not results:
             log_info("[处理函数] 没有有效的计算结果")
@@ -330,10 +321,11 @@ def select_pools(ContextInfo):
         results_df = pd.DataFrame(results)
         log_info(f"[处理函数] 有效品种数量: {len(results_df)}")
 
-        # 3.1 10日趋势TOP3（按10日趋势降序排列）
-        log_section("10日趋势TOP3")
-        top3_trend = results_df.nlargest(3, '10日趋势')
-        log_info(f"\n{top3_trend[['连续合约', '主力合约', '代码', '交易所代码', 'n手（取整）', '10日趋势']].to_string()}")
+        # 3.1 N日趋势TOP3（按N日趋势降序排列）
+        trend_col = f'{g.trend_days}日趋势'
+        log_section(f"{g.trend_days}日趋势TOP3")
+        top3_trend = results_df.nlargest(3, trend_col)
+        log_info(f"\n{top3_trend[['连续合约', '主力合约', '代码', '交易所代码', 'n手（取整）', trend_col]].to_string()}")
 
         # 3.2 趋势效率TOP3（按趋势效率降序排列）
         log_section("趋势效率TOP3")
@@ -346,24 +338,17 @@ def select_pools(ContextInfo):
         log_info(f"\n{results_df.to_string()}")
 
         # 步骤5：封装成stock_codes_dict格式，供海龟交易策略使用
-        log_section("步骤5：封装stock_codes_dict格式")
         g.stock_codes_dict_top3_trend = convert_to_stock_codes_dict(top3_trend)
         g.stock_codes_dict_top3_efficiency = convert_to_stock_codes_dict(top3_efficiency)
 
-        log_info(f"[处理函数] 10日趋势TOP3 stock_codes_dict: {g.stock_codes_dict_top3_trend}")
+        log_info(f"[处理函数] {g.trend_days}日趋势TOP3 stock_codes_dict: {g.stock_codes_dict_top3_trend}")
         log_info(f"[处理函数] 趋势效率TOP3 stock_codes_dict: {g.stock_codes_dict_top3_efficiency}")
         if g.is_trend_or_efficiency == 1:
             ContextInfo.stock_codes_dict = g.stock_codes_dict_top3_trend
         elif g.is_trend_or_efficiency == 2:
             ContextInfo.stock_codes_dict = g.stock_codes_dict_top3_efficiency
 
-        # 保存结果到全局变量，供后续使用
-        # g.top3_trend = top3_trend
-        # g.top3_efficiency = top3_efficiency
-        # g.all_results = results_df
-
         log_info("[处理函数] 选品策略执行完成")
-
     except Exception as e:
         log_info(f"[处理函数] 执行选品逻辑异常: {str(e)}")
         import traceback
@@ -422,13 +407,13 @@ def handlebar(ContextInfo):  # 策略处理函数
         if main_contract and g.is_backtest == False:
             g.position_size[main_contract] = stock_info["size"]
             g.current_trading_contracts.append(main_contract)
-            log_info(f"[初始化] 连续合约 {main_stock_code} 对应的主力合约为: {main_contract}")
+            print(f"[初始化] 连续合约 {main_stock_code} 对应的主力合约为: {main_contract}")
         else:
             # 如果获取不到主力合约，则使用原连续合约
             g.position_size[main_stock_code] = stock_info["size"]
 
             g.current_trading_contracts.append(main_stock_code)
-            log_info(f"[初始化] 无法获取 {main_stock_code} 的主力合约，继续使用原合约")
+            print(f"[初始化] 无法获取 {main_stock_code} 的主力合约，继续使用原合约")
 
     log_info(f"[初始化] 当前在交易的合约: {g.current_trading_contracts}")
 
@@ -1239,7 +1224,7 @@ def log_info(message):
 
     logging.info(message)
 
-    print(f"[{datetime.now().strftime('%Y%m%d%H%M%S')}] {message}")
+    # print(f"[{datetime.now().strftime('%Y%m%d%H%M%S')}] {message}")
 
 
 def log_debug(message):
