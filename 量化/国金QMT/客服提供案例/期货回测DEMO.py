@@ -1,0 +1,102 @@
+#encoding:gbk
+#int(ma_fast_period) = 3  # 快线
+#int(ma_slow_period) = 10  # 慢线
+"""
+5日线上穿20日线时开多，下穿时开�?
+"""
+
+
+import time
+
+
+
+def init(ContextInfo):
+	#回测参数设置
+	ContextInfo.start = "2020-02-10 00:00:00"  # 注意格式，不要写�?
+	ContextInfo.end = time.strftime('%Y-%m-%d')+ " 00:00:00"  # 注意格式，不要写�?
+	ContextInfo.set_commission(0, [0,0,0,0,0,0]) # 手续费设置为�?1
+	ContextInfo.code = ContextInfo.stockcode + '.' + ContextInfo.market
+	ContextInfo.account_id = 'backtest' # 回测时随便写�?个字符串当作账号，交易相关接口需要用�?
+	# ContextInfo.security_deposit_ratio = 0.1  # 保证金比例，�?仓需要，股票不需要或设置�?1，最好跟右侧的保证金比例�?�?
+	ContextInfo.buyed = 0
+	ContextInfo.multiplier = ContextInfo.get_contract_multiplier(ContextInfo.code)
+	# print(ContextInfo.code, '合约乘数:', ContextInfo.multiplier)
+
+
+def handlebar(ContextInfo):
+	timetag = ContextInfo.get_bar_timetag(ContextInfo.barpos)
+	bar_date = timetag_to_datetime(timetag, '%Y%m%d')
+	price = ContextInfo.get_market_data(['close','open'],
+			stock_code=[ContextInfo.code],
+			end_time = bar_date,
+			count = int(ma_slow_period) + 2,
+			period= ContextInfo.period,
+			)
+	# print(bar_date, price.to_dict())
+	price_dict = price.to_dict('list')
+	# 昨日ma计算
+	fast_ma = sum(price_dict['close'][(-1 * int(ma_fast_period) - 1): -1]) / int(ma_fast_period)
+	slow_ma = sum(price_dict['close'][(-1 * int(ma_slow_period) - 1): -1]) / int(ma_slow_period)
+	# 前日ma计算
+	fast_ma_last_bar = sum(price_dict['close'][(-1 * int(ma_fast_period) - 2): -2]) / int(ma_fast_period)
+	slow_ma_last_bar = sum(price_dict['close'][(-1 * int(ma_slow_period) - 2): -2]) / int(ma_slow_period)
+	cross_up = fast_ma_last_bar <= slow_ma_last_bar and fast_ma > slow_ma
+	cross_down = fast_ma_last_bar >= slow_ma_last_bar and fast_ma < slow_ma
+
+	bar_open = price_dict['open'][-1]
+	if cross_up:
+		# �?�?
+		passorder(0, 1123, ContextInfo.account_id, ContextInfo.code,
+				11,
+				bar_open,
+				#int(ContextInfo.capital*0.8 / (bar_open * ContextInfo.multiplier * ContextInfo.security_deposit_ratio)),
+				0.8,
+				ContextInfo)  # �?80%的资金开�?, �?仓价为当日开盘价
+		ContextInfo.draw_text(True, 0, '�?�?')
+		# 平空
+		passorder(4, 1123, ContextInfo.account_id, ContextInfo.code,
+				11,
+				bar_open,
+				1,
+					ContextInfo)
+		# orders, deals, positions, accounts = query_info(ContextInfo)
+	elif cross_down:
+
+		ContextInfo.draw_text(True, 0, '平多')
+		passorder(1, 1123, ContextInfo.account_id, ContextInfo.code,
+				11,
+				bar_open,
+				1,
+				ContextInfo)  # 全部平仓
+		# �?�?
+		passorder(3, 1123, ContextInfo.account_id, ContextInfo.code,
+				11,
+				bar_open,
+				#int(ContextInfo.capital*0.8 / (bar_open * ContextInfo.multiplier * ContextInfo.security_deposit_ratio)),
+				0.8,
+				ContextInfo)
+
+
+def query_info(ContextInfo):
+	orders = get_trade_detail_data(ContextInfo.account_id, 'future', 'order')
+	orders = [to_dict(o) for o in orders]
+
+	deals = get_trade_detail_data(ContextInfo.account_id, 'future', 'deal')
+	deals = [to_dict(t) for t in deals]
+	positions = get_trade_detail_data(ContextInfo.account_id, 'future', 'position')
+	positions = [to_dict(p) for p in positions]
+
+	accounts = get_trade_detail_data(ContextInfo.account_id, 'future', 'account')
+	accounts = [to_dict(a) for a in accounts]
+	return orders, deals, positions, accounts
+
+
+def to_dict(obj):
+	attr_dict = {}
+	for attr in dir(obj):
+		try:
+			if attr[:2] == 'm_':
+				attr_dict[attr] = getattr(obj, attr)
+		except:
+			pass
+	return attr_dict

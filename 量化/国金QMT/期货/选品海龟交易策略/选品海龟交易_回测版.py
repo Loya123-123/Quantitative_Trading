@@ -137,7 +137,7 @@ def init(ContextInfo):
     g.pending_cancel_contracts = []  # 需要撤销委托的合约列表
 
     g.is_backtest = True  # 获取是否为回测模式
-
+    log_info(f"[初始化] 回测模式: 自定义参数： {g.is_backtest} ; 系统参数： {ContextInfo.do_back_test}")
     log_info(f"[初始化] 策略状态变量初始化完成")
 
     log_info(f"[初始化] 账户信息设置完成:")
