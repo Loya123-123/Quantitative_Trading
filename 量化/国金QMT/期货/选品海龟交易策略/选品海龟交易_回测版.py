@@ -82,8 +82,13 @@ def init(ContextInfo):
         log_info("[处理函数] 品种池为空，无法执行选品")
         return
 
-    g.last_execute_date = None  # 记录上次选品执行时间，避免重复执行
+    # 记录上次选品执行时间，避免重复执行
+    g.last_execute_date = None
+
     ContextInfo.stock_codes_dict = None
+
+
+
     # ContextInfo.set_universe(ContextInfo.stock_codes)
     # log_info(f"[初始化] 设置交易标的: {ContextInfo.stock_codes}")
 
@@ -96,11 +101,11 @@ def init(ContextInfo):
     g.atr_window = 10  # ATR计算周期
     g.stop_profit_ratio = 0.2  # 止盈比例
     g.stop_loss_multiplier = 1  # 止损ATR倍数
-    g.position_limit = 3  # 持仓上线
+    g.position_limit = 4  # 持仓上线
     g.near_expiry_days = 30  # 临近到期日天数上线
     g.capital_rate = 0.1  # 资金比例 资金固定值，参数失效
-    g.is_trend_or_efficiency = 2  # 1：趋势幅度； 2:效率策略
-    g.trend_days = 60  # 选品参数 趋势天数
+    g.is_trend_or_efficiency = 1  # 1：趋势幅度； 2:效率策略
+    g.trend_days = 30  # 选品参数 趋势天数
 
     # # 资金管理参数
     # g.long_capital = 10000  # 做多资金
