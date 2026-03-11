@@ -83,10 +83,10 @@ def init(ContextInfo):
     g.atr_window = 10  # ATR计算周期
     g.stop_profit_ratio = 0.2  # 止盈比例
     g.stop_loss_multiplier = 1  # 止损ATR倍数
-    g.position_limit = 4  # 持仓上线
+    g.position_limit = 3  # 持仓上线
     g.near_expiry_days = 30  # 临近到期日天数上线
     g.capital_rate = 0.1  # 资金比例 资金固定值，参数失效
-    g.is_trend_or_efficiency = 1  # 1：趋势幅度； 2:效率策略
+    g.is_trend_or_efficiency = 2  # 1：趋势幅度； 2:效率策略
     g.trend_days = 30  # 选品参数 趋势天数
 
     # # 资金管理参数
@@ -135,7 +135,7 @@ def init(ContextInfo):
 
     select_contract(ContextInfo) # 选品
 
-    # download_data(ContextInfo) # 下载数据
+    download_data(ContextInfo) # 下载数据
 
     ContextInfo.stock_codes = [stock_info["code"] + '.' + stock_info["market"] for stock_code, stock_info in
                                ContextInfo.stock_codes_dict.items()]
@@ -146,7 +146,7 @@ def init(ContextInfo):
 
     log_section("海龟交易策略初始化完成")
 
-    ContextInfo.run_time("run_time_handlebar", "3nSecond", "2026-01-01 09:30:00")
+    ContextInfo.run_time("run_time_handlebar", "2nSecond", "2026-01-01 09:30:00")
 
 
 # def handlebar(ContextInfo):  # 策略处理函数
@@ -215,15 +215,14 @@ def run_time_handlebar(ContextInfo):  # 定时运行
     # 需要交易的合约g.current_trading_contracts 和持仓代码 position_code 两个list 合并去重得到要执行的合约代码
     g.current_trading_contracts = list(set(g.current_trading_contracts + g.position_code))
 
-    # 从需要交易的合约中剔除需要撤销委托的合约
-    if hasattr(g, 'pending_cancel_contracts') and g.pending_cancel_contracts:
-        g.current_trading_contracts = [contract for contract in g.current_trading_contracts if
-                                       contract not in g.pending_cancel_contracts]
-        log_info(f"[初始化] 剔除需要撤销委托的合约后，需要处理的合约: {g.current_trading_contracts}")
-    log_info(f"[初始化]  需要处理的合约: {g.current_trading_contracts}")
+    # # 从需要交易的合约中剔除需要撤销委托的合约
+    # if hasattr(g, 'pending_cancel_contracts') and g.pending_cancel_contracts:
+    #     g.current_trading_contracts = [contract for contract in g.current_trading_contracts if
+    #                                    contract not in g.pending_cancel_contracts]
+    #     log_info(f"[初始化] 剔除需要撤销委托的合约后，需要处理的合约: {g.current_trading_contracts}")
 
     # 过滤冷却期内的合约，并清理已过冷却期的记录
-    g.current_trading_contracts = filter_cooling_contracts()
+    g.current_trading_contracts = filter_cooling_contracts(ContextInfo)
     log_info(f"[冷却过滤] 过滤冷却期合约后，待处理合约: {g.current_trading_contracts}")
 
     # 每个合约执行策略逻辑
@@ -531,12 +530,12 @@ def select_contract(ContextInfo):
         # 3.1 N日趋势TOP3（按N日趋势降序排列）
         trend_col = f'{g.trend_days}日趋势'
         log_section(f"{g.trend_days}日趋势TOP3")
-        top3_trend = results_df.nlargest(3, trend_col)
+        top3_trend = results_df.nlargest(1, trend_col)
         log_info(f"\n{top3_trend[['连续合约', '主力合约', '代码', '交易所代码', 'n手（取整）', trend_col]].to_string()}")
 
         # 3.2 趋势效率TOP3（按趋势效率降序排列）
         log_section("趋势效率TOP3")
-        top3_efficiency = results_df.nlargest(3, '趋势效率')
+        top3_efficiency = results_df.nlargest(1, '趋势效率')
         log_info(
             f"\n{top3_efficiency[['连续合约', '主力合约', '代码', '交易所代码', 'n手（取整）', '趋势效率']].to_string()}")
 
@@ -718,11 +717,6 @@ def get_account_info(ContextInfo):
             # send_feishu_message(message)
             return None
         g.position_code = []  # 仓位代码
-        account = account_details[0]
-        available = account.m_dAvailable  # 可用资金
-        total_value = account.m_dBalance  # 总权益
-
-        log_info(f"  [账户信息] 账户资金信息: 可用资金={available:.2f}, 总资产={total_value:.2f}")
 
         # 重置主力合约的持仓状态
         for stock_code in g.current_trading_contracts:
@@ -733,42 +727,6 @@ def get_account_info(ContextInfo):
             log_info(f"重置所有主力合约的持仓状态 {stock_code} 仓位状态 重置成功 {g.long_position[stock_code]} ")
 
         g.position_count = 0
-
-        # 获取未成交委托信息并撤销未成交委托
-        log_debug("  [账户信息] 获取未成交委托详情...")
-        order_details = get_trade_detail_data(ContextInfo.account_id, 'FUTURE', 'ORDER')
-        # 清空需要撤销委托的合约列表
-        g.pending_cancel_contracts = []
-        if order_details:
-            order_len = 0
-            for order in order_details:
-                # log_info(f"  [账户信息] 获取到委托记录：\n {to_dict(order)}")
-                # 获取委托状态
-                order_status = order.m_nOrderStatus
-                symbol = order.m_strInstrumentID + '.' + order.m_strExchangeID
-                log_info(f"  [账户信息] 获取委托记录: {symbol} 委托状态为： {order_status}")
-
-                # 检查是否为未成交状态 53 部撤 54 已撤、 56 已成、57 废单
-                if order_status not in (53, 54, 56, 57):
-                    log_info(
-                        f"  [账户信息] 发现未完成委托，合约: {symbol}, 状态: {order_status}, 委托编号: {order.m_strOrderSysID}")
-                    # 将需要撤销委托的合约添加到列表中
-                    if symbol not in g.pending_cancel_contracts:
-                        g.pending_cancel_contracts.append(symbol)
-                        message = f"  [账户信息] 将需要撤销的合约添加到列表中: {symbol}"
-                        feishu_log_info(message)
-                        # send_feishu_message(message)
-                    # 撤销未成交委托
-                    cancel_result = cancel(order.m_strOrderSysID, ContextInfo.account_id, 'FUTURE', ContextInfo)
-                    log_info(f"  [账户信息] 撤销委托结果: {cancel_result}")
-                    order_len += 1
-                else:
-                    log_info(f"  [账户信息] 合约: {symbol} ,委托状态为: {order_status}，无需撤销")
-            message = f"  [账户信息] 处理  {order_len} 条委托记录，需要撤销委托的合约: {g.pending_cancel_contracts}"
-            log_info(message)
-
-        else:
-            log_info("  [账户信息] 无委托记录")
 
         # 获取持仓信息
         log_debug("  [账户信息] 获取持仓详情...")
@@ -852,8 +810,6 @@ def get_account_info(ContextInfo):
             log_info("  [账户信息] 无持仓记录")
 
         return {
-            'available': available,
-            'total_value': total_value,
             'PositionInfo_dfs': PositionInfo_dfs,
             'PositionInfo_dict': PositionInfo_dict,  # 返回更多持仓信息
         }
@@ -1194,7 +1150,7 @@ def execute_trade(ContextInfo, signal, price_data):
         # send_feishu_message(message)
 
 
-def filter_cooling_contracts():
+def filter_cooling_contracts(ContextInfo):
     """
     过滤冷却期内的合约，并清理已过冷却期的记录
     核查点1：上一次下单时间距离现在时间差距 < g.order_cooldown_seconds
@@ -1225,8 +1181,43 @@ def filter_cooling_contracts():
                     # 清理记录，释放冷却
                     del g.last_open_order[contract]
                 else:
+
+                    # 持仓未确认，检查委托状态
+                    # 获取该合约的委托信息
+                    order_details = get_trade_detail_data(ContextInfo.account_id, 'FUTURE', 'ORDER')
+                    log_info(f"  [冷却过滤] 获取委托信息: {order_details}")
+                    order_status_found = None
+                    order_sys_id = None
+                    if order_details:
+                        for order in order_details:
+                            symbol = order.m_strInstrumentID + '.' + order.m_strExchangeID
+                            if symbol == contract:
+                                order_status = order.m_nOrderStatus
+                                order_sys_id = order.m_strOrderSysID
+                                log_info(f"  [冷却过滤] 合约 {contract} 委托状态: {order_status}, 委托编号: {order_sys_id}")
+                                order_status_found = order_status
+                                break
+
+                    # 状态码说明: 53=未成交, 54=已成交, 56=已撤, 57=部撤, 58=废单
+                    # 如果委托状态是已撤(56)、部撤(57)、废单(58)，从冷却集合中删除
+                    if order_status_found in (56, 57, 58):
+                        feishu_log_info(
+                            f"  [冷却过滤] 合约 {contract} 委托状态为已撤/部撤/废单({order_status_found})，从冷却集合中删除")
+                        # 从记录中释放，允许重新下单
+                        del g.last_open_order[contract]
+                    elif order_status_found is not None:
+                        # 委托状态不是已撤/部撤（可能是未成交等），执行撤单操作
+                        feishu_log_info(
+                            f"  [冷却过滤] 合约 {contract} 委托状态为 {order_status_found}，执行撤单操作")
+                        cancel_result = cancel(order_sys_id, ContextInfo.account_id, 'FUTURE', ContextInfo)
+                        log_info(f"  [冷却过滤] 撤单结果: {cancel_result}")
+                    else:
+                        # 没有找到委托记录（可能是已成交或超时被清除），从冷却集合中删除
+                        feishu_log_info(
+                            f"  [冷却过滤] 合约 {contract} 无委托记录，从冷却集合中删除")
+                        del g.last_open_order[contract]
+
                     # 持仓未确认，在待处理列表中剔除
-                    feishu_log_info(f"  [冷却过滤] 合约 {contract} 已过冷却期但持仓未确认，方向: {last_order['direction']}, 已过时间: {time_diff:.1f}秒 ")
                     continue
 
 
