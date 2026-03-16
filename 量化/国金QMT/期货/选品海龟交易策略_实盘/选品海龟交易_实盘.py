@@ -63,6 +63,10 @@ def init(ContextInfo):
     logging.basicConfig(filename=filename, level=logging.INFO,
                         format='%(asctime)s - %(levelname)s - %(message)s')
 
+    # 判断当前是否为周末
+    if is_weekend():
+        return
+
     log_section("开始初始化海龟交易策略...")
     g.pools_df = select_pools()
 
@@ -164,9 +168,6 @@ def run_time_handlebar(ContextInfo):  # 定时运行
             log_info("[处理函数] 当前不是最后一个K线周期，跳过本次处理")
             return
 
-        # 判断当前是否为周末
-        if is_weekend():
-            return
 
         # 根据当前时间计算如果如果时间不在开盘时间内就直接退出，已知的开盘时间段有：0:00-2:30，9:00-11:30，13:30-15:00，21:00-24:00
 
@@ -447,7 +448,7 @@ def select_contract(ContextInfo):
                 # 转换时间戳为可读格式
                 history_df['time'] = history_df['time'].apply(lambda x: timetag_to_datetime(x, '%Y-%m-%d %H:%M:%S'))
                 # 日盘和夜盘的0-2点（后半段）删除历史数据中的最后一条（当天数据）。 夜盘21点-24点 最后一条是当天白天的记录不删除
-                history_df = history_df[:-1] if current_hour < 21 else history_df
+                history_df = history_df[:-1] if current_hour < 16 else history_df
                 # 根据时间倒序排列
                 history_df = history_df.sort_values(by='time', ascending=False).reset_index(drop=True)
                 log_info(f"[处理函数] 历史数据:\n{history_df.to_string()}")
@@ -1188,19 +1189,21 @@ def filter_cooling_contracts(ContextInfo):
                     log_info(f"  [冷却过滤] 获取委托信息: {order_details}")
                     order_status_found = None
                     order_sys_id = None
+                    order_msg = None
                     if order_details:
                         for order in order_details:
                             symbol = order.m_strInstrumentID + '.' + order.m_strExchangeID
                             if symbol == contract:
                                 order_status = order.m_nOrderStatus
                                 order_sys_id = order.m_strOrderSysID
-                                log_info(f"  [冷却过滤] 合约 {contract} 委托状态: {order_status}, 委托编号: {order_sys_id}")
+                                order_msg = order.m_strErrorMsg
+                                log_info(f"  [冷却过滤] 合约 {contract} 委托状态: {order_status}, 委托编号: {order_sys_id} , 委托信息：{msg}")
                                 order_status_found = order_status
                                 break
 
                     # 状态码说明: 53=未成交, 54=已成交, 56=已撤, 57=部撤, 58=废单
                     # 如果委托状态是已撤(56)、部撤(57)、废单(58)，从冷却集合中删除
-                    if order_status_found in (56, 57, 58):
+                    if order_status_found in (56, 57, 58) or order_msg == '已撤单':
                         feishu_log_info(
                             f"  [冷却过滤] 合约 {contract} 委托状态为已撤/部撤/废单({order_status_found})，从冷却集合中删除")
                         # 从记录中释放，允许重新下单

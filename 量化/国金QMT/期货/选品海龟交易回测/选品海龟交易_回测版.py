@@ -511,12 +511,12 @@ def select_contract(ContextInfo):
         # 3.1 N日趋势TOP3（按N日趋势降序排列）
         trend_col = f'{g.trend_days}日趋势'
         log_section(f"{g.trend_days}日趋势TOP3")
-        top3_trend = results_df.nlargest(1, trend_col)
+        top3_trend = results_df.nlargest(3, trend_col)
         log_info(f"\n{top3_trend[['连续合约', '主力合约', '代码', '交易所代码', 'n手（取整）', trend_col]].to_string()}")
 
         # 3.2 趋势效率TOP3（按趋势效率降序排列）
         log_section("趋势效率TOP3")
-        top3_efficiency = results_df.nlargest(1, '趋势效率')
+        top3_efficiency = results_df.nlargest(3, '趋势效率')
         log_info(
             f"\n{top3_efficiency[['连续合约', '主力合约', '代码', '交易所代码', 'n手（取整）', '趋势效率']].to_string()}")
 
@@ -1169,6 +1169,7 @@ def filter_cooling_contracts(ContextInfo):
                     order_sys_id = None
                     if order_details:
                         for order in order_details:
+
                             symbol = order.m_strInstrumentID + '.' + order.m_strExchangeID
                             if symbol == contract:
                                 order_status = order.m_nOrderStatus
@@ -1180,7 +1181,7 @@ def filter_cooling_contracts(ContextInfo):
 
                     # 状态码说明: 53=未成交, 54=已成交, 56=已撤, 57=部撤, 58=废单
                     # 如果委托状态是已撤(56)、部撤(57)、废单(58)，从冷却集合中删除
-                    if order_status_found in (56, 57, 58):
+                    if order_status_found in (54,56, 57, 58):
                         feishu_log_info(
                             f"  [冷却过滤] 合约 {contract} 委托状态为已撤/部撤/废单({order_status_found})，从冷却集合中删除")
                         # 从记录中释放，允许重新下单

@@ -441,6 +441,7 @@ def get_account_info(ContextInfo):
                 # 获取委托状态，50-54表示未成交状态
                 order_status = order.m_nOrderStatus
                 symbol = order.m_strInstrumentID + '.' + order.m_strExchangeID
+                m_strErrorMsg
 
                 # 检查是否为未成交状态(状态码49-53)
                 if 49 <= order_status < 54:
