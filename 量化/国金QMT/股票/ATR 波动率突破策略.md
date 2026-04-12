@@ -1,10 +1,5 @@
 # 剖析一百个量化策略 15 - ATR 波动率突破策略
 
-原创 国金宜宾营业部 
-
-[国金证券宜宾营业部](javascript:void(0);)
-
-*2026年2月26日 15:10* *四川*
 
 # 一、ATR 波动率突破策略核心逻辑
 
@@ -73,11 +68,8 @@ o下轨 = 前一日收盘价 - N × ATR（N 为 ATR 倍数）
 
 首先定义ATR相关：
 
-![img](https://mmbiz.qpic.cn/sz_mmbiz_png/Ib5d15YrlWsT2Mibh5eicjsEGgKx6AhCCQQs2JjEF6jfe8aLJJjd8rkdhUOfuNVwHHSNfprV1WuW8xK7EnNzt5WtqdCUWNd6UH777J8x4k1Yg/640?wx_fmt=png)
 
 判断入场条件：
-
-![img](https://mmbiz.qpic.cn/mmbiz_png/Ib5d15YrlWt7SwhROZa0oPfzmCOcTTneN9ddbChVdacI51pwDZuR6ibnnteQ7AwMcF9CaTjFcJiaVscub7F5yrOsFLQ1L36Wl9ak5aWibsx7KQ/640?wx_fmt=png)
 
 其他的，因为合规原因就不展示了。
 

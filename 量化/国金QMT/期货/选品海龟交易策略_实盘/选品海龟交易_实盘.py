@@ -83,7 +83,7 @@ def init(ContextInfo):
 
     # 策略参数
     g.entry_window = 10  # 入市通道周期（突破周期）
-    g.exit_window = 4  # 止盈通道周期
+    g.exit_window = 2  # 止盈通道周期
     g.atr_window = 10  # ATR计算周期
     g.stop_profit_ratio = 0.2  # 止盈比例
     g.stop_loss_multiplier = 1  # 止损ATR倍数
@@ -1197,7 +1197,7 @@ def filter_cooling_contracts(ContextInfo):
                                 order_status = order.m_nOrderStatus
                                 order_sys_id = order.m_strOrderSysID
                                 order_msg = order.m_strErrorMsg
-                                log_info(f"  [冷却过滤] 合约 {contract} 委托状态: {order_status}, 委托编号: {order_sys_id} , 委托信息：{msg}")
+                                log_info(f"  [冷却过滤] 合约 {contract} 委托状态: {order_status}, 委托编号: {order_sys_id} , 委托信息：{order_msg}")
                                 order_status_found = order_status
                                 break
 

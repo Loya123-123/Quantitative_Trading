@@ -16,11 +16,11 @@
 
 ```
 entry_window = 10      # 入场通道天数（突破前10日高点/低点）
-exit_window = 4        # 止损通道天数（前4日高低点）
+exit_window = 2        # 止损通道天数（默认2，可调）
 atr_window = 10        # ATR计算周期
 stop_profit_ratio = 0.2  # 止盈比例（20%）
 stop_loss_multiplier = 1  # 止损ATR倍数
-position_limit = 4    # 最大持仓品种数
+position_limit = 3    # 最大持仓品种数（默认3，可调）
 near_expiry_days = 30 # 临近到期限制天数
 capital_rate = 0.1    # 资金使用率
 trend_days = 30        # 选品趋势计算天数
