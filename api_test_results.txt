@@ -1,0 +1,53 @@
+QMT API Function Test Results
+============================================================
+
+[xtdata]
+  import: OK Available
+  get_stock_list_in_sector: OK (5200 stocks)
+  download_history_data: OK
+  get_market_data_ex: OK (10 rows)
+  subscribe_quote: OK (seq:1)
+  get_local_data: OK
+
+[xttrader]
+  import: OK
+  XtQuantTrader_init: OK
+  start: OK
+  connect: OK
+  subscribe: OK
+  order_stock: OK
+  order_stock_async: OK
+  query_stock_positions: OK (0 positions)
+  query_position_statistics: OK
+  query_stock_trades: OK
+  query_stock_orders: OK
+  query_stock_asset: OK (Asset:1025.14)
+  cancel_order_stock: OK
+  register_callback: OK
+  connect_test: OK Connected
+  subscribe_test: OK Subscribed
+
+[xttype]
+  StockAccount: OK
+  StockAccount_init: OK
+  XtQuantTraderCallback: OK
+
+[xtconstant]
+  import: OK
+  STOCK_BUY: OK (23)
+  STOCK_SELL: OK (24)
+  LATEST_PRICE: OK (5)
+  FIX_PRICE: OK (11)
+  FUTURE_OPEN_LONG: OK (0)
+  FUTURE_OPEN_SHORT: OK (3)
+  FUTURE_CLOSE_LONG_TODAY_FIRST: OK (6)
+  FUTURE_CLOSE_SHORT_TODAY_FIRST: OK (8)
+  FUTURE_CLOSE_LONG_HISTORY_FIRST: OK (7)
+  FUTURE_CLOSE_SHORT_HISTORY_FIRST: OK (9)
+
+[qmttools]
+  passorder: OK
+  get_trade_detail_data: OK
+
+
+Total: 38/38 tests passed
